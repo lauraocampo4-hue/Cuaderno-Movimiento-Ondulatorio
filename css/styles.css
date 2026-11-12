@@ -1,0 +1,1393 @@
+/* ==========================================================================
+   CUADERNO UNIVERSITARIO FÍSICO DIGITALIZADO - FÍSICA 3 UTP
+   Estética: Papelería Universitaria Femenina, Argollado Metálico 3D,
+   Hojas Completas Diseñadas (No Dashboard), Agua, Lavanda, Rosa y Cristal.
+   Autoras: Laura Yicel Ocampo Rodríguez & Danna Yised Arias Martínez
+   ========================================================================== */
+
+:root {
+  /* Paleta Oficial */
+  --c-lavender: #8a7beb;
+  --c-lavender-dark: #5038a8;
+  --c-lavender-deep: #3b2575;
+  --c-lavender-light: #ece8fc;
+  --c-lavender-subtle: #f6f3fe;
+
+  --c-purple-cover: #523982;
+  --c-purple-accent: #845ec2;
+
+  --c-blue-pastel: #e0f2fe;
+  --c-blue-soft: #bae6fd;
+  --c-blue-deep: #0369a1;
+
+  --c-rose-pastel: #fce7f3;
+  --c-rose-light: #fdf2f8;
+  --c-rose-deep: #db2777;
+
+  --c-mint-light: #d1fae5;
+  --c-mint-deep: #059669;
+
+  --c-gold-nacre: #f59e0b;
+  --c-white-paper: #fdfcfe;
+  --c-paper-line: rgba(138, 123, 235, 0.08);
+
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-hand: 'Caveat', cursive;
+  --font-mono: 'Fira Code', monospace;
+
+  --radius-full: 9999px;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: var(--font-sans);
+  background-color: #e9e4f5;
+  color: #1e293b;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Fondo de Mesa / Superficie de Agua */
+#water-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   VIEWPORT PRINCIPAL DEL CUADERNO (OCUPA LA PANTALLA COMPLETA)
+   ========================================================================== */
+.notebook-viewport {
+  position: relative;
+  z-index: 10;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 12px 5px;
+  box-sizing: border-box;
+}
+
+/* ==========================================================================
+   BARRA SUPERIOR ACADÉMICA INSTITUCIONAL (HEADER ELEGANTE & BOTÓN FULLSCREEN)
+   ========================================================================== */
+.top-academic-bar {
+  width: min(98vw, calc((100vh - 86px) * 1.54), 1600px);
+  max-width: 1600px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 16px;
+  margin-bottom: 5px;
+  background: rgba(255, 255, 255, 0.90);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1.5px solid rgba(196, 181, 253, 0.45);
+  border-radius: var(--radius-full);
+  box-shadow: 0 4px 16px rgba(45, 27, 78, 0.08);
+  z-index: 60;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+.top-bar-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.top-bar-brand {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-weight: 800;
+  font-size: 0.82rem;
+  color: var(--c-purple-cover);
+  letter-spacing: 0.3px;
+}
+
+.brand-cap-icon {
+  color: #7c3aed;
+  font-size: 0.95rem;
+}
+
+.top-bar-divider {
+  color: #cbd5e1;
+  font-size: 0.8rem;
+}
+
+.top-bar-topic {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.top-bar-center {
+  display: flex;
+  align-items: center;
+}
+
+.top-spread-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 14px;
+  background: rgba(138, 123, 235, 0.12);
+  border: 1px solid rgba(138, 123, 235, 0.3);
+  border-radius: var(--radius-full);
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--c-purple-cover);
+}
+
+.top-spread-badge i {
+  color: #7c3aed;
+  font-size: 0.8rem;
+}
+
+.top-bar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Botón de Pantalla Completa en tonos lavanda y morado institucional */
+.top-btn-fullscreen {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 14px;
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: var(--radius-full);
+  font-family: var(--font-sans);
+  font-size: 0.76rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(109, 40, 217, 0.28);
+  transition: all 0.25s ease;
+  outline: none;
+}
+
+.top-btn-fullscreen:hover {
+  background: linear-gradient(135deg, #6d28d9 0%, #5b21b6 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(109, 40, 217, 0.38);
+}
+
+.top-btn-fullscreen:active {
+  transform: translateY(0);
+}
+
+.top-btn-fullscreen i {
+  font-size: 0.82rem;
+  transition: transform 0.25s ease;
+}
+
+.top-btn-fullscreen:hover i {
+  transform: scale(1.15);
+}
+
+/* ==========================================================================
+   EL CUADERNO ABIERTO (HOJA IZQUIERDA | ARGOLLADO | HOJA DERECHA)
+   ========================================================================== */
+.notebook-container {
+  position: relative;
+  width: min(98vw, calc((100vh - 90px) * 1.54), 1600px);
+  max-width: 1600px;
+  height: min(calc(100vh - 88px), 920px);
+  min-height: 580px;
+  background: #ffffff;
+  border-radius: 20px;
+  /* Borde de tapa dura púrpura/lavanda + Sombra realista sobre la mesa */
+  border: 4px solid var(--c-purple-cover);
+  box-shadow: 
+    0 22px 55px -10px rgba(35, 18, 65, 0.38),
+    0 0 0 1px rgba(255, 255, 255, 0.6),
+    -6px 0 0 #f1f5f9, -10px 0 0 #e2e8f0,
+    6px 0 0 #f1f5f9, 10px 0 0 #e2e8f0;
+  display: flex;
+  overflow: hidden;
+  transform-style: preserve-3d;
+  flex: 1 1 auto;
+}
+
+/* ==========================================================================
+   ESTADO EN PANTALLA COMPLETA (EXPANSIÓN INMERSIVA)
+   ========================================================================== */
+:fullscreen .notebook-viewport,
+:-webkit-full-screen .notebook-viewport,
+body.is-fullscreen .notebook-viewport {
+  padding: 4px 10px 4px;
+}
+
+:fullscreen .top-academic-bar,
+:-webkit-full-screen .top-academic-bar,
+body.is-fullscreen .top-academic-bar {
+  width: min(99vw, calc((100vh - 78px) * 1.55), 1750px);
+  max-width: 1750px;
+  margin-bottom: 4px;
+  padding: 3px 14px;
+}
+
+:fullscreen .notebook-container,
+:-webkit-full-screen .notebook-container,
+body.is-fullscreen .notebook-container {
+  width: min(99vw, calc((100vh - 78px) * 1.55), 1750px);
+  max-width: 1750px;
+  height: min(calc(100vh - 78px), 980px);
+  border-radius: 22px;
+}
+
+:fullscreen .stationery-nav-bar,
+:-webkit-full-screen .stationery-nav-bar,
+body.is-fullscreen .stationery-nav-bar {
+  margin-top: 4px;
+  padding: 3px 14px;
+}
+
+/* ==========================================================================
+   ARGOLLADO CENTRAL (ESPIRAL METÁLICA 3D CON AROS Y PERFORACIONES)
+   ========================================================================== */
+.notebook-spine {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 38px;
+  transform: translateX(-50%);
+  z-index: 50;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  /* Canal central con sombra de pliegue */
+  background: linear-gradient(90deg, 
+    rgba(30, 15, 60, 0.12) 0%, 
+    rgba(255, 255, 255, 0.95) 50%, 
+    rgba(30, 15, 60, 0.12) 100%);
+  border-left: 1px solid rgba(138, 123, 235, 0.2);
+  border-right: 1px solid rgba(138, 123, 235, 0.2);
+  transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* En la portada, centrado en la separación central sin tapar letras */
+.notebook-container.cover-active .notebook-spine,
+.notebook-container:has(#spread-1.active) .notebook-spine {
+  left: calc(50% + 14px);
+}
+
+.spine-ring-unit {
+  position: relative;
+  width: 100%;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1px;
+}
+
+/* Agujeros de perforación en las hojas */
+.punch-hole {
+  width: 8px;
+  height: 15px;
+  border-radius: 4px;
+  background: #231438;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.8), 0 1px 1px rgba(255, 255, 255, 0.6);
+  z-index: 51;
+}
+
+.punch-hole.left { margin-left: 2px; }
+.punch-hole.right { margin-right: 2px; }
+
+/* Aro de espiral metálico 3D dorado/nacarado */
+.spiral-ring {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) rotate(-4deg);
+  width: 40px;
+  height: 13px;
+  border-radius: 8px;
+  background: linear-gradient(180deg, 
+    #fef3c7 0%, 
+    #ffffff 22%, 
+    #d4af37 55%, 
+    #926e10 82%, 
+    #4a3403 100%);
+  box-shadow: 
+    0 3px 5px rgba(20, 10, 40, 0.45),
+    inset 0 1px 1px rgba(255, 255, 255, 0.9);
+  z-index: 52;
+}
+
+.ring-glint-bar {
+  position: absolute;
+  top: 1px;
+  left: 6px;
+  right: 6px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 2px;
+}
+
+/* Destello sutil al pasar la hoja */
+.notebook-spine.shimmering .spiral-ring {
+  filter: brightness(1.25);
+  transition: filter 0.3s ease;
+}
+
+/* ==========================================================================
+   PLIEGOS (SPREADS) Y PÁGINAS FÍSICAS
+   ========================================================================== */
+.book-spread {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+.book-spread.active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.book-page {
+  flex: 1;
+  height: 100%;
+  background-color: #faf7fd;
+  /* Fondo oficial universitario de Física III - Ondas, oscilaciones y física (PAG.png) */
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.05)),
+    url('../PAG.png');
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: clamp(14px, 2vh, 22px) clamp(22px, 2.5vw, 40px);
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(196, 181, 253, 0.65) transparent;
+}
+
+/* Scrollbar sutil, fina y elegante en tonos lavanda institucional */
+.book-page::-webkit-scrollbar {
+  width: 6px;
+}
+
+.book-page::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 12px 0;
+}
+
+.book-page::-webkit-scrollbar-thumb {
+  background: rgba(196, 181, 253, 0.65);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  transition: background 0.2s ease;
+}
+
+.book-page::-webkit-scrollbar-thumb:hover {
+  background: rgba(138, 123, 235, 0.85);
+}
+
+/* Páginas diseñadas como imagen completa (Págs. 2, 29, 30) */
+.full-image-page {
+  padding: 0 !important;
+  position: relative;
+  overflow: hidden;
+  background-image: none !important;
+  background-color: #faf7fd !important;
+  box-shadow: none !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.full-image-page.page-left {
+  border-top-left-radius: 16px;
+  border-bottom-left-radius: 16px;
+}
+
+.full-image-page.page-right {
+  border-top-right-radius: 16px;
+  border-bottom-right-radius: 16px;
+}
+
+.page-img-full {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  display: block;
+}
+
+.book-page.page-left {
+  border-top-left-radius: 16px;
+  border-bottom-left-radius: 16px;
+  padding-right: 42px;
+  /* Sombra del lomo hacia la derecha */
+  box-shadow: inset -24px 0 30px -10px rgba(50, 30, 85, 0.08);
+}
+
+.book-page.page-right {
+  border-top-right-radius: 16px;
+  border-bottom-right-radius: 16px;
+  padding-left: 42px;
+  /* Sombra del lomo hacia la izquierda */
+  box-shadow: inset 24px 0 30px -10px rgba(50, 30, 85, 0.08);
+}
+
+/* ==========================================================================
+   PORTADA: HOJA COMPLETA (FULL-BLEED COVER LEAF)
+   ========================================================================== */
+.cover-page-full {
+  padding: 0 !important;
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px 0 0 16px;
+  background: #2a1b4e;
+}
+
+.cover-image-full {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+/* Botón flotante idéntico a la referencia: "Abrir Cuaderno (→)" */
+.btn-open-notebook-floating {
+  position: absolute;
+  top: 22px;
+  right: 28px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 18px 7px 22px;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(8px);
+  border: 1.5px solid rgba(138, 123, 235, 0.35);
+  border-radius: var(--radius-full);
+  color: var(--c-purple-cover);
+  font-family: var(--font-sans);
+  font-size: 0.88rem;
+  font-weight: 800;
+  box-shadow: 0 8px 24px rgba(45, 27, 78, 0.28);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  z-index: 20;
+}
+
+.btn-open-notebook-floating .circle-arrow {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--c-purple-cover);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.78rem;
+  transition: transform 0.25s ease;
+}
+
+.btn-open-notebook-floating:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(45, 27, 78, 0.38);
+}
+
+.btn-open-notebook-floating:hover .circle-arrow {
+  transform: translateX(3px);
+}
+
+/* ==========================================================================
+   ENCABEZADO DE HOJA (EDITORIAL STATIONERY HEADER)
+   ========================================================================== */
+.stationery-header {
+  position: relative;
+  margin-bottom: 8px;
+  display: flex;
+  flex-direction: column;
+}
+
+.header-top-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2px;
+}
+
+.header-category-tag {
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: #7c65b8;
+}
+
+.page-badge-pill {
+  font-family: var(--font-sans);
+  font-size: 0.74rem;
+  font-weight: 800;
+  color: var(--c-lavender-dark);
+  background: var(--c-lavender-light);
+  padding: 2px 12px;
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(138, 123, 235, 0.25);
+}
+
+.header-title-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.page-title-script {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: clamp(1.3rem, 1.8vw, 1.7rem);
+  font-weight: 800;
+  color: #3b2766;
+  line-height: 1.15;
+}
+
+.title-doodle {
+  color: #b3a4f3;
+  font-size: 1.2rem;
+  opacity: 0.75;
+}
+
+/* ==========================================================================
+   BLOQUES DE APUNTES (STATIONERY NOTE BLOCKS - NO DASHBOARD)
+   ========================================================================== */
+.stationery-body {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.note-block {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(196, 181, 253, 0.35);
+  border-radius: 14px;
+  padding: 10px 14px;
+  box-shadow: 0 2px 8px rgba(90, 60, 140, 0.04);
+  position: relative;
+}
+
+/* Título con estilo de resaltador universitario */
+.note-banner-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 12px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(90deg, #ede9fe, #fae8ff);
+  color: var(--c-lavender-dark);
+  font-size: 0.76rem;
+  font-weight: 800;
+  margin-bottom: 6px;
+  box-shadow: 0 1px 3px rgba(80, 56, 168, 0.08);
+}
+
+.note-banner-title.green {
+  background: linear-gradient(90deg, #dcfce7, #ecfdf5);
+  color: #065f46;
+}
+
+.note-content {
+  font-size: 0.82rem;
+  line-height: 1.48;
+  color: #334155;
+}
+
+.note-content ul {
+  margin: 4px 0 0 16px;
+}
+
+.note-content li {
+  margin-bottom: 3px;
+}
+
+/* Cuadro de fórmulas KaTeX integrado en el apunte con scroll horizontal seguro */
+.formula-stationery {
+  background: linear-gradient(135deg, rgba(245, 243, 255, 0.85), rgba(240, 249, 255, 0.75));
+  border: 1px solid rgba(138, 123, 235, 0.25);
+  border-radius: 10px;
+  padding: 8px 14px;
+  margin: 8px 0;
+  text-align: center;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(196, 181, 253, 0.6) transparent;
+}
+
+.formula-stationery::-webkit-scrollbar {
+  height: 4px;
+}
+
+.formula-stationery::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.formula-stationery::-webkit-scrollbar-thumb {
+  background: rgba(196, 181, 253, 0.65);
+  border-radius: 4px;
+}
+
+.formula-stationery .katex-display {
+  margin: 0.25em 0 !important;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 2px 0;
+  line-height: 1.55;
+}
+
+.formula-stationery .katex {
+  font-size: 1.05em;
+  text-rendering: optimizeLegibility;
+}
+
+/* ==========================================================================
+   VIÑETAS E ILUSTRACIONES CIENTÍFICAS DIBUJADAS EN LA HOJA
+   ========================================================================== */
+.science-vignette {
+  float: right;
+  margin: 0 0 8px 12px;
+  padding: 6px 12px;
+  background: linear-gradient(145deg, rgba(246, 243, 255, 0.9), rgba(253, 248, 255, 0.9));
+  border: 1px solid rgba(196, 181, 253, 0.35);
+  border-radius: 12px;
+  text-align: center;
+}
+
+/* ==========================================================================
+   PIE DE PÁGINA (STATIONERY FOOTER)
+   ========================================================================== */
+.stationery-footer {
+  margin-top: auto;
+  padding-top: 10px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px dashed rgba(138, 123, 235, 0.2);
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: #94a3b8;
+}
+
+/* ==========================================================================
+   BARRA DE NAVEGACIÓN INFERIOR (MATCHING FOTO DE REFERENCIA)
+   ========================================================================== */
+.stationery-nav-bar {
+  margin-top: 10px;
+  width: 100%;
+  max-width: 980px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.btn-nav-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 20px;
+  background: #ffffff;
+  border: 1.5px solid #cbd5e1;
+  border-radius: var(--radius-full);
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  flex-shrink: 0;
+}
+
+.btn-nav-pill:hover:not(:disabled) {
+  border-color: var(--c-purple-accent);
+  color: var(--c-purple-accent);
+  transform: translateY(-1px);
+}
+
+.btn-nav-pill:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btn-nav-pill.next-solid {
+  background: var(--c-purple-accent);
+  color: #ffffff;
+  border-color: var(--c-purple-accent);
+  box-shadow: 0 4px 12px rgba(132, 94, 194, 0.35);
+}
+
+.btn-nav-pill.next-solid:hover:not(:disabled) {
+  background: #734bb0;
+  color: #ffffff;
+  box-shadow: 0 6px 16px rgba(132, 94, 194, 0.45);
+}
+
+.btn-nav-pill.icon-only {
+  padding: 8px 12px;
+}
+
+/* Selector Central en Píldora Blanca */
+.nav-dropdown-pill {
+  flex: 1 1 0%;
+  min-width: 0;
+  max-width: 440px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #ffffff;
+  border: 1.5px solid #cbd5e1;
+  border-radius: var(--radius-full);
+  padding: 7px 14px;
+  position: relative;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.nav-dropdown-pill .home-icon {
+  color: var(--c-purple-accent);
+  font-size: 0.95rem;
+  flex-shrink: 0;
+}
+
+.nav-dropdown-pill .pages-text {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: #1e293b;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.spread-dropdown-native {
+  flex: 1 1 0%;
+  min-width: 0;
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #475569;
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nav-dropdown-pill .arrow-down-icon {
+  color: #94a3b8;
+  font-size: 0.75rem;
+  pointer-events: none;
+  flex-shrink: 0;
+  margin-left: 2px;
+}
+
+/* Línea de autoría institucional al pie */
+.notebook-credits-line {
+  margin-top: 5px;
+  font-size: 0.72rem;
+  color: #64748b;
+  text-align: center;
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   ANIMACIÓN 3D DE PASO DE HOJA (PAGE FLIPPER)
+   ========================================================================== */
+.page-flipper {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  pointer-events: none;
+  z-index: 40;
+  display: none;
+  transform-style: preserve-3d;
+}
+
+.page-flipper.flipping-next {
+  display: block;
+  left: 50%;
+  transform-origin: left center;
+  animation: flipNextAnim 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+.page-flipper.flipping-prev {
+  display: block;
+  left: 0;
+  transform-origin: right center;
+  animation: flipPrevAnim 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+@keyframes flipNextAnim {
+  0% { transform: perspective(2000px) rotateY(0deg); }
+  100% { transform: perspective(2000px) rotateY(-180deg); }
+}
+
+@keyframes flipPrevAnim {
+  0% { transform: perspective(2000px) rotateY(0deg); }
+  100% { transform: perspective(2000px) rotateY(180deg); }
+}
+
+.flipper-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  background-color: var(--c-white-paper);
+}
+
+.flipper-front { border-radius: 0 16px 16px 0; }
+.flipper-back { transform: rotateY(180deg); border-radius: 16px 0 0 16px; }
+
+/* ==========================================================================
+   SIMULACIONES INTEGRADAS EN EL CUADERNO (ESTILO APUNTE DE LABORATORIO)
+   ========================================================================== */
+.sim-stationery-card {
+  background: #ffffff;
+  border: 1.5px solid rgba(138, 123, 235, 0.3);
+  border-radius: 14px;
+  padding: 10px 14px;
+  box-shadow: 0 4px 14px rgba(138, 123, 235, 0.08);
+}
+
+.special-sim-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+
+.simulation-canvas-wrap {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  background: linear-gradient(180deg, #fcfdff 0%, #f6f9fe 100%);
+  border-radius: 12px;
+  border: 1px solid rgba(138, 123, 235, 0.28);
+  box-shadow: inset 0 2px 8px rgba(138, 123, 235, 0.06);
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.simulation-canvas-wrap canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.special-wave-wrapper {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  background: linear-gradient(180deg, #fcfdff 0%, #f6f9fe 100%);
+  border-radius: 12px;
+  border: 1px solid rgba(138, 123, 235, 0.28);
+  box-shadow: inset 0 2px 8px rgba(138, 123, 235, 0.06);
+  overflow: hidden;
+}
+
+#special-wave-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.special-wave-header-eq {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 12px;
+  background: linear-gradient(90deg, #ede9fe, #e0f2fe);
+  border-radius: 8px;
+  border: 1px solid rgba(138, 123, 235, 0.25);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--c-lavender-dark);
+  font-weight: 700;
+}
+
+.special-metrics-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+
+.special-metric-pill {
+  background: #ffffff;
+  border: 1px solid rgba(138, 123, 235, 0.22);
+  border-radius: 8px;
+  padding: 4px 8px;
+  text-align: center;
+}
+
+.special-metric-pill .lbl {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+}
+
+.special-metric-pill .val {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.84rem;
+  font-weight: 800;
+  color: var(--c-lavender-dark);
+}
+
+.special-controls-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.85);
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(138, 123, 235, 0.2);
+}
+
+.special-ctrl-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.special-ctrl-group label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #334155;
+}
+
+.special-ctrl-group input[type="range"] {
+  accent-color: var(--c-purple-accent);
+  height: 4px;
+}
+
+.special-btn-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+/* Pregunta Interactiva de Lambda */
+.lambda-quiz-card {
+  background: #ffffff;
+  border: 1.5px solid rgba(138, 123, 235, 0.35);
+  border-radius: 14px;
+  padding: 12px 16px;
+  box-shadow: 0 4px 14px rgba(138, 123, 235, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.lambda-quiz-title {
+  font-family: var(--font-serif);
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: #3b2766;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lambda-options-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.lambda-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #fbfbfe;
+  border: 1.5px solid rgba(138, 123, 235, 0.25);
+  border-radius: 8px;
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: #334155;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.lambda-btn:hover {
+  border-color: var(--c-purple-accent);
+  background: #f3f0fb;
+  transform: translateY(-1px);
+}
+
+.lambda-btn.correct {
+  background: #dcfce7 !important;
+  border-color: #22c55e !important;
+  color: #15803d !important;
+}
+
+.lambda-btn.incorrect {
+  background: #fee2e2 !important;
+  border-color: #ef4444 !important;
+  color: #b91c1c !important;
+}
+
+.lambda-feedback-box {
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  display: none;
+}
+
+.lambda-feedback-box.show { display: block; }
+.lambda-feedback-box.correct { background: #dcfce7; border: 1px solid #86efac; color: #14532d; }
+.lambda-feedback-box.incorrect { background: #fee2e2; border: 1px solid #fca5a5; color: #7f1d1d; }
+
+/* Selector de Armónicos */
+.btn-harmonic-select {
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  cursor: pointer;
+  background: #ffffff;
+  border: 1px solid rgba(138, 123, 235, 0.35);
+  color: #475569;
+}
+
+.btn-harmonic-select.active {
+  background: var(--c-purple-accent);
+  color: #ffffff;
+  border-color: var(--c-purple-accent);
+}
+
+/* Ejercicios y Soluciones */
+.exercise-feedback {
+  margin-top: 4px;
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+.exercise-feedback.correct { color: #15803d; }
+.exercise-feedback.incorrect { color: #b91c1c; }
+
+.btn-check-exercise {
+  background: var(--c-purple-accent);
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+.btn-check-exercise:hover { opacity: 0.9; }
+
+/* Agradecimientos Final */
+.acknowledgments-stationery {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  padding: 4px;
+}
+
+.author-badge-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 14px;
+  background: linear-gradient(90deg, #ede9fe, #fae8ff);
+  border-radius: 12px;
+  border: 1px solid rgba(138, 123, 235, 0.3);
+}
+
+.author-badge-card i {
+  font-size: 1.5rem;
+  color: var(--c-lavender-dark);
+}
+
+.author-badge-card h4 {
+  font-family: var(--font-serif);
+  font-size: 0.92rem;
+  color: #3b2766;
+}
+
+.author-badge-card p {
+  font-size: 0.72rem;
+  color: #64748b;
+}
+
+.quote-academic-calligraphy {
+  font-family: var(--font-hand);
+  font-size: 1.2rem;
+  color: var(--c-lavender-dark);
+  text-align: center;
+  line-height: 1.35;
+  padding: 4px 8px;
+}
+
+.academic-seal-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 8px 14px;
+  background: #ffffff;
+  border: 1px solid rgba(138, 123, 235, 0.3);
+  border-radius: 10px;
+}
+
+.academic-seal-box i {
+  font-size: 1.6rem;
+  color: #d97706;
+}
+
+/* Drawer Lateral de Índice */
+.drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.drawer-backdrop.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.drawer-menu {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 360px;
+  max-width: 90vw;
+  background: #ffffff;
+  z-index: 101;
+  transform: translateX(100%);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.drawer-menu.active {
+  transform: translateX(0);
+}
+
+.drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.drawer-header h3 {
+  font-family: var(--font-serif);
+  font-size: 1.2rem;
+  color: var(--c-purple-cover);
+}
+
+.drawer-list {
+  list-style: none;
+  overflow-y: auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.drawer-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  color: #334155;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.drawer-item:hover, .drawer-item.active {
+  background: var(--c-lavender-light);
+  color: var(--c-lavender-dark);
+  font-weight: 700;
+}
+
+.drawer-num {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  background: rgba(138, 123, 235, 0.15);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+/* ==========================================================================
+   DISEÑO RESPONSIVO Y ADAPTACIÓN MULTIPANTALLA (ESCRITORIO, TABLET, MÓVIL)
+   ========================================================================== */
+@media (max-width: 1024px) {
+  .top-academic-bar {
+    width: 98vw;
+    padding: 4px 12px;
+  }
+  .notebook-container {
+    width: 98vw;
+    height: min(calc(100vh - 84px), 780px);
+  }
+  .book-page {
+    padding: clamp(10px, 1.5vh, 16px) clamp(16px, 2vw, 26px);
+  }
+  .book-page.page-left {
+    padding-right: 32px;
+  }
+  .book-page.page-right {
+    padding-left: 32px;
+  }
+}
+
+@media (max-width: 820px) {
+  .notebook-viewport {
+    padding: 4px 6px 4px;
+    height: 100vh;
+  }
+  .top-academic-bar {
+    width: 100%;
+    max-width: 100%;
+    padding: 3px 10px;
+    margin-bottom: 3px;
+    border-radius: 10px;
+  }
+  .top-bar-topic, .top-bar-divider {
+    display: none;
+  }
+  .top-btn-fullscreen .fullscreen-text {
+    display: none;
+  }
+  .top-btn-fullscreen {
+    padding: 4px 8px;
+  }
+  .notebook-container {
+    width: 100%;
+    max-width: 100%;
+    height: calc(100vh - 90px);
+    border-radius: 14px;
+    border-width: 3px;
+  }
+  .notebook-spine {
+    display: none !important;
+  }
+  .page-flipper {
+    display: none !important;
+  }
+  .book-spread {
+    flex-direction: column;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .book-page {
+    flex: none;
+    min-height: 95%;
+    width: 100%;
+    border-radius: 10px !important;
+    padding: 14px 16px !important;
+    box-shadow: none !important;
+    margin-bottom: 12px;
+  }
+  .full-image-page {
+    min-height: 480px;
+    height: 90vh;
+    padding: 0 !important;
+  }
+  .stationery-nav-bar {
+    width: 100%;
+    padding: 4px 6px;
+    gap: 4px;
+  }
+  .btn-nav-pill span {
+    display: none;
+  }
+  .nav-dropdown-pill {
+    padding: 4px 8px;
+    max-width: 55vw;
+  }
+  .pages-text {
+    font-size: 0.68rem;
+  }
+  .notebook-credits-line {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .top-bar-brand {
+    font-size: 0.72rem;
+  }
+  .top-spread-badge {
+    font-size: 0.68rem;
+    padding: 2px 8px;
+  }
+  .full-image-page {
+    min-height: 420px;
+  }
+  .page-title-script {
+    font-size: 1.15rem;
+  }
+  .formula-stationery {
+    font-size: 0.82rem;
+    padding: 6px 8px;
+  }
+  .sim-stationery-card {
+    padding: 6px 8px;
+  }
+}

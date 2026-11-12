@@ -1,0 +1,2755 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Cuaderno Digital Universitario: Movimiento Ondulatorio | Física 3 - UTP</title>
+
+  <!-- Metadatos Académicos Institucionales -->
+  <meta name="author" content="Laura Yicel Ocampo Rodríguez, Danna Yised Arias Martínez">
+  <meta name="description" content="Cuaderno Digital Universitario de Movimiento Ondulatorio con argollado central 3D, paso de hojas físico y simulaciones interactivas - Física 3, Ingeniería Industrial, Universidad Tecnológica de Pereira.">
+
+  <!-- Fuentes Tipográficas Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600;1,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- Iconos Font Awesome 6.5 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- KaTeX para renderizado matemático -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+  <!-- Hoja de Estilos del Cuaderno Físico -->
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/v3-styles.css">
+</head>
+<body>
+
+  <!-- Canvas de fondo con efecto de agua y partículas translúcidas -->
+  <canvas id="water-canvas"></canvas>
+
+  <!-- Drawer Lateral (Índice de Temas) -->
+  <div class="drawer-backdrop" id="drawer-backdrop"></div>
+  <aside class="drawer-menu" id="drawer-menu">
+    <div class="drawer-header">
+      <h3><i class="fas fa-book-open"></i> Índice del Cuaderno</h3>
+      <button class="btn-nav-pill icon-only" id="btn-drawer-close" title="Cerrar índice">
+        <i class="fas fa-xmark"></i>
+      </button>
+    </div>
+    <div style="margin-bottom: 12px;">
+      <input type="text" id="drawer-search-input" placeholder="Buscar tema o fórmula..." style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1.5px solid #cbd5e1; font-size: 0.8rem; outline: none;">
+    </div>
+    <ul class="drawer-list" id="drawer-list">
+      <!-- Generado dinámicamente por app.js -->
+    </ul>
+  </aside>
+
+  <!-- =========================================================================
+       VIEWPORT PRINCIPAL: EL CUADERNO UNIVERSITARIO ABIERTO SOBRE LA MESA
+       ========================================================================= -->
+  <main class="notebook-viewport">
+
+    <!-- ===================================================================
+         BARRA SUPERIOR INSTITUCIONAL (PANTALLA COMPLETA & SEGUIMIENTO)
+         =================================================================== -->
+    <header class="top-academic-bar" id="top-academic-bar">
+      <div class="top-bar-left">
+        <div class="top-bar-brand">
+          <i class="fas fa-graduation-cap brand-cap-icon"></i>
+          <span class="top-brand-text">Física III • UTP</span>
+        </div>
+        <span class="top-bar-divider">|</span>
+        <span class="top-bar-topic">Movimiento Ondulatorio</span>
+      </div>
+
+      <div class="top-bar-center">
+        <div class="top-spread-badge" id="top-spread-indicator">
+          <i class="fas fa-book-open"></i> <span id="top-spread-text">Pliego 1 de 16</span>
+        </div>
+      </div>
+
+      <div class="top-bar-right">
+        <button class="top-btn-fullscreen" id="btn-fullscreen-toggle" title="Pantalla Completa" aria-label="Pantalla Completa">
+          <i class="fas fa-expand" id="fullscreen-icon"></i>
+          <span class="fullscreen-text" id="fullscreen-text">Pantalla Completa</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Cuaderno con Borde de Tapa Púrpura -->
+    <div class="notebook-container cover-active" id="notebook-container">
+
+      <!-- ===================================================================
+           ARGOLLADO CENTRAL (ESPIRAL METÁLICA 3D CON AROS Y PERFORACIONES)
+           =================================================================== -->
+      <div class="notebook-spine" id="notebook-spine">
+        <div class="spine-ring-unit"><div class="punch-hole left"></div><div class="spiral-ring"><div class="ring-glint-bar"></div></div><div class="punch-hole right"></div></div>
+        <div class="spine-ring-unit"><div class="punch-hole left"></div><div class="spiral-ring"><div class="ring-glint-bar"></div></div><div class="punch-hole right"></div></div>
+        <div class="spine-ring-unit"><div class="punch-hole left"></div><div class="spiral-ring"><div class="ring-glint-bar"></div></div><div class="punch-hole right"></div></div>
+        <div class="spine-ring-unit"><div class="punch-hole left"></div><div class="spiral-ring"><div class="ring-glint-bar"></div></div><div class="punch-hole right"></div></div>
+        <div class="spine-ring-unit"><div class="punch-hole left"></div><div class="spiral-ring"><div class="ring-glint-bar"></div></div><div class="punch-hole right"></div></div>
+        <div class="spine-ring-unit"><div class="punch-hole left"></div><div class="spiral-ring"><div class="ring-glint-bar"></div></div><div class="punch-hole right"></div></div>
+        <div class="spine-ring-unit"><div class="punch-hole left"></div><div class="spiral-ring"><div class="ring-glint-bar"></div></div><div class="punch-hole right"></div></div>
+        <div class="spine-ring-unit"><div class="punch-hole left"></div><div class="spiral-ring"><div class="ring-glint-bar"></div></div><div class="punch-hole right"></div></div>
+        <div class="spine-ring-unit"><div class="punch-hole left"></div><div class="spiral-ring"><div class="ring-glint-bar"></div></div><div class="punch-hole right"></div></div>
+        <div class="spine-ring-unit"><div class="punch-hole left"></div><div class="spiral-ring"><div class="ring-glint-bar"></div></div><div class="punch-hole right"></div></div>
+        <div class="spine-ring-unit"><div class="punch-hole left"></div><div class="spiral-ring"><div class="ring-glint-bar"></div></div><div class="punch-hole right"></div></div>
+        <div class="spine-ring-unit"><div class="punch-hole left"></div><div class="spiral-ring"><div class="ring-glint-bar"></div></div><div class="punch-hole right"></div></div>
+        <div class="spine-ring-unit"><div class="punch-hole left"></div><div class="spiral-ring"><div class="ring-glint-bar"></div></div><div class="punch-hole right"></div></div>
+        <div class="spine-ring-unit"><div class="punch-hole left"></div><div class="spiral-ring"><div class="ring-glint-bar"></div></div><div class="punch-hole right"></div></div>
+        <div class="spine-ring-unit"><div class="punch-hole left"></div><div class="spiral-ring"><div class="ring-glint-bar"></div></div><div class="punch-hole right"></div></div>
+      </div>
+
+      <!-- Efecto 3D de Hoja Pasando -->
+      <div class="page-flipper" id="page-flipper">
+        <div class="flipper-face flipper-front"></div>
+        <div class="flipper-face flipper-back"></div>
+      </div>
+
+      <!-- ===================================================================
+           PLIEGO 1: PÁGS. 1 Y 2 (PORTADA OFICIAL FULL-BLEED & PRESENTACIÓN)
+           =================================================================== -->
+      <div class="book-spread active" id="spread-1" data-spread="1">
+        <!-- Página 1 (Izquierda): PORTADA COMO HOJA COMPLETA -->
+        <div class="book-page page-left cover-page-full" id="page-1">
+          <img src="portada_fisica.jpg" alt="Portada Oficial Física 3 - Movimiento Ondulatorio" class="cover-image-full">
+          <button class="btn-open-notebook-floating" id="btn-open-notebook" title="Abrir Cuaderno">
+            <span>Abrir Cuaderno</span>
+            <div class="circle-arrow"><i class="fas fa-arrow-right"></i></div>
+          </button>
+        </div>
+
+        <!-- Página 2 (Derecha): BIENVENIDA A LA MECÁNICA OSCILATORIA -->
+        <div class="book-page page-right full-image-page" id="page-2">
+          <img src="INTRO.png" alt="Bienvenida a la Mecánica Oscilatoria - Página 2" class="page-img-full">
+        </div>
+      </div>
+
+      <!-- ===================================================================
+           PLIEGO 2: PÁGS. 3 Y 4 (¿QUÉ ES UNA ONDA? & CINEMÁTICA ONDULATORIA)
+           =================================================================== -->
+      <div class="book-spread" id="spread-2" data-spread="2">
+        <!-- Página 3: ¿Qué es una Onda? -->
+        <div class="book-page page-left" id="page-3">
+          <header class="stationery-header">
+            <div class="header-top-meta">
+              <span class="header-category-tag">FUNDAMENTOS FÍSICOS</span>
+              <span class="page-badge-pill">Pág. 3</span>
+            </div>
+            <div class="header-title-row">
+              <h2 class="page-title-script">¿Qué es una Onda?</h2>
+              <i class="fas fa-water title-doodle"></i>
+            </div>
+          </header>
+
+          <div class="stationery-body">
+            <div class="note-block">
+              <!-- Viñeta de gotas de agua -->
+              <div class="science-vignette">
+                <svg viewBox="0 0 60 60" width="42" height="42" fill="none">
+                  <path d="M30,8 C30,8 18,28 18,38 A12,12 0 0,0 42,38 C42,28 30,8 30,8 Z" fill="#bae6fd" stroke="#0284c7" stroke-width="1.2"/>
+                  <ellipse cx="30" cy="48" rx="20" ry="6" stroke="#38bdf8" stroke-width="1" stroke-dasharray="2,2"/>
+                </svg>
+              </div>
+
+              <div class="note-banner-title">
+                <i class="fas fa-atom"></i> Definición Física Fundamental
+              </div>
+              <p class="note-content">
+                Una <strong>onda</strong> es una perturbación en el espacio y en el tiempo que transporta <strong>energía</strong> y <strong>cantidad de movimiento lineal</strong> de un punto a otro sin que exista desplazamiento permanente neto de materia.
+              </p>
+              <div class="formula-stationery">
+                $$\Delta M_{\text{neto}} = 0, \quad \Delta E > 0, \quad \Delta \vec{p} > 0$$
+              </div>
+            </div>
+
+            <div class="note-block">
+              <div class="note-banner-title">
+                <i class="fas fa-shield-halved"></i> Medio Deformable y Elasticidad
+              </div>
+              <p class="note-content">
+                Las partículas del medio elástico oscilan en torno a posiciones fijas de equilibrio. La fuerza de restitución elástica y la inercia del medio son las responsables de sostener el avance continuo del frente ondulatorio.
+              </p>
+            </div>
+
+            <!-- EJEMPLO 1 V3.0: SITUACIÓN REAL - PIEDRA EN EL ESTANQUE -->
+            <div class="v3-real-card">
+              <div class="v3-card-header">
+                <span class="v3-card-badge">
+                  <i class="fas fa-water"></i> Ejemplo Real 1: Piedra en un Estanque
+                </span>
+                <span class="v3-card-tag">Exp. Interactiva</span>
+              </div>
+              <p class="v3-real-situation">
+                Al caer una piedra sobre agua en reposo, se engendra una perturbación local que genera <strong>ondas circulares concéntricas</strong>. Observa el corcho con banderita que flota en el estanque a una distancia fija.
+              </p>
+              
+              <div class="v3-canvas-wrap" style="height: 135px;">
+                <canvas id="v3-canvas-pond"></canvas>
+              </div>
+
+              <div class="v3-controls-bar">
+                <div class="v3-control-group">
+                  <label>Amplitud de onda: <span class="v3-control-val" id="v3-pond-amp-val">1.0x</span></label>
+                  <input type="range" class="v3-slider" id="v3-pond-amp" min="0.4" max="2.0" step="0.2" value="1.0">
+                </div>
+                <button type="button" class="v3-btn-action" id="v3-pond-drop">
+                  <i class="fas fa-meteor"></i> Caída de piedra
+                </button>
+                <button type="button" class="v3-btn-action" id="v3-pond-pause">
+                  <i class="fas fa-pause"></i> Pausar
+                </button>
+              </div>
+
+              <div class="v3-quiz-box">
+                <div class="v3-quiz-prompt">
+                  <i class="fas fa-circle-question"></i>
+                  <span>Pregunta de comprensión: ¿Qué viaja a lo largo del estanque hasta la orilla?</span>
+                </div>
+                <div class="v3-options-group">
+                  <label class="v3-opt-label">
+                    <input type="radio" name="v3-pond-opt" value="a">
+                    <span>La masa de agua que impactó la piedra en el centro.</span>
+                  </label>
+                  <label class="v3-opt-label">
+                    <input type="radio" name="v3-pond-opt" value="b">
+                    <span>La energía y el momento lineal de la perturbación (las moléculas sólo oscilan en su sitio).</span>
+                  </label>
+                  <label class="v3-opt-label">
+                    <input type="radio" name="v3-pond-opt" value="c">
+                    <span>El corcho flotante impulsado por una corriente permanente de materia.</span>
+                  </label>
+                </div>
+                <button type="button" class="v3-btn-check" id="v3-pond-check">
+                  <i class="fas fa-check"></i> Comprobar respuesta
+                </button>
+                <div class="v3-feedback" id="v3-pond-feedback"></div>
+              </div>
+            </div>
+          </div>
+
+          <footer class="stationery-footer">
+            <span>Universidad Tecnológica de Pereira • 2026</span>
+            <span>Pág. 3 de 30</span>
+          </footer>
+        </div>
+
+        <!-- Página 4: Cinemática Ondulatoria -->
+        <div class="book-page page-right" id="page-4">
+          <header class="stationery-header">
+            <div class="header-top-meta">
+              <span class="header-category-tag">CINEMÁTICA ONDULATORIA</span>
+              <span class="page-badge-pill">Pág. 4</span>
+            </div>
+            <div class="header-title-row">
+              <h2 class="page-title-script">Cinemática Ondulatoria</h2>
+              <i class="fas fa-wave-square title-doodle"></i>
+            </div>
+          </header>
+
+          <div class="stationery-body">
+            <div class="note-block">
+              <div class="note-banner-title">
+                <i class="fas fa-burst"></i> Pulso vs Tren Periódico Armónico
+              </div>
+              <p class="note-content">
+                • <strong>Pulso solitario:</strong> Una sola perturbación que viaja a través del medio.<br>
+                • <strong>Tren de ondas continuo:</strong> Sucesión periódica y armónica engendrada por un oscilador en Movimiento Armónico Simple (M.A.S.).
+              </p>
+            </div>
+
+            <div class="note-block">
+              <div class="note-banner-title">
+                <i class="fas fa-repeat"></i> Doble Periodicidad Espacio-Temporal
+              </div>
+              <p class="note-content">
+                La perturbación armónica \(y(x,t)\) se repite de manera idéntica en el espacio con periodo \(\lambda\) y en el tiempo con periodo \(T\):
+              </p>
+              <div class="formula-stationery">
+                $y(x + \lambda, t) = y(x, t) \quad \text{y} \quad y(x, t + T) = y(x, t)$
+              </div>
+              <p class="note-content" style="font-size: 0.74rem; color: #64748b;">
+                Cada partícula experimenta una aceleración restauradora proporcional a su desplazamiento: \(a_y = -\omega^2 y\).
+              </p>
+            </div>
+
+            <!-- EJEMPLO 2 V3.0: SITUACIÓN REAL - OLA EN LA PISCINA OLÍMPICA -->
+            <div class="v3-real-card">
+              <div class="v3-card-header">
+                <span class="v3-card-badge">
+                  <i class="fas fa-swimming-pool"></i> Ejemplo Real 2: Ola en una Piscina (50 m)
+                </span>
+                <span class="v3-card-tag">Cinemática</span>
+              </div>
+              <p class="v3-real-situation">
+                Un nadador genera un pulso en el partidor (\(x=0\text{ m}\)) que viaja con rapidez constante \(v\) a lo largo de un carril olímpico de \(50\text{ m}\).
+              </p>
+
+              <div class="v3-canvas-wrap" style="height: 125px;">
+                <canvas id="v3-canvas-pool"></canvas>
+              </div>
+
+              <div class="v3-controls-bar">
+                <div class="v3-control-group">
+                  <label>Velocidad \(v\): <span class="v3-control-val" id="v3-pool-v-val">2.5 m/s</span></label>
+                  <input type="range" class="v3-slider" id="v3-pool-v" min="1.0" max="5.0" step="0.5" value="2.5">
+                </div>
+                <div class="v3-control-group">
+                  <label>Tiempo \(t\): <span class="v3-control-val" id="v3-pool-t-val">8.0 s</span></label>
+                  <input type="range" class="v3-slider" id="v3-pool-t" min="0" max="20" step="1" value="8">
+                </div>
+              </div>
+
+              <div class="v3-math-panel">
+                <div class="v3-math-grid">
+                  <div class="v3-math-pill">
+                    <span class="v3-math-lbl">DISTANCIA RECORRIDA</span>
+                    <span class="v3-math-num" id="v3-pool-dist-out">20.0 m</span>
+                  </div>
+                  <div class="v3-math-pill">
+                    <span class="v3-math-lbl">TIEMPO CRUCE TOTAL (50 m)</span>
+                    <span class="v3-math-num" id="v3-pool-totalt-out">20.0 s</span>
+                  </div>
+                  <div class="v3-math-pill">
+                    <span class="v3-math-lbl">RELACIÓN APLICADA</span>
+                    <span class="v3-math-num">d = v · t</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="v3-quiz-box">
+                <div class="v3-quiz-prompt">
+                  <i class="fas fa-circle-question"></i>
+                  <span>Reto: Si la perturbación viaja a \(v = 2.5\text{ m/s}\), ¿qué distancia habrá recorrido al cabo de \(t = 12\text{ s}\)?</span>
+                </div>
+                <div class="v3-options-group">
+                  <label class="v3-opt-label">
+                    <input type="radio" name="v3-pool-opt" value="15">
+                    <span>\(15\text{ metros}\)</span>
+                  </label>
+                  <label class="v3-opt-label">
+                    <input type="radio" name="v3-pool-opt" value="30">
+                    <span>\(30\text{ metros}\) (procedimiento: \(2.5 \times 12\))</span>
+                  </label>
+                  <label class="v3-opt-label">
+                    <input type="radio" name="v3-pool-opt" value="48">
+                    <span>\(48\text{ metros}\)</span>
+                  </label>
+                </div>
+                <button type="button" class="v3-btn-check" id="v3-pool-check">
+                  <i class="fas fa-check"></i> Comprobar cálculo
+                </button>
+                <div class="v3-feedback" id="v3-pool-feedback"></div>
+              </div>
+            </div>
+          </div>
+
+          <footer class="stationery-footer">
+            <span>Universidad Tecnológica de Pereira • 2026</span>
+            <span>Pág. 4 de 30</span>
+          </footer>
+        </div>
+      </div>
+
+      <!-- ===================================================================
+           PLIEGO 3: PÁGS. 5 Y 6 (CLASIFICACIÓN SEGÚN MEDIO & DIRECCIÓN)
+           =================================================================== -->
+      <div class="book-spread" id="spread-3" data-spread="3">
+        <!-- Página 5: Según el Medio -->
+        <div class="book-page page-left" id="page-5">
+          <header class="stationery-header">
+            <div class="header-top-meta">
+              <span class="header-category-tag">CLASIFICACIÓN • MEDIO FÍSICO</span>
+              <span class="page-badge-pill">Pág. 5</span>
+            </div>
+            <div class="header-title-row">
+              <h2 class="page-title-script">Mecánicas vs Electromagnéticas</h2>
+              <i class="fas fa-layer-group title-doodle"></i>
+            </div>
+          </header>
+
+          <div class="stationery-body">
+            <div class="note-block">
+              <div class="note-banner-title">
+                <i class="fas fa-water"></i> Ondas Mecánicas
+              </div>
+              <p class="note-content">
+                Requieren obligatoriamente un medio material elástico (sólido, fluido o gas) dotado de inercia y elasticidad.
+              </p>
+              <ul>
+                <li><strong>Sonido y ultrasonido:</strong> Ondas de presión en gases y líquidos.</li>
+                <li><strong>Cuerdas tensas:</strong> Instrumentos musicales y cables de puentes.</li>
+              </ul>
+            </div>
+
+            <div class="note-block">
+              <div class="note-banner-title">
+                <i class="fas fa-sun"></i> Ondas Electromagnéticas (OEM)
+              </div>
+              <p class="note-content">
+                Oscilaciones sinusoidales de campos eléctricos (\(\vec{E}\)) y magnéticos (\(\vec{B}\)) ortogonales que se autopropagan en el vacío absoluto a la velocidad de la luz:
+              </p>
+              <div class="formula-stationery">
+                $c = \frac{1}{\sqrt{\varepsilon_0 \mu_0}} \approx 3.00 \times 10^8 \text{ m/s}$
+              </div>
+            </div>
+
+            <!-- EJEMPLO 3 V3.0: SITUACIÓN REAL - BOCINA Y SEÑAL DE RADIO EN CAMPANA DE VACÍO -->
+            <div class="v3-real-card">
+              <div class="v3-card-header">
+                <span class="v3-card-badge">
+                  <i class="fas fa-bullhorn"></i> Ejemplo Real 3: Sonido de Bocina vs Señal de Radio
+                </span>
+                <span class="v3-card-tag">Medio Material</span>
+              </div>
+              <p class="v3-real-situation">
+                Compara una <strong>bocina acústica</strong> y una <strong>antena de radio</strong> dentro de una campana de laboratorio hermética. Observa qué ocurre al accionar la bomba de vacío.
+              </p>
+
+              <div class="v3-controls-bar" style="justify-content: center; gap: 6px;">
+                <button type="button" class="v3-btn-action active" id="v3-vac-sound-btn">
+                  <i class="fas fa-volume-high"></i> Bocina Acústica
+                </button>
+                <button type="button" class="v3-btn-action" id="v3-vac-radio-btn">
+                  <i class="fas fa-tower-broadcast"></i> Señal de Radio (OEM)
+                </button>
+                <button type="button" class="v3-btn-action" id="v3-vac-toggle-btn">
+                  <i class="fas fa-wind"></i> Activar Bomba de Vacío
+                </button>
+              </div>
+
+              <div class="v3-canvas-wrap" style="height: 130px;">
+                <canvas id="v3-canvas-vacuum"></canvas>
+              </div>
+
+              <p class="v3-real-situation" id="v3-vac-status-desc" style="font-size: 0.72rem; margin-bottom: 6px;"></p>
+
+              <div class="v3-quiz-box">
+                <div class="v3-quiz-prompt">
+                  <i class="fas fa-circle-question"></i>
+                  <span>Pregunta: ¿Cuál de estas ondas puede propagarse en el vacío del espacio exterior?</span>
+                </div>
+                <div class="v3-options-group">
+                  <label class="v3-opt-label">
+                    <input type="radio" name="v3-vac-opt" value="sound">
+                    <span>El sonido de la bocina, porque viaja mediante vibraciones en el vacío.</span>
+                  </label>
+                  <label class="v3-opt-label">
+                    <input type="radio" name="v3-vac-opt" value="radio">
+                    <span>La señal de radio, porque es electromagnética y no requiere medio material.</span>
+                  </label>
+                  <label class="v3-opt-label">
+                    <input type="radio" name="v3-vac-opt" value="both">
+                    <span>Ambas por igual, cambiando únicamente su rapidez.</span>
+                  </label>
+                </div>
+                <button type="button" class="v3-btn-check" id="v3-vac-check">
+                  <i class="fas fa-check"></i> Comprobar respuesta
+                </button>
+                <div class="v3-feedback" id="v3-vac-feedback"></div>
+              </div>
+            </div>
+          </div>
+
+          <footer class="stationery-footer">
+            <span>Universidad Tecnológica de Pereira • 2026</span>
+            <span>Pág. 5 de 30</span>
+          </footer>
+        </div>
+
+        <!-- Página 6: Según la Dirección -->
+        <div class="book-page page-right" id="page-6">
+          <header class="stationery-header">
+            <div class="header-top-meta">
+              <span class="header-category-tag">CLASIFICACIÓN • GEOMETRÍA</span>
+              <span class="page-badge-pill">Pág. 6</span>
+            </div>
+            <div class="header-title-row">
+              <h2 class="page-title-script">Transversales vs Longitudinales</h2>
+              <i class="fas fa-arrows-up-down title-doodle"></i>
+            </div>
+          </header>
+
+          <div class="stationery-body">
+            <div class="note-block">
+              <div class="note-banner-title">
+                <i class="fas fa-arrows-up-down-left-right"></i> Ondas Transversales (\(\vec{\xi} \perp \vec{v}\))
+              </div>
+              <p class="note-content">
+                La dirección de oscilación de las partículas es <strong>estrictamente perpendicular</strong> a la velocidad de propagación de la perturbación (e.g. cuerdas de guitarra, luz visible, ondas sísmicas secundarias S).
+              </p>
+            </div>
+
+            <div class="note-block">
+              <div class="note-banner-title">
+                <i class="fas fa-arrows-left-right"></i> Ondas Longitudinales (\(\vec{\xi} \parallel \vec{v}\))
+              </div>
+              <p class="note-content">
+                La vibración se produce <strong>en la misma dirección</strong> de avance de la onda, formando zonas alternadas de compresión y descompresión (e.g. sonido en aire, ultrasonido NDT, ondas sísmicas primarias P).
+              </p>
+            </div>
+
+            <!-- EJEMPLO 4 V3.0: SITUACIÓN REAL - CUERDA AGITADA VS PARLANTE ACÚSTICO -->
+            <div class="v3-real-card">
+              <div class="v3-card-header">
+                <span class="v3-card-badge">
+                  <i class="fas fa-arrows-split-up-and-left"></i> Ejemplo Real 4: Cuerda Agitada vs Cono de Parlante
+                </span>
+                <span class="v3-card-tag">Geometría</span>
+              </div>
+              <p class="v3-real-situation">
+                Compara el movimiento de las partículas respecto a la dirección de propagación: agitar una cuerda tensada vs la oscilación del aire frente a un altavoz.
+              </p>
+
+              <div class="v3-controls-bar" style="justify-content: center; gap: 8px;">
+                <button type="button" class="v3-btn-action active" id="v3-mode-trans-btn">
+                  <i class="fas fa-arrows-up-down"></i> Cuerda (Transversal)
+                </button>
+                <button type="button" class="v3-btn-action" id="v3-mode-long-btn">
+                  <i class="fas fa-arrows-left-right"></i> Parlante (Longitudinal)
+                </button>
+              </div>
+
+              <div class="v3-canvas-wrap" style="height: 125px;">
+                <canvas id="v3-canvas-polar"></canvas>
+              </div>
+
+              <p class="v3-real-situation" id="v3-mode-desc" style="font-size: 0.72rem; margin-bottom: 6px;"></p>
+
+              <div class="v3-quiz-box">
+                <div class="v3-quiz-prompt">
+                  <i class="fas fa-circle-question"></i>
+                  <span>Pregunta: ¿En cuál fenómeno la oscilación de las partículas es estrictamente perpendicular (\(\perp\)) al avance de la onda?</span>
+                </div>
+                <div class="v3-options-group">
+                  <label class="v3-opt-label">
+                    <input type="radio" name="v3-geom-opt" value="transverse">
+                    <span>En la cuerda agitada (onda transversal, \(\vec{\xi} \perp \vec{v}\)).</span>
+                  </label>
+                  <label class="v3-opt-label">
+                    <input type="radio" name="v3-geom-opt" value="longitudinal">
+                    <span>En el cono del parlante (onda acústica longitudinal, \(\vec{\xi} \parallel \vec{v}\)).</span>
+                  </label>
+                </div>
+                <button type="button" class="v3-btn-check" id="v3-geom-check">
+                  <i class="fas fa-check"></i> Comprobar respuesta
+                </button>
+                <div class="v3-feedback" id="v3-geom-feedback"></div>
+              </div>
+            </div>
+          </div>
+
+          <footer class="stationery-footer">
+            <span>Universidad Tecnológica de Pereira • 2026</span>
+            <span>Pág. 6 de 30</span>
+          </footer>
+        </div>
+      </div>
+
+      <!-- ===================================================================
+           PLIEGO 4: PÁGS. 7 Y 8 (MAGNITUDES FUNDAMENTALES I & II)
+           =================================================================== -->
+      <div class="book-spread" id="spread-4" data-spread="4">
+        <!-- Página 7: Magnitudes Temporales -->
+        <div class="book-page page-left" id="page-7">
+          <header class="stationery-header">
+            <div class="header-top-meta">
+              <span class="header-category-tag">MAGNITUDES FUNDAMENTALES I</span>
+              <span class="page-badge-pill">Pág. 7</span>
+            </div>
+            <div class="header-title-row">
+              <h2 class="page-title-script">Periodo, Frecuencia y \(\omega\)</h2>
+              <i class="fas fa-stopwatch title-doodle"></i>
+            </div>
+          </header>
+
+          <div class="stationery-body">
+            <div class="note-block">
+              <div class="note-banner-title">
+                <i class="fas fa-clock"></i> Periodo (\(T\)) y Frecuencia (\(f\))
+              </div>
+              <p class="note-content">
+                • <strong>Periodo (\(T\)):</strong> Tiempo que tarda un ciclo completo de oscilación (segundos, \(\text{s}\)).<br>
+                • <strong>Frecuencia (\(f\)):</strong> Número de ciclos completados por unidad de tiempo (\(\text{Hertz} = \text{s}^{-1}\)).
+              </p>
+              <div class="formula-stationery">
+                $$f = \frac{1}{T} \iff T = \frac{1}{f}$$
+              </div>
+            </div>
+
+            <div class="note-block">
+              <div class="note-banner-title">
+                <i class="fas fa-circle-notch"></i> Frecuencia Angular (\(\omega\))
+              </div>
+              <p class="note-content">
+                Tasa de cambio de la fase trigonométrica en radianes por segundo:
+              </p>
+              <div class="formula-stationery">
+                $\omega = 2\pi f = \frac{2\pi}{T} \quad [\text{rad/s}]$
+              </div>
+            </div>
+
+            <!-- EJEMPLO 5 V3.0: SITUACIÓN REAL - DIAPASÓN PATRÓN DE 440 HZ -->
+            <div class="v3-real-card">
+              <div class="v3-card-header">
+                <span class="v3-card-badge">
+                  <i class="fas fa-bell"></i> Ejemplo Real 5: Diapasón de Concierto (Nota La = 440 Hz)
+                </span>
+                <span class="v3-card-tag">Acústica Musical</span>
+              </div>
+              <p class="v3-real-situation">
+                Los músicos y afinadores de orquesta utilizan un diapasón metálico calibrado a \(440\text{ Hz}\) como referencia internacional del tono \(A_4\) (La central).
+              </p>
+
+              <div class="v3-controls-bar">
+                <div class="v3-control-group">
+                  <label>Frecuencia de oscilación: <span class="v3-control-val" id="v3-fork-freq-val">440 Hz</span></label>
+                  <input type="range" class="v3-slider" id="v3-fork-freq" min="100" max="1000" step="10" value="440">
+                </div>
+                <button type="button" class="v3-btn-action active" id="v3-fork-440">
+                  <i class="fas fa-music"></i> Calibrar a 440 Hz
+                </button>
+              </div>
+
+              <div class="v3-math-panel">
+                <div class="v3-math-grid">
+                  <div class="v3-math-pill">
+                    <span class="v3-math-lbl">PERIODO (T = 1/f)</span>
+                    <span class="v3-math-num" id="v3-fork-t-out">2.27 ms</span>
+                  </div>
+                  <div class="v3-math-pill">
+                    <span class="v3-math-lbl">PULSACIÓN ANGULAR (ω = 2πf)</span>
+                    <span class="v3-math-num" id="v3-fork-w-out">2764.6 rad/s</span>
+                  </div>
+                  <div class="v3-math-pill">
+                    <span class="v3-math-lbl">CICLOS COMPLETOS</span>
+                    <span class="v3-math-num">440 por segundo</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="v3-quiz-box">
+                <div class="v3-quiz-prompt">
+                  <i class="fas fa-circle-question"></i>
+                  <span>Ejercicio: Para la frecuencia de afinación de \(440\text{ Hz}\), ¿cuánto dura exactamente cada ciclo en milisegundos?</span>
+                </div>
+                <div class="v3-options-group">
+                  <label class="v3-opt-label">
+                    <input type="radio" name="v3-fork-opt" value="1.25">
+                    <span>\(1.25\text{ ms}\)</span>
+                  </label>
+                  <label class="v3-opt-label">
+                    <input type="radio" name="v3-fork-opt" value="2.27">
+                    <span>\(2.27\text{ ms}\) (\(T = 1/440 \approx 0.002273\text{ s}\))</span>
+                  </label>
+                  <label class="v3-opt-label">
+                    <input type="radio" name="v3-fork-opt" value="4.40">
+                    <span>\(4.40\text{ ms}\)</span>
+                  </label>
+                </div>
+                <button type="button" class="v3-btn-check" id="v3-fork-check">
+                  <i class="fas fa-check"></i> Comprobar respuesta
+                </button>
+                <div class="v3-feedback" id="v3-fork-feedback"></div>
+              </div>
+            </div>
+          </div>
+
+          <footer class="stationery-footer">
+            <span>Universidad Tecnológica de Pereira • 2026</span>
+            <span>Pág. 7 de 30</span>
+          </footer>
+        </div>
+
+        <!-- Página 8: Magnitudes Espaciales -->
+        <div class="book-page page-right" id="page-8">
+          <header class="stationery-header">
+            <div class="header-top-meta">
+              <span class="header-category-tag">MAGNITUDES FUNDAMENTALES II</span>
+              <span class="page-badge-pill">Pág. 8</span>
+            </div>
+            <div class="header-title-row">
+              <h2 class="page-title-script">Longitud (\(\lambda\)), \(k\) y Amplitud (\(A\))</h2>
+              <i class="fas fa-ruler-horizontal title-doodle"></i>
+            </div>
+          </header>
+
+          <div class="stationery-body">
+            <div class="note-block">
+              <div class="note-banner-title">
+                <i class="fas fa-arrows-left-right-to-line"></i> Longitud de Onda (\(\lambda\)) y Número de Onda (\(k\))
+              </div>
+              <p class="note-content">
+                <strong>\(\lambda\):</strong> Distancia espacial mínima entre dos puntos consecutivos que oscilan exactamente en fase (cresta a cresta). Unidades: metros (\(\text{m}\)) o centímetros (\(\text{cm}\)).
+              </p>
+              <div class="formula-stationery">
+                $$k = \frac{2\pi}{\lambda} \quad [\text{rad/m} \text{ o } \text{rad/cm}]$$
+              </div>
+            </div>
+
+            <div class="note-block">
+              <div class="note-banner-title">
+                <i class="fas fa-chart-line"></i> Amplitud (\(A\)) y Energía
+              </div>
+              <p class="note-content">
+                La <strong>amplitud \(A\)</strong> es la elongación máxima. La potencia mecánica transmitida por la onda es directamente proporcional al cuadrado de la amplitud:
+              </p>
+              <div class="formula-stationery">
+                $E \propto A^2, \quad \text{Potencia } P \propto \omega^2 A^2$
+              </div>
+            </div>
+
+            <!-- EJEMPLO 6 V3.0: SITUACIÓN REAL - LAS OLAS DEL MAR -->
+            <div class="v3-real-card">
+              <div class="v3-card-header">
+                <span class="v3-card-badge">
+                  <i class="fas fa-water"></i> Ejemplo Real 6: Oleaje Marítimo en la Costa
+                </span>
+                <span class="v3-card-tag">Geometría de Ola</span>
+              </div>
+              <p class="v3-real-situation">
+                En el océano, la distancia entre crestas define la <strong>longitud de onda \(\lambda\)</strong> y la altura respecto al agua en calma define la <strong>amplitud \(A\)</strong>.
+              </p>
+
+              <div class="v3-canvas-wrap" style="height: 130px;">
+                <canvas id="v3-canvas-ocean"></canvas>
+              </div>
+
+              <div class="v3-controls-bar">
+                <div class="v3-control-group">
+                  <label>Amplitud \(A\): <span class="v3-control-val" id="v3-ocean-amp-val">1.5 m</span></label>
+                  <input type="range" class="v3-slider" id="v3-ocean-amp" min="0.5" max="2.5" step="0.1" value="1.5">
+                </div>
+                <div class="v3-control-group">
+                  <label>Longitud \(\lambda\): <span class="v3-control-val" id="v3-ocean-lambda-val">12 m</span></label>
+                  <input type="range" class="v3-slider" id="v3-ocean-lambda" min="6" max="24" step="2" value="12">
+                </div>
+              </div>
+
+              <div class="v3-math-panel">
+                <div class="v3-math-grid">
+                  <div class="v3-math-pill">
+                    <span class="v3-math-lbl">NÚMERO DE ONDA (k = 2π/λ)</span>
+                    <span class="v3-math-num" id="v3-ocean-k-out">0.52 rad/m</span>
+                  </div>
+                  <div class="v3-math-pill">
+                    <span class="v3-math-lbl">ALTURA CRESTA-VALLE (2A)</span>
+                    <span class="v3-math-num" id="v3-ocean-h-out">3.0 m</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="v3-quiz-box">
+                <div class="v3-quiz-prompt">
+                  <i class="fas fa-circle-question"></i>
+                  <span>Pregunta: Si dos crestas consecutivas en el mar están separadas \(10\text{ m}\) y la cresta sobresale \(1.5\text{ m}\) sobre el nivel de calma, ¿cuáles son sus valores de \(\lambda\) y \(A\)?</span>
+                </div>
+                <div class="v3-options-group">
+                  <label class="v3-opt-label">
+                    <input type="radio" name="v3-ocean-opt" value="10-1.5">
+                    <span>\(\lambda = 10\text{ m}, \quad A = 1.5\text{ m}\)</span>
+                  </label>
+                  <label class="v3-opt-label">
+                    <input type="radio" name="v3-ocean-opt" value="5-3.0">
+                    <span>\(\lambda = 5\text{ m}, \quad A = 3.0\text{ m}\)</span>
+                  </label>
+                  <label class="v3-opt-label">
+                    <input type="radio" name="v3-ocean-opt" value="20-1.5">
+                    <span>\(\lambda = 20\text{ m}, \quad A = 1.5\text{ m}\)</span>
+                  </label>
+                </div>
+                <button type="button" class="v3-btn-check" id="v3-ocean-check">
+                  <i class="fas fa-check"></i> Comprobar respuesta
+                </button>
+                <div class="v3-feedback" id="v3-ocean-feedback"></div>
+              </div>
+            </div>
+          </div>
+
+          <footer class="stationery-footer">
+            <span>Universidad Tecnológica de Pereira • 2026</span>
+            <span>Pág. 8 de 30</span>
+          </footer>
+        </div>
+      </div>
+
+      <!-- ===================================================================
+           PLIEGO 5: PÁGS. 9 Y 10 (VELOCIDAD DE PROPAGACIÓN & CALCULADORA)
+           =================================================================== -->
+      <div class="book-spread" id="spread-5" data-spread="5">
+        <!-- Página 9: Velocidad de Propagación -->
+        <div class="book-page page-left" id="page-9">
+          <header class="stationery-header">
+            <div class="header-top-meta">
+              <span class="header-category-tag">DINÁMICA ONDULATORIA</span>
+              <span class="page-badge-pill">Pág. 9</span>
+            </div>
+            <div class="header-title-row">
+              <h2 class="page-title-script">Velocidad de Propagación</h2>
+              <i class="fas fa-gauge-high title-doodle"></i>
+            </div>
+          </header>
+
+          <div class="stationery-body">
+            <div class="note-block">
+              <div class="note-banner-title">
+                <i class="fas fa-link"></i> Relación Fundamental Cinemática
+              </div>
+              <p class="note-content">
+                La velocidad de fase conecta las dimensiones temporales con las espaciales:
+              </p>
+              <div class="formula-stationery">
+                $$v = \frac{\lambda}{T} = \lambda f = \frac{\omega}{k}$$
+              </div>
+            </div>
+
+            <div class="note-block">
+              <div class="note-banner-title">
+                <i class="fas fa-guitar"></i> Velocidad en Cuerdas y Fluidos
+              </div>
+              <p class="note-content">
+                La velocidad la determina <strong>el medio</strong>, no la fuente:
+              </p>
+              <div class="formula-stationery" style="margin: 3px 0;">
+                $v_{\text{cuerda}} = \sqrt{\frac{T_s}{\mu}}, \quad v_{\text{fluido}} = \sqrt{\frac{B}{\rho}}, \quad v_{\text{sólido}} = \sqrt{\frac{Y}{\rho}}$
+              </div>
+              <p class="note-content" style="font-size: 0.72rem; color: #475569;">
+                \(T_s\): Tensión [N], \(\mu = m/L\): Densidad lineal [kg/m], \(B\): Módulo de compresibilidad [Pa], \(Y\): Módulo de Young [Pa], \(\rho\): Densidad volumétrica [\(\text{kg/m}^3\)]. La rapidez responde a: \(v = \sqrt{\text{Propiedad Elástica} / \text{Propiedad Inercial}}\).
+              </p>
+            </div>
+
+            <!-- EJEMPLO 7 V3.0: SITUACIÓN REAL - CUERDA BAJO TENSIÓN -->
+            <div class="v3-real-card">
+              <div class="v3-card-header">
+                <span class="v3-card-badge">
+                  <i class="fas fa-guitar"></i> Ejemplo Real 7: Cuerda de Guitarra y Tensión Mecánica
+                </span>
+                <span class="v3-card-tag">Dinámica de Cuerdas</span>
+              </div>
+              <p class="v3-real-situation">
+                Al girar la clavija de una guitarra o piano, aumentamos la tensión \(T_s\), acelerando la velocidad de propagación transversal de la onda: \(v = \sqrt{T_s / \mu}\).
+              </p>
+
+              <div class="v3-controls-bar">
+                <div class="v3-control-group">
+                  <label>Tensión \(T_s\): <span class="v3-control-val" id="v3-string-tension-val">100 N</span></label>
+                  <input type="range" class="v3-slider" id="v3-string-tension" min="20" max="400" step="20" value="100">
+                </div>
+                <div class="v3-control-group">
+                  <label>Densidad lineal \(\mu\): <span class="v3-control-val" id="v3-string-density-val">4.0 g/m</span></label>
+                  <input type="range" class="v3-slider" id="v3-string-density" min="1.0" max="10.0" step="0.5" value="4.0">
+                </div>
+              </div>
+
+              <div class="v3-math-panel">
+                <div class="v3-math-grid">
+                  <div class="v3-math-pill">
+                    <span class="v3-math-lbl">VELOCIDAD RESULTANTE (v = √(Ts/μ))</span>
+                    <span class="v3-math-num" id="v3-string-v-out">158.1 m/s</span>
+                  </div>
+                  <div class="v3-math-pill">
+                    <span class="v3-math-lbl">PROPIEDAD ELÁSTICA / INERCIAL</span>
+                    <span class="v3-math-num">Mayor Ts → Más rápida</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="v3-quiz-box">
+                <div class="v3-quiz-prompt">
+                  <i class="fas fa-circle-question"></i>
+                  <span>Pregunta: Si deseas duplicar la rapidez de onda (\(2v\)) en la misma cuerda, ¿cómo debe ajustarse la tensión aplicada?</span>
+                </div>
+                <div class="v3-options-group">
+                  <label class="v3-opt-label">
+                    <input type="radio" name="v3-string-opt" value="double">
+                    <span>Duplicar la tensión (\(2T_s\)).</span>
+                  </label>
+                  <label class="v3-opt-label">
+                    <input type="radio" name="v3-string-opt" value="quadruple">
+                    <span>Cuadruplicar la tensión (\(4T_s\)), porque la velocidad depende de la raíz cuadrada (\(\sqrt{4} = 2\)).</span>
+                  </label>
+                  <label class="v3-opt-label">
+                    <input type="radio" name="v3-string-opt" value="half">
+                    <span>Reducir la tensión a la mitad.</span>
+                  </label>
+                </div>
+                <button type="button" class="v3-btn-check" id="v3-string-check">
+                  <i class="fas fa-check"></i> Comprobar respuesta
+                </button>
+                <div class="v3-feedback" id="v3-string-feedback"></div>
+              </div>
+            </div>
+          </div>
+
+          <footer class="stationery-footer">
+            <span>Universidad Tecnológica de Pereira • 2026</span>
+            <span>Pág. 9 de 30</span>
+          </footer>
+        </div>
+
+        <!-- Página 10: Calculadora Interactiva de Parámetros -->
+        <div class="book-page page-right" id="page-10">
+          <header class="stationery-header">
+            <div class="header-top-meta">
+              <span class="header-category-tag">HERRAMIENTA INTERACTIVA</span>
+              <span class="page-badge-pill">Pág. 10</span>
+            </div>
+            <div class="header-title-row">
+              <h2 class="page-title-script">Calculadora de Parámetros</h2>
+              <i class="fas fa-calculator title-doodle"></i>
+            </div>
+          </header>
+
+          <div class="stationery-body">
+            <div class="note-block" style="padding: 12px 16px;">
+              <div class="note-banner-title">
+                <i class="fas fa-sliders"></i> Introduce Parámetros de Entrada
+              </div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 8px 0;">
+                <div>
+                  <label style="font-size: 0.74rem; font-weight: 700; color: #475569; display: block; margin-bottom: 2px;">Frecuencia \(f\) [Hz]:</label>
+                  <input type="number" id="calc-f" value="50" min="0.1" step="1" style="width: 100%; padding: 6px 10px; border-radius: 8px; border: 1px solid #c4b5fd; font-family: var(--font-mono); font-size: 0.88rem;">
+                </div>
+                <div>
+                  <label style="font-size: 0.74rem; font-weight: 700; color: #475569; display: block; margin-bottom: 2px;">Longitud \(\lambda\) [m]:</label>
+                  <input type="number" id="calc-lambda" value="2.5" min="0.01" step="0.1" style="width: 100%; padding: 6px 10px; border-radius: 8px; border: 1px solid #c4b5fd; font-family: var(--font-mono); font-size: 0.88rem;">
+                </div>
+              </div>
+
+              <!-- Resultados calculados en tarjetas de papel -->
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px;">
+                <div style="background: #fbfbfe; border: 1px solid rgba(138,123,235,0.25); border-radius: 8px; padding: 6px; text-align: center;">
+                  <span style="font-size: 0.65rem; color: #64748b; font-weight: 700;">VELOCIDAD (\(v\))</span>
+                  <div id="calc-res-v" style="font-family: var(--font-mono); font-size: 1.05rem; font-weight: 800; color: var(--c-lavender-dark);">125.00 m/s</div>
+                </div>
+                <div style="background: #fbfbfe; border: 1px solid rgba(138,123,235,0.25); border-radius: 8px; padding: 6px; text-align: center;">
+                  <span style="font-size: 0.65rem; color: #64748b; font-weight: 700;">PERIODO (\(T\))</span>
+                  <div id="calc-res-t" style="font-family: var(--font-mono); font-size: 1.05rem; font-weight: 800; color: var(--c-lavender-dark);">0.0200 s</div>
+                </div>
+                <div style="background: #fbfbfe; border: 1px solid rgba(138,123,235,0.25); border-radius: 8px; padding: 6px; text-align: center;">
+                  <span style="font-size: 0.65rem; color: #64748b; font-weight: 700;">NÚMERO (\(k\))</span>
+                  <div id="calc-res-k" style="font-family: var(--font-mono); font-size: 1.05rem; font-weight: 800; color: var(--c-lavender-dark);">2.51 rad/m</div>
+                </div>
+                <div style="background: #fbfbfe; border: 1px solid rgba(138,123,235,0.25); border-radius: 8px; padding: 6px; text-align: center;">
+                  <span style="font-size: 0.65rem; color: #64748b; font-weight: 700;">ANGULAR (\(\omega\))</span>
+                  <div id="calc-res-w" style="font-family: var(--font-mono); font-size: 1.05rem; font-weight: 800; color: var(--c-lavender-dark);">314.16 rad/s</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Síntesis de Relaciones Cinemáticas Ondulatorias -->
+            <div class="note-block" style="padding: 10px 14px;">
+              <div class="note-banner-title">
+                <i class="fas fa-link"></i> Síntesis de Relaciones Cinemáticas
+              </div>
+              <p class="note-content">
+                Las magnitudes que rigen la propagación armónica se interconectan mediante la identidad fundamental:
+              </p>
+              <div class="formula-stationery">
+                $v = \frac{\lambda}{T} = \lambda \cdot f = \frac{\omega}{k}$
+              </div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 6px;">
+                <div style="background: rgba(245, 243, 255, 0.7); border: 1px solid rgba(196, 181, 253, 0.4); border-radius: 8px; padding: 6px 8px;">
+                  <strong style="color: var(--c-purple-cover); font-size: 0.73rem; display: block; margin-bottom: 2px;">
+                    <i class="fas fa-arrows-left-right"></i> Dominio Espacial (\(x\))
+                  </strong>
+                  <span style="font-size: 0.71rem; color: #475569; line-height: 1.35; display: block;">
+                    \(k = \frac{2\pi}{\lambda}\) [rad/m] &bull; Periodicidad espacial entre crestas homólogas.
+                  </span>
+                </div>
+                <div style="background: rgba(245, 243, 255, 0.7); border: 1px solid rgba(196, 181, 253, 0.4); border-radius: 8px; padding: 6px 8px;">
+                  <strong style="color: var(--c-purple-cover); font-size: 0.73rem; display: block; margin-bottom: 2px;">
+                    <i class="fas fa-stopwatch"></i> Dominio Temporal (\(t\))
+                  </strong>
+                  <span style="font-size: 0.71rem; color: #475569; line-height: 1.35; display: block;">
+                    \(\omega = 2\pi f = \frac{2\pi}{T}\) [rad/s] &bull; Pulsación angular de oscilación de las partículas.
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- EJEMPLO 8 V3.0: SITUACIÓN REAL - RETO EN LA CALCULADORA -->
+            <div class="v3-real-card">
+              <div class="v3-card-header">
+                <span class="v3-card-badge">
+                  <i class="fas fa-sliders"></i> Ejemplo Real 8: Calibración Acústica de Cuerda
+                </span>
+                <span class="v3-card-tag">Reto Interactivo</span>
+              </div>
+              <p class="v3-real-situation">
+                Un luthier calibra una cuerda que vibra a una frecuencia fundamental de <strong>\(f = 80\text{ Hz}\)</strong> produciendo una onda con longitud medida <strong>\(\lambda = 2.0\text{ m}\)</strong>.
+              </p>
+
+              <div style="text-align: center; margin-bottom: 8px;">
+                <button type="button" class="v3-btn-action" id="v3-calc-load-btn">
+                  <i class="fas fa-bolt"></i> Cargar valores (f=80 Hz, λ=2.0 m) en la calculadora superior
+                </button>
+              </div>
+
+              <div class="v3-quiz-box">
+                <div class="v3-quiz-prompt">
+                  <i class="fas fa-circle-question"></i>
+                  <span>Reto: Con los datos cargados en la calculadora superior, ¿qué velocidad de fase \(v\) y número de onda \(k\) se obtienen?</span>
+                </div>
+                <div class="v3-options-group">
+                  <label class="v3-opt-label">
+                    <input type="radio" name="v3-calc-opt" value="opt1">
+                    <span>\(v = 160.00\text{ m/s}, \quad k = 3.14\text{ rad/m}\)</span>
+                  </label>
+                  <label class="v3-opt-label">
+                    <input type="radio" name="v3-calc-opt" value="opt2">
+                    <span>\(v = 40.00\text{ m/s}, \quad k = 1.25\text{ rad/m}\)</span>
+                  </label>
+                  <label class="v3-opt-label">
+                    <input type="radio" name="v3-calc-opt" value="opt3">
+                    <span>\(v = 200.00\text{ m/s}, \quad k = 6.28\text{ rad/m}\)</span>
+                  </label>
+                </div>
+                <button type="button" class="v3-btn-check" id="v3-calc-check">
+                  <i class="fas fa-check"></i> Comprobar respuesta
+                </button>
+                <div class="v3-feedback" id="v3-calc-feedback"></div>
+              </div>
+            </div>
+          </div>
+
+          <footer class="stationery-footer">
+            <span>Universidad Tecnológica de Pereira • 2026</span>
+            <span>Pág. 10 de 30</span>
+          </footer>
+        </div>
+      </div>
+
+      <!-- ===================================================================
+           PLIEGO 6: PÁGS. 11 Y 12 (FUNCIÓN ARMÓNICA & ECUACIÓN DE D'ALEMBERT)
+           =================================================================== -->
+      <div class="book-spread" id="spread-6" data-spread="6">
+        <!-- Página 11: Función Armónica -->
+        <div class="book-page page-left" id="page-11">
+          <header class="stationery-header">
+            <div class="header-top-meta">
+              <span class="header-category-tag">MODELO MATEMÁTICO</span>
+              <span class="page-badge-pill">Pág. 11</span>
+            </div>
+            <div class="header-title-row">
+              <h2 class="page-title-script">Función de Onda Armónica</h2>
+              <i class="fas fa-function title-doodle"></i>
+            </div>
+          </header>
+
+          <div class="stationery-body">
+            <div class="note-block">
+              <div class="note-banner-title">
+                <i class="fas fa-signature"></i> Forma Canónica Unidimensional
+              </div>
+              <p class="note-content">
+                La elongación transversal \(y(x,t)\) en cualquier punto y tiempo:
+              </p>
+              <div class="formula-stationery">
+                $$y(x,t) = A \sin(kx \mp \omega t + \phi_0)$$
+              </div>
+              <p class="note-content" style="font-size: 0.74rem;">
+                Signo \((-)\): viaje hacia la derecha (\(+x\)) • Signo \((+)\): viaje hacia la izquierda (\(-x\)).
+              </p>
+            </div>
+
+            <div class="note-block">
+              <div class="note-banner-title">
+                <i class="fas fa-arrows-up-down"></i> Velocidad y Aceleración Transversal
+              </div>
+              <div class="formula-stationery">
+                $v_y = \frac{\partial y}{\partial t} = \mp \omega A \cos(kx \mp \omega t + \phi_0)$
+                $a_y = \frac{\partial^2 y}{\partial t^2} = -\omega^2 y(x,t)$
+              </div>
+              <p class="note-content" style="font-size: 0.72rem; color: #475569; margin-top: 2px;">
+                Valores máximos: \(v_{y,\text{máx}} = \omega A\) [m/s] • \(a_{y,\text{máx}} = \omega^2 A\) [\(\text{m/s}^2\)]. La rapidez de avance de la onda (\(v\)) es constante en el medio, mientras que la velocidad de cada partícula (\(v_y\)) es un M.A.S. armónico local.
+              </p>
+            </div>
+
+            <!-- EJEMPLO 9 V3.0: SITUACIÓN REAL - FUNCIÓN ARMÓNICA EN GUITARRA -->
+            <div class="v3-real-card">
+              <div class="v3-card-header">
+                <span class="v3-card-badge">
+                  <i class="fas fa-wave-square"></i> Ejemplo Real 9: Vibración Armónica de Cuerda
+                </span>
+                <span class="v3-card-tag">Función y(x,t)</span>
+              </div>
+              <p class="v3-real-situation">
+                Al pulsar una nota continua en la guitarra, cada punto describe un movimiento armónico simple. Modifica los parámetros para ver la función canónica en tiempo real:
+              </p>
+
+              <div class="v3-canvas-wrap" style="height: 125px;">
+                <canvas id="v3-canvas-harmonic"></canvas>
+              </div>
+
+              <div style="background: rgba(245, 243, 255, 0.9); border: 1px solid rgba(138, 123, 235, 0.4); border-radius: 6px; padding: 4px 8px; text-align: center; margin-bottom: 6px;">
+                <span style="font-size: 0.64rem; font-weight: 700; color: #64748b; display: block;">ECUACIÓN ARMÓNICA DINÁMICA:</span>
+                <span id="v3-harm-eq-str" style="font-family: var(--font-mono); font-size: 0.85rem; font-weight: 800; color: #5a3c8c;">y(x,t) = 0.05 · sin(6.28x - 12.6t)</span>
+              </div>
+
+              <div class="v3-controls-bar">
+                <div class="v3-control-group">
+                  <label>Amplitud \(A\):</label>
+                  <input type="range" class="v3-slider" id="v3-harm-amp" min="0.02" max="0.08" step="0.01" value="0.05">
+                </div>
+                <div class="v3-control-group">
+                  <label>Frecuencia \(f\):</label>
+                  <input type="range" class="v3-slider" id="v3-harm-freq" min="1.0" max="4.0" step="0.5" value="2.0">
+                </div>
+                <div class="v3-control-group">
+                  <label>Longitud \(\lambda\):</label>
+                  <input type="range" class="v3-slider" id="v3-harm-lambda" min="0.5" max="2.0" step="0.25" value="1.0">
+                </div>
+              </div>
+
+              <div class="v3-quiz-box">
+                <div class="v3-quiz-prompt">
+                  <i class="fas fa-circle-question"></i>
+                  <span>Pregunta: En la ecuación \(y(x,t) = A\sin(kx - \omega t)\), ¿qué representa el término encerrado \((kx - \omega t)\)?</span>
+                </div>
+                <div class="v3-options-group">
+                  <label class="v3-opt-label">
+                    <input type="radio" name="v3-harm-opt" value="amp">
+                    <span>La amplitud pico de la oscilación.</span>
+                  </label>
+                  <label class="v3-opt-label">
+                    <input type="radio" name="v3-harm-opt" value="phase">
+                    <span>La fase angular total \(\Phi(x,t)\) en radianes.</span>
+                  </label>
+                  <label class="v3-opt-label">
+                    <input type="radio" name="v3-harm-opt" value="speed">
+                    <span>La velocidad transversal de cada partícula.</span>
+                  </label>
+                </div>
+                <button type="button" class="v3-btn-check" id="v3-harm-check">
+                  <i class="fas fa-check"></i> Comprobar respuesta
+                </button>
+                <div class="v3-feedback" id="v3-harm-feedback"></div>
+              </div>
+            </div>
+          </div>
+
+          <footer class="stationery-footer">
+            <span>Universidad Tecnológica de Pereira • 2026</span>
+            <span>Pág. 11 de 30</span>
+          </footer>
+        </div>
+
+        <!-- Página 12: D'Alembert -->
+        <div class="book-page page-right" id="page-12">
+          <header class="stationery-header">
+            <div class="header-top-meta">
+              <span class="header-category-tag">ECUACIÓN DIFERENCIAL</span>
+              <span class="page-badge-pill">Pág. 12</span>
+            </div>
+            <div class="header-title-row">
+              <h2 class="page-title-script">Ecuación de Onda de D'Alembert</h2>
+              <i class="fas fa-infinity title-doodle"></i>
+            </div>
+          </header>
+
+          <div class="stationery-body">
+            <div class="note-block">
+              <div class="note-banner-title">
+                <i class="fas fa-scale-balanced"></i> Ecuación Diferencial Canónica (1747)
+              </div>
+              <p class="note-content">
+                Conecta la curvatura espacial del perfil con la aceleración temporal:
+              </p>
+              <div class="formula-stationery">
+                $$\frac{\partial^2 y}{\partial x^2} = \frac{1}{v^2} \frac{\partial^2 y}{\partial t^2}$$
+              </div>
+            </div>
+
+            <div class="note-block">
+              <div class="note-banner-title">
+                <i class="fas fa-compass-drafting"></i> Solución General de D'Alembert
+              </div>
+              <p class="note-content">
+                Toda función diferenciable de la forma \((x \mp vt)\) satisface la ecuación:
+              </p>
+              <div class="formula-stationery">
+                $y(x,t) = f(x - vt) + g(x + vt)$
+              </div>
+            </div>
+
+            <!-- EJEMPLO 10 V3.0: SITUACIÓN REAL - PULSO SOLITARIO D'ALEMBERT -->
+            <div class="v3-real-card">
+              <div class="v3-card-header">
+                <span class="v3-card-badge">
+                  <i class="fas fa-infinity"></i> Ejemplo Real 10: Pulso Viajero en Cable de Puente
+                </span>
+                <span class="v3-card-tag">D'Alembert</span>
+              </div>
+              <p class="v3-real-situation">
+                Un pulso solitario que viaja por una cuerda tensada mantiene su perfil rígido idéntico trasladándose a velocidad \(v\), gobernado por \(f(x - vt)\) o \(g(x + vt)\).
+              </p>
+
+              <div class="v3-canvas-wrap" style="height: 125px;">
+                <canvas id="v3-canvas-dal"></canvas>
+              </div>
+
+              <div class="v3-controls-bar">
+                <button type="button" class="v3-btn-action active" id="v3-dal-right-btn">
+                  <i class="fas fa-arrow-right"></i> Viaje a la derecha f(x - vt)
+                </button>
+                <button type="button" class="v3-btn-action" id="v3-dal-left-btn">
+                  <i class="fas fa-arrow-left"></i> Viaje a la izquierda g(x + vt)
+                </button>
+                <div class="v3-control-group">
+                  <label>Velocidad \(v\): <span class="v3-control-val" id="v3-dal-speed-val">2.5 m/s</span></label>
+                  <input type="range" class="v3-slider" id="v3-dal-speed" min="1.0" max="5.0" step="0.5" value="2.5">
+                </div>
+                <button type="button" class="v3-btn-action" id="v3-dal-reset">
+                  <i class="fas fa-rotate-left"></i> Reiniciar
+                </button>
+              </div>
+
+              <div class="v3-quiz-box">
+                <div class="v3-quiz-prompt">
+                  <i class="fas fa-circle-question"></i>
+                  <span>Pregunta: ¿Por qué la solución de D'Alembert \(f(x - vt)\) representa avance hacia las \(+x\) (derecha)?</span>
+                </div>
+                <div class="v3-options-group">
+                  <label class="v3-opt-label">
+                    <input type="radio" name="v3-dal-opt" value="constant">
+                    <span>Porque para mantener el mismo punto del perfil (\(x - vt = \text{cte}\)), si \(t\) crece, \(x\) debe aumentar hacia la derecha.</span>
+                  </label>
+                  <label class="v3-opt-label">
+                    <input type="radio" name="v3-dal-opt" value="negative">
+                    <span>Porque el signo negativo invierte la dirección de la energía.</span>
+                  </label>
+                </div>
+                <button type="button" class="v3-btn-check" id="v3-dal-check">
+                  <i class="fas fa-check"></i> Comprobar respuesta
+                </button>
+                <div class="v3-feedback" id="v3-dal-feedback"></div>
+              </div>
+            </div>
+          </div>
+
+          <footer class="stationery-footer">
+            <span>Universidad Tecnológica de Pereira • 2026</span>
+            <span>Pág. 12 de 30</span>
+          </footer>
+        </div>
+      </div>
+
+      <!-- ===================================================================
+           PLIEGO 7: PÁGS. 13 Y 14 (ENERGÍA, POTENCIA & EFECTO DOPPLER)
+           =================================================================== -->
+      <div class="book-spread" id="spread-7" data-spread="7">
+        <!-- Página 13: Energía y Potencia -->
+        <div class="book-page page-left" id="page-13">
+          <header class="stationery-header">
+            <div class="header-top-meta">
+              <span class="header-category-tag">ENERGÍA & ACÚSTICA</span>
+              <span class="page-badge-pill">Pág. 13</span>
+            </div>
+            <div class="header-title-row">
+              <h2 class="page-title-script">Energía, Potencia e Intensidad</h2>
+              <i class="fas fa-fire-flame-curved title-doodle"></i>
+            </div>
+          </header>
+
+          <div class="stationery-body">
+            <div class="note-block">
+              <div class="note-banner-title">
+                <i class="fas fa-bolt"></i> Potencia Media e Intensidad Esférica
+              </div>
+              <div class="formula-stationery">
+                $$P_{\text{med}} = \frac{1}{2} \mu v \omega^2 A^2 \quad [\text{W}], \qquad I = \frac{P_{\text{fuente}}}{4\pi r^2} \quad \left[\frac{\text{W}}{\text{m}^2}\right]$$
+              </div>
+              <p class="note-content" style="font-size: 0.73rem; color: #475569;">
+                \(\mu\): densidad lineal [kg/m], \(v\): rapidez de fase [m/s], \(\omega = 2\pi f\): frecuencia angular [rad/s], \(A\): amplitud [m]. La ley del cuadrado inverso gobierna la dilución geométrica tridimensional (\(I \propto 1/r^2\)).
+              </p>
+            </div>
+
+            <div class="note-block">
+              <div class="note-banner-title">
+                <i class="fas fa-volume-high"></i> Nivel de Intensidad Sonora (\(\beta\))
+              </div>
+              <div class="formula-stationery">
+                $\beta = 10 \log_{10}\left(\frac{I}{I_0}\right) \quad [\text{dB}], \quad I_0 = 10^{-12}\text{ W/m}^2$
+              </div>
+              <p class="note-content" style="font-size: 0.73rem; color: #475569;">
+                \(I_0\) representa el umbral absoluto de audición humana a \(1\text{ kHz}\) (\(0\text{ dB}\)). Cada incremento de \(+10\text{ dB}\) decuplica la intensidad incidente sobre la membrana timpánica.
+              </p>
+            </div>
+
+            <!-- EJEMPLO 11 V3.0: SITUACIÓN REAL - BOCINA A DIFERENTES DISTANCIAS -->
+            <div class="v3-real-card">
+              <div class="v3-card-header">
+                <span class="v3-card-badge">
+                  <i class="fas fa-volume-high"></i> Ejemplo Real 11: Altavoz en Campo Abierto (P = 10 W)
+                </span>
+                <span class="v3-card-tag">Atenuación Sonora</span>
+              </div>
+              <p class="v3-real-situation">
+                Bajo condiciones ideales (fuente puntual isotrópica en campo libre sin reflexiones ni absorción viscosa), la energía acústica se distribuye sobre esferas concéntricas: \(I = \frac{P}{4\pi r^2}\).
+              </p>
+
+              <div class="v3-controls-bar">
+                <div class="v3-control-group">
+                  <label>Distancia del oyente \(r\): <span class="v3-control-val" id="v3-sound-dist-val">4.0 m</span></label>
+                  <input type="range" class="v3-slider" id="v3-sound-dist" min="1.0" max="16.0" step="0.5" value="4.0">
+                </div>
+              </div>
+
+              <div class="v3-math-panel">
+                <div class="v3-math-grid">
+                  <div class="v3-math-pill">
+                    <span class="v3-math-lbl">INTENSIDAD I [W/m²]</span>
+                    <span class="v3-math-num" id="v3-sound-i-out">4.974e-2 W/m²</span>
+                  </div>
+                  <div class="v3-math-pill">
+                    <span class="v3-math-lbl">NIVEL SONORO β [dB]</span>
+                    <span class="v3-math-num" id="v3-sound-db-out">107.0 dB</span>
+                  </div>
+                  <div class="v3-math-pill">
+                    <span class="v3-math-lbl">FRACCIÓN RESPECTO A r=2m</span>
+                    <span class="v3-math-num" id="v3-sound-ratio-out">0.250x</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="v3-quiz-box">
+                <div class="v3-quiz-prompt">
+                  <i class="fas fa-circle-question"></i>
+                  <span>Ejercicio: Si te encuentras a \(r_1 = 5\text{ m}\) de la bocina y te trasladas al doble de distancia (\(r_2 = 10\text{ m}\)), ¿a qué fracción se reduce la intensidad sonora incidente?</span>
+                </div>
+                <div class="v3-options-group">
+                  <label class="v3-opt-label">
+                    <input type="radio" name="v3-energy-opt" value="half">
+                    <span>A la mitad (\(1/2 = 0.5\)).</span>
+                  </label>
+                  <label class="v3-opt-label">
+                    <input type="radio" name="v3-energy-opt" value="quarter">
+                    <span>A la cuarta parte (\(1/4 = 0.25\)), debido a la ley del inverso al cuadrado (\(I \propto 1/r^2\)).</span>
+                  </label>
+                  <label class="v3-opt-label">
+                    <input type="radio" name="v3-energy-opt" value="eighth">
+                    <span>A la octava parte (\(1/8 = 0.125\)).</span>
+                  </label>
+                </div>
+                <button type="button" class="v3-btn-check" id="v3-energy-check">
+                  <i class="fas fa-check"></i> Comprobar respuesta
+                </button>
+                <div class="v3-feedback" id="v3-energy-feedback"></div>
+              </div>
+            </div>
+          </div>
+
+          <footer class="stationery-footer">
+            <span>Universidad Tecnológica de Pereira • 2026</span>
+            <span>Pág. 13 de 30</span>
+          </footer>
+        </div>
+
+        <!-- Página 14: Efecto Doppler -->
+        <div class="book-page page-right" id="page-14">
+          <header class="stationery-header">
+            <div class="header-top-meta">
+              <span class="header-category-tag">MOVIMIENTO RELATIVO</span>
+              <span class="page-badge-pill">Pág. 14</span>
+            </div>
+            <div class="header-title-row">
+              <h2 class="page-title-script">Efecto Doppler</h2>
+              <i class="fas fa-car-side title-doodle"></i>
+            </div>
+          </header>
+
+          <div class="stationery-body">
+            <div class="note-block">
+              <div class="note-banner-title">
+                <i class="fas fa-arrows-split-up-and-left"></i> Ecuación Doppler Acústica General
+              </div>
+              <div class="formula-stationery">
+                $$f' = f \left(\frac{v \pm v_o}{v \mp v_s}\right)$$
+              </div>
+              <p class="note-content" style="font-size: 0.72rem; color: #475569;">
+                \(v\): rapidez en aire (\(\approx 343\text{ m/s}\) a \(20^\circ\text{C}\)), \(v_o\): obs., \(v_s\): fuente.<br>
+                • Numerador: \((+)\) si obs. se aproxima a fuente; \((-)\) si se aleja.<br>
+                • Denominador: \((-)\) si fuente persigue a receptor; \((+)\) si se aleja.
+              </p>
+            </div>
+
+            <div class="note-block">
+              <div class="note-banner-title">
+                <i class="fas fa-radar"></i> Aplicaciones Industriales
+              </div>
+              <p class="note-content">
+                • <strong>Velocimetría Láser Doppler (LDA):</strong> Diagnóstico de fluidos.<br>
+                • <strong>Radar de velocidad:</strong> Control de tráfico y logística.
+              </p>
+            </div>
+
+            <!-- EJEMPLO 12 V3.0: SITUACIÓN REAL - AMBULANCIA Y PREGUNTAS DOPPLER -->
+            <div class="v3-real-card">
+              <div class="v3-card-header">
+                <span class="v3-card-badge">
+                  <i class="fas fa-truck-medical"></i> Ejemplo Real 12: Ambulancia en Ruta (Doppler Acústico)
+                </span>
+                <span class="v3-card-tag">Predicción e Interpretación</span>
+              </div>
+              <p class="v3-real-situation">
+                Una ambulancia de emergencia con sirena activa (\(f = 440\text{ Hz}\)) transita a \(v_s = 30\text{ m/s}\) hacia un peatón inmóvil en la acera y posteriormente lo rebasa.
+              </p>
+
+              <!-- Fase 1: Predicción -->
+              <div class="v3-quiz-box" style="margin-bottom: 8px;">
+                <div class="v3-quiz-prompt">
+                  <i class="fas fa-eye"></i>
+                  <span>Fase 1 (Predicción previa): Mientras la ambulancia se ACERCA al peatón, ¿qué tono percibe el oído humano?</span>
+                </div>
+                <div class="v3-options-group">
+                  <label class="v3-opt-label">
+                    <input type="radio" name="v3-dop-pred-opt" value="higher">
+                    <span>Un tono notablemente más agudo (frecuencia más alta, \(f' > f\)).</span>
+                  </label>
+                  <label class="v3-opt-label">
+                    <input type="radio" name="v3-dop-pred-opt" value="lower">
+                    <span>Un tono más grave (frecuencia más baja, \(f' < f\)).</span>
+                  </label>
+                  <label class="v3-opt-label">
+                    <input type="radio" name="v3-dop-pred-opt" value="equal">
+                    <span>El mismo tono exactamente, sin alteración.</span>
+                  </label>
+                </div>
+                <button type="button" class="v3-btn-check" id="v3-dop-pred-check">
+                  <i class="fas fa-check"></i> Comprobar predicción
+                </button>
+                <div class="v3-feedback" id="v3-dop-pred-feedback"></div>
+              </div>
+
+              <!-- Enlace al simulador Doppler oficial -->
+              <div style="background: rgba(245, 243, 255, 0.85); border: 1px solid rgba(138, 123, 235, 0.4); border-radius: 8px; padding: 6px 10px; text-align: center; margin-bottom: 8px;">
+                <span style="font-size: 0.72rem; color: #4c1d95; font-weight: 700; display: block; margin-bottom: 4px;">
+                  <i class="fas fa-flask-vial"></i> Explora el simulador completo calibrado en el Pliego 15 (Páginas 29 y 30)
+                </span>
+                <span style="font-size: 0.69rem; color: #64748b;">Verás los frentes comprimidos delante y dilatados detrás con audio realista.</span>
+              </div>
+
+              <!-- Fase 2: Interpretación -->
+              <div class="v3-quiz-box">
+                <div class="v3-quiz-prompt">
+                  <i class="fas fa-brain"></i>
+                  <span>Fase 2 (Interpretación posterior): Tras rebasar al observador y comenzar a ALEJARSE, ¿por qué la frecuencia percibida desciende (\(f' < f\))?</span>
+                </div>
+                <div class="v3-options-group">
+                  <label class="v3-opt-label">
+                    <input type="radio" name="v3-dop-post-opt" value="dilated">
+                    <span>Porque los frentes de onda se dilatan en el espacio detrás del vehículo (\(\lambda_{\text{detrás}} = \frac{v + v_s}{f}\)), espaciando la llegada de crestas.</span>
+                  </label>
+                  <label class="v3-opt-label">
+                    <input type="radio" name="v3-dop-post-opt" value="airslow">
+                    <span>Porque la velocidad del sonido en el aire disminuye con la distancia.</span>
+                  </label>
+                </div>
+                <button type="button" class="v3-btn-check" id="v3-dop-post-check">
+                  <i class="fas fa-check"></i> Comprobar interpretación
+                </button>
+                <div class="v3-feedback" id="v3-dop-post-feedback"></div>
+              </div>
+            </div>
+          </div>
+
+          <footer class="stationery-footer">
+            <span>Universidad Tecnológica de Pereira • 2026</span>
+            <span>Pág. 14 de 30</span>
+          </footer>
+        </div>
+      </div>
+
+      <!-- ===================================================================
+           PLIEGO 8: PÁGS. 15 Y 16 (SUPERPOSICIÓN & ESTACIONARIAS)
+           =================================================================== -->
+      <div class="book-spread" id="spread-8" data-spread="8">
+        <!-- Página 15: Superposición e Interferencia -->
+        <div class="book-page page-left" id="page-15">
+          <header class="stationery-header">
+            <div class="header-top-meta">
+              <span class="header-category-tag">INTERFERENCIA</span>
+              <span class="page-badge-pill">Pág. 15</span>
+            </div>
+            <div class="header-title-row">
+              <h2 class="page-title-script">Superposición e Interferencia</h2>
+              <i class="fas fa-network-wired title-doodle"></i>
+            </div>
+          </header>
+
+          <div class="stationery-body">
+            <div class="note-block">
+              <div class="note-banner-title">
+                <i class="fas fa-plus-minus"></i> Onda Resultante por Desfase
+              </div>
+              <div class="formula-stationery">
+                $$y_{\text{res}} = \left[2A \cos\left(\frac{\Delta\phi}{2}\right)\right] \sin\left(kx - \omega t + \frac{\Delta\phi}{2}\right)$$
+              </div>
+            </div>
+
+            <div class="note-block">
+              <div class="note-banner-title">
+                <i class="fas fa-compress"></i> Condiciones de Interferencia
+              </div>
+              <p class="note-content">
+                • <strong>Constructiva Máxima:</strong> \(\Delta\phi = 2n\pi \implies A_{\text{res}} = 2A\).<br>
+                • <strong>Destructiva Total:</strong> \(\Delta\phi = (2n+1)\pi \implies A_{\text{res}} = 0\).
+              </p>
+            </div>
+
+            <div class="sim-stationery-card" style="margin-top: 8px;">
+              <div class="simulation-canvas-wrap" style="height: 155px;">
+                <canvas id="interference-canvas"></canvas>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                <label style="font-size: 0.68rem; font-weight: 700;">Desfase \(\Delta\phi\): <span id="val-interf-phase" style="color:var(--c-lavender-dark);">0° (0.00 rad)</span></label>
+                <span id="badge-interf-type" style="font-size: 0.63rem; font-weight: 700; padding: 2px 7px; border-radius: 6px; background: #d1fae5; color: #065f46;">Interferencia Constructiva Máxima (A_tot = 2A)</span>
+              </div>
+              <input type="range" id="slider-interf-phase" min="0" max="360" step="15" value="0" style="width: 100%;">
+            </div>
+
+            <!-- Apartado: Simulador de Superposición de Ondas -->
+            <div class="note-block" style="margin-top: 10px;">
+              <div class="note-banner-title">
+                <i class="fas fa-wave-square"></i> Simulador: Superposición de Ondas
+              </div>
+              <div class="sim-stationery-card" style="margin-top: 8px; padding: 0; overflow: hidden; border: 1.5px solid rgba(138, 123, 235, 0.35);">
+                <iframe src="superposicion_ondas.html" title="Simulador de Superposición de Ondas" style="width: 100%; height: 580px; border: none; display: block;" allowfullscreen loading="lazy"></iframe>
+              </div>
+            </div>
+
+            <!-- EJEMPLO 13 V3.0: SITUACIÓN REAL - DOS PARLANTES ACÚSTICOS EN SALA -->
+            <div class="v3-real-card">
+              <div class="v3-card-header">
+                <span class="v3-card-badge">
+                  <i class="fas fa-network-wired"></i> Ejemplo Real 13: Dos Parlantes en un Auditorio
+                </span>
+                <span class="v3-card-tag">Interferencia Acústica</span>
+              </div>
+              <p class="v3-real-situation">
+                Dos altavoces conectados al mismo amplificador emiten un tono puro de amplitud \(A\). Dependiendo de la diferencia de fase (\(\Delta\phi\)), las ondas se refuerzan o se anulan completamente.
+              </p>
+
+              <div class="v3-quiz-box" style="margin-bottom: 8px;">
+                <div class="v3-quiz-prompt">
+                  <i class="fas fa-circle-question"></i>
+                  <span>Pregunta 1 (Constructiva): Si un oyente está en un punto equidistante con desfase \(\Delta\phi = 0^\circ\), ¿cuál es la amplitud combinada que percibe?</span>
+                </div>
+                <div class="v3-options-group">
+                  <label class="v3-opt-label">
+                    <input type="radio" name="v3-interf-q1-opt" value="0">
+                    <span>\(0\) (silencio absoluto por anulación).</span>
+                  </label>
+                  <label class="v3-opt-label">
+                    <input type="radio" name="v3-interf-q1-opt" value="2a">
+                    <span>\(2A\) (doble amplitud, reforzamiento constructivo máximo).</span>
+                  </label>
+                </div>
+                <button type="button" class="v3-btn-check" id="v3-interf-q1-check">
+                  <i class="fas fa-check"></i> Comprobar respuesta
+                </button>
+                <div class="v3-feedback" id="v3-interf-q1-feedback"></div>
+              </div>
+
+              <div class="v3-quiz-box">
+                <div class="v3-quiz-prompt">
+                  <i class="fas fa-circle-question"></i>
+                  <span>Pregunta 2 (Destructiva): Si ajustas el control superior de desfase a \(\Delta\phi = 180^\circ\) (\(\pi\text{ rad}\)), ¿qué aplicación real se fundamenta en esta anulación?</span>
+                </div>
+                <div class="v3-options-group">
+                  <label class="v3-opt-label">
+                    <input type="radio" name="v3-interf-q2-opt" value="anc">
+                    <span>La Cancelación Activa de Ruido (ANC) en audífonos modernos de aviación y estudio.</span>
+                  </label>
+                  <label class="v3-opt-label">
+                    <input type="radio" name="v3-interf-q2-opt" value="fm">
+                    <span>La modulación en frecuencia de radio FM.</span>
+                  </label>
+                </div>
+                <button type="button" class="v3-btn-check" id="v3-interf-q2-check">
+                  <i class="fas fa-check"></i> Comprobar aplicación
+                </button>
+                <div class="v3-feedback" id="v3-interf-q2-feedback"></div>
+              </div>
+            </div>
+          </div>
+
+          <footer class="stationery-footer">
+            <span>Universidad Tecnológica de Pereira • 2026</span>
+            <span>Pág. 15 de 30</span>
+          </footer>
+        </div>
+
+        <!-- Página 16: Ondas Estacionarias -->
+        <div class="book-page page-right" id="page-16">
+          <header class="stationery-header">
+            <div class="header-top-meta">
+              <span class="header-category-tag">MODOS RESONANTES</span>
+              <span class="page-badge-pill">Pág. 16</span>
+            </div>
+            <div class="header-title-row">
+              <h2 class="page-title-script">Ondas Estacionarias y Modos</h2>
+              <i class="fas fa-guitar title-doodle"></i>
+            </div>
+          </header>
+
+          <div class="stationery-body">
+            <div class="note-block">
+              <div class="note-banner-title">
+                <i class="fas fa-circle-nodes"></i> Nodos y Antinodos
+              </div>
+              <div class="formula-stationery">
+                $$y(x,t) = [2A \sin(kx)] \cos(\omega t)$$
+              </div>
+              <p class="note-content" style="font-size: 0.72rem; color: #475569;">
+                • Nodos (\(y=0\)): \(x_n = \frac{n\lambda}{2}\) • Antinodos (\(2A\)): \(x_m = \frac{(2m+1)\lambda}{4}\). Distancia intermodal: \(\Delta x = \lambda/2\).
+              </p>
+            </div>
+
+            <div class="note-block">
+              <div class="note-banner-title">
+                <i class="fas fa-music"></i> Modos Normales y Frecuencias Resonantes
+              </div>
+              <div class="formula-stationery">
+                $f_n = n \left(\frac{v}{2L}\right) = \frac{n}{2L}\sqrt{\frac{T_s}{\mu}}, \quad n=1,2,3\dots$
+              </div>
+              <p class="note-content" style="font-size: 0.71rem; color: #475569;">
+                \(f_1 = \frac{v}{2L}\): modo fundamental. Tubos abiertos: \(f_n = n\frac{v}{2L}\); tubos cerrados: \(f_m = m\frac{v}{4L}\) (\(m = 1, 3, 5\dots\)).
+              </p>
+            </div>
+
+            <!-- EJEMPLO 14 V3.0: SITUACIÓN REAL - CUERDA DE GUITARRA Y MODOS NORMALES -->
+            <div class="v3-real-card">
+              <div class="v3-card-header">
+                <span class="v3-card-badge">
+                  <i class="fas fa-guitar"></i> Ejemplo Real 14: Modos Resonantes en Cuerda de Guitarra
+                </span>
+                <span class="v3-card-tag">Nodos y Antinodos</span>
+              </div>
+              <p class="v3-real-situation">
+                Al rozar suavemente la cuerda en puntos estratégicos, los guitarristas generan <strong>armónicos naturales</strong>. Selecciona el modo para identificar visualmente sus nodos y antinodos:
+              </p>
+
+              <div class="v3-controls-bar" style="justify-content: center; gap: 6px;">
+                <button type="button" class="v3-btn-action" id="v3-harm-btn-1">Fundamental (n=1)</button>
+                <button type="button" class="v3-btn-action active" id="v3-harm-btn-2">2º Armónico (n=2)</button>
+                <button type="button" class="v3-btn-action" id="v3-harm-btn-3">3º Armónico (n=3)</button>
+                <button type="button" class="v3-btn-action" id="v3-harm-btn-4">4º Armónico (n=4)</button>
+              </div>
+
+              <div class="v3-canvas-wrap" style="height: 125px;">
+                <canvas id="v3-canvas-standing"></canvas>
+              </div>
+
+              <div class="v3-math-panel">
+                <div class="v3-math-grid">
+                  <div class="v3-math-pill">
+                    <span class="v3-math-lbl">ARMÓNICO ACTIVO</span>
+                    <span class="v3-math-num" id="v3-mode-n-out">n = 2</span>
+                  </div>
+                  <div class="v3-math-pill">
+                    <span class="v3-math-lbl">PUNTOS FIJOS (NODOS)</span>
+                    <span class="v3-math-num" style="color: #ef4444;" id="v3-mode-nodes-out">3 nodos</span>
+                  </div>
+                  <div class="v3-math-pill">
+                    <span class="v3-math-lbl">MÁXIMA OSCILACIÓN (ANTINODOS)</span>
+                    <span class="v3-math-num" style="color: #10b981;" id="v3-mode-antinodes-out">2 antinodos</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="v3-quiz-box">
+                <div class="v3-quiz-prompt">
+                  <i class="fas fa-circle-question"></i>
+                  <span>Pregunta: En el segundo armónico (\(n=2\)), ¿cuántos nodos en total (incluyendo ambos extremos fijos) se forman en la cuerda?</span>
+                </div>
+                <div class="v3-options-group">
+                  <label class="v3-opt-label">
+                    <input type="radio" name="v3-stand-opt" value="2">
+                    <span>\(2\text{ nodos}\)</span>
+                  </label>
+                  <label class="v3-opt-label">
+                    <input type="radio" name="v3-stand-opt" value="3">
+                    <span>\(3\text{ nodos}\) (\(x=0\), \(x=L/2\) en el centro, y \(x=L\))</span>
+                  </label>
+                  <label class="v3-opt-label">
+                    <input type="radio" name="v3-stand-opt" value="4">
+                    <span>\(4\text{ nodos}\)</span>
+                  </label>
+                </div>
+                <button type="button" class="v3-btn-check" id="v3-stand-check">
+                  <i class="fas fa-check"></i> Comprobar respuesta
+                </button>
+                <div class="v3-feedback" id="v3-stand-feedback"></div>
+              </div>
+            </div>
+          </div>
+
+          <footer class="stationery-footer">
+            <span>Universidad Tecnológica de Pereira • 2026</span>
+            <span>Pág. 16 de 30</span>
+          </footer>
+        </div>
+      </div>
+
+      <!-- ===================================================================
+           PLIEGO 9: PÁGS. 17 Y 18 (REFLEXIÓN, REFRACCIÓN & DIFRACCIÓN)
+           =================================================================== -->
+      <div class="book-spread" id="spread-9" data-spread="9">
+        <!-- Página 17: Reflexión y Refracción -->
+        <div class="book-page page-left" id="page-17">
+          <header class="stationery-header">
+            <div class="header-top-meta">
+              <span class="header-category-tag">FRONTERA Y MEDIOS</span>
+              <span class="page-badge-pill">Pág. 17</span>
+            </div>
+            <div class="header-title-row">
+              <h2 class="page-title-script">Reflexión y Refracción</h2>
+              <i class="fas fa-arrow-turn-down title-doodle"></i>
+            </div>
+          </header>
+
+          <div class="stationery-body">
+            <div class="note-block">
+              <div class="note-banner-title">
+                <i class="fas fa-shield"></i> Condiciones de Frontera y Coeficiente de Reflexión
+              </div>
+              <p class="note-content" style="font-size: 0.72rem; line-height: 1.35; color: #334155;">
+                • <strong>Extremo Fijo:</strong> Inversión de fase de \(180^\circ\) (\(\pi\text{ rad}\)) por reacción de apoyo.<br>
+                • <strong>Extremo Libre:</strong> Reflexión en fase (\(0^\circ\)) sin inversión.<br>
+                • <strong>Frontera entre dos medios:</strong> \(r = \frac{v_2 - v_1}{v_2 + v_1}\). Si \(\mu_2 > \mu_1 \implies v_2 < v_1 \implies r < 0\) (pulso invertido).
+              </p>
+            </div>
+
+            <div class="note-block">
+              <div class="note-banner-title">
+                <i class="fas fa-water"></i> Ley de Snell Generalizada e Invarianza de \(f\)
+              </div>
+              <div class="formula-stationery" style="margin: 3px 0;">
+                $\frac{\sin\theta_1}{\sin\theta_2} = \frac{v_1}{v_2} = \frac{\lambda_1}{\lambda_2}, \qquad f_1 = f_2 = f_{\text{fuente}}$
+              </div>
+              <p class="note-content" style="font-size: 0.71rem; color: #475569;">
+                La frecuencia temporal la impone el oscilador emisor y nunca se altera al refractarse.
+              </p>
+            </div>
+
+            <!-- EJEMPLO 15 V3.0: SITUACIÓN REAL - ECO Y CAMBIO DE MEDIO -->
+            <div class="v3-real-card">
+              <div class="v3-card-header">
+                <span class="v3-card-badge">
+                  <i class="fas fa-arrow-turn-down"></i> Ejemplo Real 15: El Eco y Ondas que Cambian de Medio
+                </span>
+                <span class="v3-card-tag">Fronteras Físicas</span>
+              </div>
+              <p class="v3-real-situation">
+                Observa cómo se comporta una perturbación al incidir contra un extremo fijo (pared rígida), un extremo libre o al pasar a una cuerda más densa.
+              </p>
+
+              <div class="v3-controls-bar" style="justify-content: center; gap: 6px;">
+                <button type="button" class="v3-btn-action active" id="v3-refl-fixed-btn">Extremo Fijo (Pared)</button>
+                <button type="button" class="v3-btn-action" id="v3-refl-free-btn">Extremo Libre</button>
+                <button type="button" class="v3-btn-action" id="v3-refl-bound-btn">Medio Liviano → Denso</button>
+              </div>
+
+              <div class="v3-canvas-wrap" style="height: 125px;">
+                <canvas id="v3-canvas-refl"></canvas>
+              </div>
+
+              <p class="v3-real-situation" id="v3-refl-desc" style="font-size: 0.72rem; margin-bottom: 6px;"></p>
+
+              <div class="v3-quiz-box">
+                <div class="v3-quiz-prompt">
+                  <i class="fas fa-circle-question"></i>
+                  <span>Pregunta: Cuando una onda cruza de un medio liviano a uno denso, ¿cuál propiedad física permanece estrictamente INVARIABLE?</span>
+                </div>
+                <div class="v3-options-group">
+                  <label class="v3-opt-label">
+                    <input type="radio" name="v3-refl-opt" value="speed">
+                    <span>La velocidad de propagación \(v\).</span>
+                  </label>
+                  <label class="v3-opt-label">
+                    <input type="radio" name="v3-refl-opt" value="lambda">
+                    <span>La longitud de onda \(\lambda\).</span>
+                  </label>
+                  <label class="v3-opt-label">
+                    <input type="radio" name="v3-refl-opt" value="freq">
+                    <span>La frecuencia temporal \(f\) (la dicta el oscilador emisor original).</span>
+                  </label>
+                </div>
+                <button type="button" class="v3-btn-check" id="v3-refl-check">
+                  <i class="fas fa-check"></i> Comprobar respuesta
+                </button>
+                <div class="v3-feedback" id="v3-refl-feedback"></div>
+              </div>
+            </div>
+          </div>
+
+          <footer class="stationery-footer">
+            <span>Universidad Tecnológica de Pereira • 2026</span>
+            <span>Pág. 17 de 30</span>
+          </footer>
+        </div>
+
+        <!-- Página 18: Difracción y Huygens -->
+        <div class="book-page page-right" id="page-18">
+          <header class="stationery-header">
+            <div class="header-top-meta">
+              <span class="header-category-tag">DIFRACCIÓN</span>
+              <span class="page-badge-pill">Pág. 18</span>
+            </div>
+            <div class="header-title-row">
+              <h2 class="page-title-script">Difracción y Huygens</h2>
+              <i class="fas fa-expand title-doodle"></i>
+            </div>
+          </header>
+
+          <div class="stationery-body">
+            <div class="note-block">
+              <div class="note-banner-title">
+                <i class="fas fa-lightbulb"></i> Principio de Huygens (1678)
+              </div>
+              <p class="note-content">
+                Todo punto de un frente de onda actúa como foco emisor de ondas secundarias esféricas cuyo envolvente genera el nuevo frente.
+              </p>
+            </div>
+
+            <div class="note-block">
+              <div class="note-banner-title">
+                <i class="fas fa-door-open"></i> Condición de Difracción Máxima
+              </div>
+              <p class="note-content">
+                La dispersión sólo es apreciable cuando el ancho de rendija u obstáculo es del orden de la longitud de onda:
+              </p>
+              <div class="formula-stationery">
+                $$a \approx \lambda \implies \text{Difracción Notable}$$
+              </div>
+            </div>
+
+            <div class="sim-stationery-card" style="margin-top: 8px;">
+              <div class="simulation-canvas-wrap" style="height: 155px;">
+                <canvas id="diffraction-canvas"></canvas>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <label style="font-size: 0.68rem; font-weight: 700;">Ancho de Rendija \(a\): <span id="val-diff-aperture" style="color:var(--c-lavender-dark);">25 mm</span></label>
+                <span style="font-size: 0.63rem; color: #64748b;">(Longitud onda fija \(\lambda = 26\text{ mm}\))</span>
+              </div>
+              <input type="range" id="slider-diff-aperture" min="8" max="70" step="2" value="25" style="width: 100%;">
+            </div>
+
+            <!-- EJEMPLO 16 V3.0: SITUACIÓN REAL - ESCUCHAR TRAS UNA PUERTA ABIERTA -->
+            <div class="v3-real-card">
+              <div class="v3-card-header">
+                <span class="v3-card-badge">
+                  <i class="fas fa-door-open"></i> Ejemplo Real 16: Escuchar Conversaciones desde Otra Habitación
+                </span>
+                <span class="v3-card-tag">Difracción Real</span>
+              </div>
+              <p class="v3-real-situation">
+                ¿Por qué puedes oír con total claridad la voz de alguien situado fuera de tu línea de visión detrás de una puerta, pero es imposible ver su silueta?
+              </p>
+
+              <table class="v3-compare-table">
+                <thead>
+                  <tr>
+                    <th>Fenómeno</th>
+                    <th>Longitud de onda (\(\lambda\))</th>
+                    <th>Ancho puerta (\(a\))</th>
+                    <th>Efecto de Difracción</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>Voz humana</strong></td>
+                    <td>\(\approx 1.0 - 3.0\text{ m}\)</td>
+                    <td>\(0.90\text{ m}\)</td>
+                    <td><span style="color:#059669; font-weight:700;">¡Máxima! Dobla esquinas en abanico</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Luz visible</strong></td>
+                    <td>\(\approx 0.0000005\text{ m}\)</td>
+                    <td>\(0.90\text{ m}\)</td>
+                    <td><span style="color:#64748b;">Nula a simple vista (viaje rectilíneo)</span></td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div class="v3-quiz-box">
+                <div class="v3-quiz-prompt">
+                  <i class="fas fa-circle-question"></i>
+                  <span>Pregunta: ¿Por qué la onda acústica se dispersa llenando toda la habitación mientras la luz proyecta una sombra recta?</span>
+                </div>
+                <div class="v3-options-group">
+                  <label class="v3-opt-label">
+                    <input type="radio" name="v3-diff-opt" value="lambda_size">
+                    <span>Porque la longitud de onda del sonido es comparable al ancho de la puerta (\(\lambda \approx a\)), condición que maximiza la difracción según Huygens.</span>
+                  </label>
+                  <label class="v3-opt-label">
+                    <input type="radio" name="v3-diff-opt" value="reflection">
+                    <span>Porque la luz no interactúa con los marcos de madera.</span>
+                  </label>
+                </div>
+                <button type="button" class="v3-btn-check" id="v3-diff-check">
+                  <i class="fas fa-check"></i> Comprobar respuesta
+                </button>
+                <div class="v3-feedback" id="v3-diff-feedback"></div>
+              </div>
+            </div>
+          </div>
+
+          <footer class="stationery-footer">
+            <span>Universidad Tecnológica de Pereira • 2026</span>
+            <span>Pág. 18 de 30</span>
+          </footer>
+        </div>
+      </div>
+
+      <!-- ===================================================================
+           PLIEGO 10: PÁGS. 19 Y 20 (RESONANCIA & INDUSTRIA 4.0)
+           =================================================================== -->
+      <div class="book-spread" id="spread-10" data-spread="10">
+        <!-- Página 19: Resonancia -->
+        <div class="book-page page-left" id="page-19">
+          <header class="stationery-header">
+            <div class="header-top-meta">
+              <span class="header-category-tag">DINÁMICA RESONANTE</span>
+              <span class="page-badge-pill">Pág. 19</span>
+            </div>
+            <div class="header-title-row">
+              <h2 class="page-title-script">Resonancia Física</h2>
+              <i class="fas fa-chart-line-up title-doodle"></i>
+            </div>
+          </header>
+
+          <div class="stationery-body">
+            <div class="note-block">
+              <div class="note-banner-title">
+                <i class="fas fa-triangle-exclamation"></i> Amplificación de Amplitud
+              </div>
+              <p class="note-content">
+                Ocurre cuando \(\omega_{\text{ext}} \approx \omega_0\), provocando una absorción máxima de potencia.
+              </p>
+              <div class="formula-stationery">
+                $$A(\omega) = \frac{F_0 / m}{\sqrt{(\omega_0^2 - \omega^2)^2 + \gamma^2 \omega^2}}$$
+              </div>
+            </div>
+
+            <div class="note-block">
+              <div class="note-banner-title">
+                <i class="fas fa-building-circle-exclamation"></i> Ingeniería y Mitigación
+              </div>
+              <p class="note-content">
+                Diseño de amortiguadores y desacoplo de frecuencias críticas para prevenir fallas estructurales por fatiga resonante.
+              </p>
+            </div>
+
+            <div class="sim-stationery-card" style="margin-top: 8px;">
+              <div class="simulation-canvas-wrap" style="height: 155px;">
+                <canvas id="resonance-canvas"></canvas>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <label style="font-size: 0.68rem; font-weight: 700;">Frecuencia Externa \(f_{\text{ext}}\): <span id="val-res-f" style="color:var(--c-lavender-dark);">2.00 Hz</span></label>
+                <span id="badge-res-status" style="font-size: 0.63rem; font-weight: 700; padding: 2px 7px; border-radius: 6px; background: #fef3c7; color: #b45309;">¡RESONANCIA! Amplitud Máxima (f_ext ≈ f_0)</span>
+              </div>
+              <input type="range" id="slider-res-f" min="0.5" max="3.5" step="0.05" value="2.0" style="width: 100%;">
+            </div>
+
+            <!-- EJEMPLO 17 V3.0: SITUACIÓN REAL - EL COLUMPIO EN EL PARQUE -->
+            <div class="v3-real-card">
+              <div class="v3-card-header">
+                <span class="v3-card-badge">
+                  <i class="fas fa-child"></i> Ejemplo Real 17: El Columpio Infantil y Resonancia Mecánica
+                </span>
+                <span class="v3-card-tag" id="v3-res-badge">Resonancia</span>
+              </div>
+              <p class="v3-real-situation">
+                Un columpio tiene una frecuencia natural de oscilación \(f_0 = 0.5\text{ Hz}\) (\(T = 2\text{ s}\)). Para elevarlo a gran altura sin esfuerzo, cada empuje periódico debe coincidir exactamente con \(f_0\).
+              </p>
+
+              <div class="v3-controls-bar">
+                <div class="v3-control-group">
+                  <label>Frecuencia de empujes \(f_{\text{ext}}\): <span class="v3-control-val" id="v3-res-freq-val">0.50 Hz</span></label>
+                  <input type="range" class="v3-slider" id="v3-res-freq" min="0.10" max="1.00" step="0.05" value="0.50">
+                </div>
+              </div>
+
+              <div class="v3-math-panel">
+                <div class="v3-math-grid">
+                  <div class="v3-math-pill">
+                    <span class="v3-math-lbl">FRECUENCIA NATURAL (f0)</span>
+                    <span class="v3-math-num">0.50 Hz</span>
+                  </div>
+                  <div class="v3-math-pill">
+                    <span class="v3-math-lbl">ÁNGULO / AMPLITUD ESTIMADA</span>
+                    <span class="v3-math-num" style="color: #b45309;" id="v3-res-amp-out">88°</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="v3-quiz-box">
+                <div class="v3-quiz-prompt">
+                  <i class="fas fa-circle-question"></i>
+                  <span>Pregunta: ¿En qué momento del ciclo debe aplicarse cada empuje para lograr la máxima amplitud de balanceo?</span>
+                </div>
+                <div class="v3-options-group">
+                  <label class="v3-opt-label">
+                    <input type="radio" name="v3-swing-opt" value="inphase">
+                    <span>Justo en el punto de retorno, empujando en fase y en la misma dirección de la velocidad natural.</span>
+                  </label>
+                  <label class="v3-opt-label">
+                    <input type="radio" name="v3-swing-opt" value="opposed">
+                    <span>Cuando el columpio viene de regreso en contra de los brazos.</span>
+                  </label>
+                </div>
+                <button type="button" class="v3-btn-check" id="v3-swing-check">
+                  <i class="fas fa-check"></i> Comprobar respuesta
+                </button>
+                <div class="v3-feedback" id="v3-swing-feedback"></div>
+              </div>
+            </div>
+          </div>
+
+          <footer class="stationery-footer">
+            <span>Universidad Tecnológica de Pereira • 2026</span>
+            <span>Pág. 19 de 30</span>
+          </footer>
+        </div>
+
+        <!-- Página 20: Industria 4.0 -->
+        <div class="book-page page-right" id="page-20">
+          <header class="stationery-header">
+            <div class="header-top-meta">
+              <span class="header-category-tag">INGENIERÍA INDUSTRIAL</span>
+              <span class="page-badge-pill">Pág. 20</span>
+            </div>
+            <div class="header-title-row">
+              <h2 class="page-title-script">Aplicaciones en Industria 4.0</h2>
+              <i class="fas fa-gears title-doodle"></i>
+            </div>
+          </header>
+
+          <div class="stationery-body">
+            <div class="note-block">
+              <div class="note-banner-title">
+                <i class="fas fa-microchip"></i> Mantenimiento Predictivo por FFT
+              </div>
+              <p class="note-content">
+                Transformada Rápida de Fourier (FFT) en acelerómetros para detectar desbalances, solturas mecánicas y desgaste de rodamientos antes de una parada crítica de planta.
+              </p>
+            </div>
+
+            <div class="note-block">
+              <div class="note-banner-title">
+                <i class="fas fa-bullseye"></i> Ensayos No Destructivos (NDT)
+              </div>
+              <p class="note-content">
+                Ultrasonido de alta frecuencia (\(1-10\text{ MHz}\)) para inspección volumétrica de soldaduras y medición de espesores residuales en tuberías industriales.
+              </p>
+            </div>
+
+            <!-- EJEMPLO 18 V3.0: SITUACIÓN REAL - MANTENIMIENTO PREDICTIVO EN MOTOR INDUSTRIAL -->
+            <div class="v3-real-card">
+              <div class="v3-card-header">
+                <span class="v3-card-badge">
+                  <i class="fas fa-microchip"></i> Ejemplo Real 18: Monitoreo Predictivo en Bomba Centrífuga
+                </span>
+                <span class="v3-card-tag">Industria 4.0</span>
+              </div>
+              <p class="v3-real-situation">
+                Un acelerómetro piezoeléctrico IoT transmite la vibración de un motor industrial de \(1800\text{ RPM}\) (\(30\text{ Hz}\)). Compara la señal normal con la señal bajo falla incipiente de rodamiento:
+              </p>
+
+              <div class="v3-controls-bar" style="justify-content: center; gap: 8px;">
+                <button type="button" class="v3-btn-action active" id="v3-motor-normal-btn">
+                  <i class="fas fa-circle-check"></i> Operación Normal (Sano)
+                </button>
+                <button type="button" class="v3-btn-action" id="v3-motor-fault-btn">
+                  <i class="fas fa-triangle-exclamation"></i> Condición de Falla (Rodamiento)
+                </button>
+              </div>
+
+              <div class="v3-canvas-wrap" style="height: 125px;">
+                <canvas id="v3-canvas-motor"></canvas>
+              </div>
+
+              <p class="v3-real-situation" id="v3-motor-diag" style="font-size: 0.72rem; margin-bottom: 6px;"></p>
+
+              <div class="v3-quiz-box">
+                <div class="v3-quiz-prompt">
+                  <i class="fas fa-circle-question"></i>
+                  <span>Pregunta: En mantenimiento predictivo 4.0, ¿por qué es indispensable aplicar la Transformada Rápida de Fourier (FFT) a la vibración?</span>
+                </div>
+                <div class="v3-options-group">
+                  <label class="v3-opt-label">
+                    <input type="radio" name="v3-motor-opt" value="fft">
+                    <span>Para descomponer la vibración caótica en frecuencias discretas y aislar la falla exacta (BPFO en rodamiento, desbalance o soltura).</span>
+                  </label>
+                  <label class="v3-opt-label">
+                    <input type="radio" name="v3-motor-opt" value="cooling">
+                    <span>Para refrigerar los devanados del motor eléctrico.</span>
+                  </label>
+                </div>
+                <button type="button" class="v3-btn-check" id="v3-motor-check">
+                  <i class="fas fa-check"></i> Comprobar diagnóstico
+                </button>
+                <div class="v3-feedback" id="v3-motor-feedback"></div>
+              </div>
+            </div>
+          </div>
+
+          <footer class="stationery-footer">
+            <span>Universidad Tecnológica de Pereira • 2026</span>
+            <span>Pág. 20 de 30</span>
+          </footer>
+        </div>
+      </div>
+
+      <!-- ===================================================================
+           PLIEGO 11: PÁGS. 21 Y 22 (TALLER DE EJERCICIOS & SOLUCIONES)
+           =================================================================== -->
+      <div class="book-spread" id="spread-11" data-spread="11">
+        <!-- Página 21: Ejercicios -->
+        <div class="book-page page-left" id="page-21">
+          <header class="stationery-header">
+            <div class="header-top-meta">
+              <span class="header-category-tag">TALLER PRÁCTICO CUANTITATIVO</span>
+              <span class="page-badge-pill">Pág. 21</span>
+            </div>
+            <div class="header-title-row">
+              <h2 class="page-title-script">Ejercicios de Aplicación</h2>
+              <i class="fas fa-pen-to-square title-doodle"></i>
+            </div>
+          </header>
+
+          <div class="stationery-body">
+            <!-- Ejercicio 1 -->
+            <div class="note-block" style="padding: 7px 11px; margin-bottom: 6px;">
+              <div class="note-banner-title"><i class="fas fa-pencil"></i> Ejercicio 1: Cinemática en Cuerda de Acero</div>
+              <p class="note-content" style="font-size: 0.74rem; line-height: 1.35; margin-bottom: 4px;">
+                <strong>Enunciado:</strong> Una perturbación armónica transversal se propaga a lo largo de una cuerda tensa con rapidez constante \(v = 300\text{ m/s}\) y una frecuencia de excitación oscilatoria \(f = 150\text{ Hz}\). Determine el valor de la longitud de onda (\(\lambda\)) en metros.
+              </p>
+              <div style="font-size: 0.70rem; color: #475569; margin-bottom: 4px;">
+                <strong>Datos:</strong> \(v = 300\text{ m/s}\), \(f = 150\text{ s}^{-1}\) • <strong>Incógnita:</strong> \(\lambda\) [m]
+              </div>
+              <div style="display: flex; gap: 6px; align-items: center;">
+                <input type="text" id="input-ex-1" placeholder="Ej: 2.0" style="padding: 3px 8px; border-radius: 6px; border: 1px solid #c4b5fd; width: 75px; font-family:var(--font-mono); font-size: 0.78rem;">
+                <span style="font-size: 0.72rem; font-weight: 700;">m</span>
+                <button class="btn-check-exercise" id="btn-check-ex-1" style="padding: 3px 10px; font-size: 0.72rem;">Validar</button>
+              </div>
+              <div class="exercise-feedback" id="feedback-ex-1" style="font-size: 0.70rem; margin-top: 3px;"></div>
+            </div>
+
+            <!-- Ejercicio 2 -->
+            <div class="note-block" style="padding: 7px 11px;">
+              <div class="note-banner-title"><i class="fas fa-pencil"></i> Ejercicio 2: Dinámica de Cuerda Polimérica Industrial</div>
+              <p class="note-content" style="font-size: 0.74rem; line-height: 1.35; margin-bottom: 4px;">
+                <strong>Enunciado:</strong> Un cable industrial de polímero estructural posee una densidad lineal de masa \(\mu = 0.050\text{ kg/m}\) y se somete a una fuerza de tensión axial uniforme de \(T_s = 720\text{ N}\). Calcule la velocidad de propagación de las ondas transversales (\(v\)) en m/s.
+              </p>
+              <div style="font-size: 0.70rem; color: #475569; margin-bottom: 4px;">
+                <strong>Datos:</strong> \(\mu = 0.050\text{ kg/m}\), \(T_s = 720\text{ N}\) • <strong>Incógnita:</strong> \(v\) [m/s]
+              </div>
+              <div style="display: flex; gap: 6px; align-items: center;">
+                <input type="text" id="input-ex-2" placeholder="Ej: 120.0" style="padding: 3px 8px; border-radius: 6px; border: 1px solid #c4b5fd; width: 75px; font-family:var(--font-mono); font-size: 0.78rem;">
+                <span style="font-size: 0.72rem; font-weight: 700;">m/s</span>
+                <button class="btn-check-exercise" id="btn-check-ex-2" style="padding: 3px 10px; font-size: 0.72rem;">Validar</button>
+              </div>
+              <div class="exercise-feedback" id="feedback-ex-2" style="font-size: 0.70rem; margin-top: 3px;"></div>
+            </div>
+          </div>
+
+          <footer class="stationery-footer">
+            <span>Universidad Tecnológica de Pereira • 2026</span>
+            <span>Pág. 21 de 30</span>
+          </footer>
+        </div>
+
+        <!-- Página 22: Soluciones -->
+        <div class="book-page page-right" id="page-22">
+          <header class="stationery-header">
+            <div class="header-top-meta">
+              <span class="header-category-tag">SOLUCIONARIO ANALÍTICO RIGUROSO</span>
+              <span class="page-badge-pill">Pág. 22</span>
+            </div>
+            <div class="header-title-row">
+              <h2 class="page-title-script">Soluciones Paso a Paso</h2>
+              <i class="fas fa-check-double title-doodle"></i>
+            </div>
+          </header>
+
+          <div class="stationery-body">
+            <!-- Solución Detallada 1 -->
+            <div class="note-block" style="padding: 6px 10px; margin-bottom: 5px;">
+              <div class="note-banner-title" style="font-size: 0.74rem;"><i class="fas fa-graduation-cap"></i> Solución Ejercicio 1 (9 Pasos Metodológicos)</div>
+              <div style="font-size: 0.69rem; line-height: 1.32; display: flex; flex-direction: column; gap: 2px; color: #334155;">
+                <div><strong>1. Enunciado:</strong> Hallar \(\lambda\) para \(v = 300\text{ m/s}\) y \(f = 150\text{ Hz}\).</div>
+                <div><strong>2. Datos conocidos:</strong> \(v = 300\text{ m/s}\), \(f = 150\text{ s}^{-1}\).</div>
+                <div><strong>3. Variable a encontrar:</strong> Longitud de onda espacial \(\lambda\) [m].</div>
+                <div><strong>4. Fórmula:</strong> Relación de dispersión cinemática: \(v = \lambda f \implies \lambda = \frac{v}{f}\).</div>
+                <div><strong>5. Sustitución:</strong> \(\lambda = \frac{300\text{ m/s}}{150\text{ s}^{-1}}\).</div>
+                <div><strong>6. Desarrollo:</strong> \(\lambda = \left(\frac{300}{150}\right)\left[\frac{\text{m}\cdot\text{s}^{-1}}{\text{s}^{-1}}\right] = 2.00\text{ m}\).</div>
+                <div><strong>7. Resultado:</strong> \(\lambda = 2.00\).</div>
+                <div><strong>8. Unidad SI:</strong> Metros (\(\text{m}\)).</div>
+                <div><strong>9. Interpretación física:</strong> La separación espacial entre dos crestas consecutivas en fase es \(2.00\text{ m}\). En un periodo \(T = 1/f = 6.67\text{ ms}\), la perturbación avanza exactamente \(2.00\text{ m}\).</div>
+              </div>
+            </div>
+
+            <!-- Solución Detallada 2 -->
+            <div class="note-block" style="padding: 6px 10px;">
+              <div class="note-banner-title" style="font-size: 0.74rem;"><i class="fas fa-graduation-cap"></i> Solución Ejercicio 2 (9 Pasos Metodológicos)</div>
+              <div style="font-size: 0.69rem; line-height: 1.32; display: flex; flex-direction: column; gap: 2px; color: #334155;">
+                <div><strong>1. Enunciado:</strong> Rapidez de onda con \(\mu = 0.050\text{ kg/m}\) y \(T_s = 720\text{ N}\).</div>
+                <div><strong>2. Datos conocidos:</strong> \(\mu = 0.050\text{ kg/m}\), \(T_s = 720\text{ N} = 720\text{ kg}\cdot\text{m/s}^2\).</div>
+                <div><strong>3. Variable a encontrar:</strong> Velocidad de fase transversal \(v\) [m/s].</div>
+                <div><strong>4. Fórmula:</strong> Ecuación de cuerdas tensas: \(v = \sqrt{\frac{T_s}{\mu}}\).</div>
+                <div><strong>5. Sustitución:</strong> \(v = \sqrt{\frac{720\text{ kg}\cdot\text{m/s}^2}{0.050\text{ kg/m}}}\).</div>
+                <div><strong>6. Desarrollo:</strong> \(v = \sqrt{14\,400\text{ m}^2/\text{s}^2} = 120.0\text{ m/s}\).</div>
+                <div><strong>7. Resultado:</strong> \(v = 120.0\).</div>
+                <div><strong>8. Unidad SI:</strong> Metros por segundo (\(\text{m/s}\)).</div>
+                <div><strong>9. Interpretación física:</strong> La rapidez depende del cociente entre la fuerza recuperadora (\(T_s\)) y la inercia (\(\mu\)). Una mayor tensión acelera las partículas acortando el tiempo de respuesta elástica del medio.</div>
+              </div>
+            </div>
+          </div>
+
+          <footer class="stationery-footer">
+            <span>Universidad Tecnológica de Pereira • 2026</span>
+            <span>Pág. 22 de 30</span>
+          </footer>
+        </div>
+      </div>
+
+      <!-- ===================================================================
+           PLIEGO 12: PÁGS. 23 Y 24 (LABORATORIO GRÁFICO & QUIZ EVALUATIVO)
+           =================================================================== -->
+      <div class="book-spread" id="spread-12" data-spread="12">
+        <!-- Página 23: Laboratorio Gráfico -->
+        <div class="book-page page-left" id="page-23">
+          <header class="stationery-header">
+            <div class="header-top-meta">
+              <span class="header-category-tag">LABORATORIO INTERACTIVO</span>
+              <span class="page-badge-pill">Pág. 23</span>
+            </div>
+            <div class="header-title-row">
+              <h2 class="page-title-script">Laboratorio Gráfico de Ondas</h2>
+              <i class="fas fa-chart-sine title-doodle"></i>
+            </div>
+          </header>
+
+          <div class="stationery-body">
+            <div class="sim-stationery-card">
+              <div class="simulation-canvas-wrap" style="height: 240px;">
+                <canvas id="wave-graph-canvas"></canvas>
+              </div>
+              <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 6px 0;">
+                <div>
+                  <label style="font-size: 0.65rem; font-weight: 700;">A: <span id="val-wave-a" style="color:var(--c-lavender-dark);">1.00 m</span></label>
+                  <input type="range" id="slider-wave-a" min="0.2" max="2.0" step="0.1" value="1.0" style="width: 100%;">
+                </div>
+                <div>
+                  <label style="font-size: 0.65rem; font-weight: 700;">f: <span id="val-wave-f" style="color:var(--c-lavender-dark);">1.20 Hz</span></label>
+                  <input type="range" id="slider-wave-f" min="0.2" max="3.0" step="0.1" value="1.2" style="width: 100%;">
+                </div>
+                <div>
+                  <label style="font-size: 0.65rem; font-weight: 700;">λ: <span id="val-wave-l" style="color:var(--c-lavender-dark);">4.00 m</span></label>
+                  <input type="range" id="slider-wave-l" min="1.0" max="8.0" step="0.2" value="4.0" style="width: 100%;">
+                </div>
+                <div>
+                  <label style="font-size: 0.65rem; font-weight: 700;">v: <span id="val-wave-v" style="color:var(--c-lavender-dark);">4.80 m/s</span></label>
+                  <div style="font-size: 0.62rem; color: #64748b; margin-top: 4px;">v = λ · f</div>
+                </div>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.72rem; margin-top: 4px;">
+                <span id="val-wave-eq" style="font-family: var(--font-mono); color: var(--c-lavender-dark); font-weight: 600;">y(x,t) = 1.00 · sin(1.57x - 7.54t)</span>
+                <div style="display: flex; gap: 4px;">
+                  <button id="btn-wave-play" class="btn-harmonic-select"><i class="fas fa-pause"></i> Pausa</button>
+                  <button id="btn-wave-reset" class="btn-harmonic-select" title="Reiniciar"><i class="fas fa-rotate-left"></i></button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <footer class="stationery-footer">
+            <span>Universidad Tecnológica de Pereira • 2026</span>
+            <span>Pág. 23 de 30</span>
+          </footer>
+        </div>
+
+        <!-- Página 24: Quiz -->
+        <div class="book-page page-right" id="page-24">
+          <header class="stationery-header">
+            <div class="header-top-meta">
+              <span class="header-category-tag">EVALUACIÓN FORMATIVA</span>
+              <span class="page-badge-pill">Pág. 24</span>
+            </div>
+            <div class="header-title-row">
+              <h2 class="page-title-script">Quiz Conceptual</h2>
+              <i class="fas fa-award title-doodle"></i>
+            </div>
+          </header>
+
+          <div class="stationery-body">
+            <div class="note-block" style="padding: 14px 16px; flex: 1; display: flex; flex-direction: column; justify-content: center;">
+              <div id="quiz-main">
+                <div style="display: flex; justify-content: space-between; font-size: 0.74rem; font-weight: 700; color: #64748b; margin-bottom: 8px;">
+                  <span id="quiz-step-count">Pregunta 1 de 10</span>
+                  <span id="quiz-live-score" style="color: var(--c-lavender-dark);">Aciertos: 0 / 0</span>
+                </div>
+                <h3 id="quiz-q-title" style="font-size: 0.92rem; color: #3b2766; margin-bottom: 10px; min-height: 44px; line-height: 1.35;">
+                  Cargando...
+                </h3>
+                <div id="quiz-options-container" style="display: flex; flex-direction: column; gap: 8px;"></div>
+                <div id="quiz-explanation" style="display: none; padding: 8px 12px; border-radius: 8px; font-size: 0.78rem; margin-top: 10px; line-height: 1.4;"></div>
+                <button id="btn-quiz-next" style="display: none; width: 100%; margin-top: 10px; padding: 8px; border-radius: 8px; background: var(--c-purple-accent); color: #fff; border: none; font-weight: 700; font-size: 0.8rem; cursor: pointer;">
+                  Siguiente Pregunta <i class="fas fa-arrow-right"></i>
+                </button>
+              </div>
+
+              <div id="quiz-final" style="display: none; text-align: center; padding: 16px;">
+                <div id="final-medal" style="font-size: 2.5rem; margin-bottom: 8px;"></div>
+                <h3 style="font-size: 1.1rem; color: #3b2766;">¡Evaluación Completada!</h3>
+                <div id="final-grade" style="font-family: var(--font-mono); font-size: 1.15rem; font-weight: 800; color: var(--c-lavender-dark); margin: 8px 0;"></div>
+                <p id="final-detail" style="font-size: 0.8rem; color: #64748b; margin-bottom: 12px;"></p>
+                <button id="btn-quiz-restart" class="btn-nav-pill next-solid" style="padding: 6px 18px; font-size: 0.8rem;"><i class="fas fa-rotate-left"></i> Reiniciar</button>
+              </div>
+            </div>
+          </div>
+
+          <footer class="stationery-footer">
+            <span>Universidad Tecnológica de Pereira • 2026</span>
+            <span>Pág. 24 de 30</span>
+          </footer>
+        </div>
+      </div>
+
+      <!-- ===================================================================
+           PLIEGO 13: PÁGS. 25 Y 26 (SIMULACIONES INTERACTIVAS)
+           =================================================================== -->
+      <div class="book-spread" id="spread-13" data-spread="13">
+        <!-- Página 25: Simulación Ondas Estacionarias -->
+        <div class="book-page page-left" id="page-25">
+          <header class="stationery-header">
+            <div class="header-top-meta">
+              <span class="header-category-tag">SIMULACIÓN INTERACTIVA</span>
+              <span class="page-badge-pill">Pág. 25</span>
+            </div>
+            <div class="header-title-row">
+              <h2 class="page-title-script">Modos Normales de Vibración</h2>
+              <i class="fas fa-wave-pulse title-doodle"></i>
+            </div>
+          </header>
+
+          <div class="stationery-body">
+            <div class="sim-stationery-card">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-size: 0.75rem;">
+                <span id="val-mode-title" style="font-weight: 700; color: var(--c-lavender-dark);"><i class="fas fa-guitar"></i> Modo Normal n = 1 (Fundamental)</span>
+                <span id="val-mode-freq" style="font-family: var(--font-mono); font-weight: 700; color: #0284c7;">f₁ = 1 · f₁ = 110 Hz</span>
+              </div>
+              <div class="simulation-canvas-wrap" style="height: 230px;">
+                <canvas id="suite-standing-canvas"></canvas>
+              </div>
+              <div style="display: flex; gap: 4px; justify-content: center; align-items: center; margin-top: 6px;">
+                <span style="font-size: 0.68rem; font-weight: 700; color: #475569;">Armónico \(n\):</span>
+                <button class="btn-harmonic-select active" id="btn-suite-harmonic-1" data-harmonic-mode="1">n=1</button>
+                <button class="btn-harmonic-select" id="btn-suite-harmonic-2" data-harmonic-mode="2">n=2</button>
+                <button class="btn-harmonic-select" id="btn-suite-harmonic-3" data-harmonic-mode="3">n=3</button>
+                <button class="btn-harmonic-select" id="btn-suite-harmonic-4" data-harmonic-mode="4">n=4</button>
+                <button class="btn-harmonic-select" id="btn-suite-harmonic-5" data-harmonic-mode="5">n=5</button>
+              </div>
+              <div style="display: flex; justify-content: space-between; font-size: 0.68rem; color: #64748b; margin-top: 4px;">
+                <span><i class="fas fa-circle" style="color: #059669;"></i> <strong>Nodos:</strong> Inmóviles</span>
+                <span><i class="fas fa-circle" style="color: #dc2626;"></i> <strong>Antinodos:</strong> Máximo \(2A\)</span>
+              </div>
+            </div>
+          </div>
+
+          <footer class="stationery-footer">
+            <span>Universidad Tecnológica de Pereira • 2026</span>
+            <span>Pág. 25 de 30</span>
+          </footer>
+        </div>
+
+        <!-- Página 26: Simulación Reflexión y Refracción -->
+        <div class="book-page page-right" id="page-26">
+          <header class="stationery-header">
+            <div class="header-top-meta">
+              <span class="header-category-tag">SIMULACIÓN INTERACTIVA</span>
+              <span class="page-badge-pill">Pág. 26</span>
+            </div>
+            <div class="header-title-row">
+              <h2 class="page-title-script">Reflexión y Transmisión</h2>
+              <i class="fas fa-arrows-split-up-and-left title-doodle"></i>
+            </div>
+          </header>
+
+          <div class="stationery-body">
+            <div class="sim-stationery-card">
+              <div class="simulation-canvas-wrap" style="height: 185px;">
+                <canvas id="reflection-canvas"></canvas>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px;">
+                <div style="display: flex; gap: 6px;">
+                  <button id="btn-refl-pulse" class="btn-harmonic-select active"><i class="fas fa-play"></i> Enviar Pulso</button>
+                  <button id="btn-refl-fixed" class="btn-harmonic-select active"><i class="fas fa-anchor"></i> Fijo (Inversión)</button>
+                  <button id="btn-refl-free" class="btn-harmonic-select"><i class="fas fa-ring"></i> Libre (Sin Inversión)</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <footer class="stationery-footer">
+            <span>Universidad Tecnológica de Pereira • 2026</span>
+            <span>Pág. 26 de 30</span>
+          </footer>
+        </div>
+      </div>
+
+      <!-- ===================================================================
+           PLIEGO 14: PÁGS. 27 Y 28 (SIMULACIÓN ONDA VIAJERA & PREGUNTA λ)
+           =================================================================== -->
+      <div class="book-spread" id="spread-14" data-spread="14">
+        <!-- Página 27: Simulación Onda Viajera Especial -->
+        <div class="book-page page-left" id="page-27">
+          <header class="stationery-header">
+            <div class="header-top-meta">
+              <span class="header-category-tag">SIMULACIÓN ESPECIAL • ONDA VIAJERA</span>
+              <span class="page-badge-pill">Pág. 27</span>
+            </div>
+            <div class="header-title-row">
+              <h2 class="page-title-script">Simulación: Onda Viajera \(y(x,t)\)</h2>
+              <i class="fas fa-sparkles title-doodle" style="color:#f59e0b;"></i>
+            </div>
+          </header>
+
+          <div class="stationery-body">
+            <div class="special-sim-container">
+              <!-- Ecuación activa -->
+              <div class="special-wave-header-eq">
+                <span>Ecuación: <span id="val-spec-eq">y(x,t) = 4.0 · sin[ (2π / 5.0) · (x - 3.0t) ]</span></span>
+                <span style="font-size: 0.68rem; color: #64748b;">x, y en [cm] • t en [s]</span>
+              </div>
+
+              <!-- Canvas con regla centimétrica calibrada y cota λ=5cm -->
+              <div class="special-wave-wrapper">
+                <canvas id="special-wave-canvas"></canvas>
+              </div>
+
+              <!-- Tarjetas de Métricas Físicas -->
+              <div class="special-metrics-row">
+                <div class="special-metric-pill">
+                  <span class="lbl">Amplitud (A)</span>
+                  <span class="val" id="val-spec-a">4.0 cm</span>
+                </div>
+                <div class="special-metric-pill">
+                  <span class="lbl">Longitud (λ)</span>
+                  <span class="val" id="val-spec-lambda">5.0 cm</span>
+                </div>
+                <div class="special-metric-pill">
+                  <span class="lbl">Velocidad (v)</span>
+                  <span class="val" id="val-spec-v">3.0 cm/s</span>
+                </div>
+                <div class="special-metric-pill">
+                  <span class="lbl">Frecuencia (f)</span>
+                  <span class="val" id="val-spec-f">0.60 Hz</span>
+                </div>
+              </div>
+
+              <!-- Controles deslizantes -->
+              <div class="special-controls-grid">
+                <div class="special-ctrl-group">
+                  <label>Tiempo \(t\): <span id="val-spec-t">0.00 s</span></label>
+                  <input type="range" id="slider-spec-t" min="0" max="10" step="0.05" value="0">
+                </div>
+                <div class="special-ctrl-group">
+                  <label>Amplitud \(A\):</label>
+                  <input type="range" id="slider-spec-a" min="1" max="6" step="0.5" value="4.0">
+                </div>
+                <div class="special-ctrl-group">
+                  <label>Longitud \(\lambda\):</label>
+                  <input type="range" id="slider-spec-lambda" min="2" max="10" step="0.5" value="5.0">
+                </div>
+                <div class="special-ctrl-group">
+                  <label>Velocidad \(v\):</label>
+                  <input type="range" id="slider-spec-v" min="1" max="8" step="0.5" value="3.0">
+                </div>
+              </div>
+
+              <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.68rem; color: #64748b;">
+                <div>
+                  <span>T: <strong id="val-spec-period">1.67 s</strong></span> • 
+                  <span>k: <strong id="val-spec-k">1.26 rad/cm</strong></span> • 
+                  <span>ω: <strong id="val-spec-omega">3.77 rad/s</strong></span>
+                </div>
+                <div class="special-btn-row">
+                  <button id="btn-spec-play" class="btn-harmonic-select active" style="padding: 3px 10px;"><i class="fas fa-pause"></i> Pausar</button>
+                  <button id="btn-spec-reset" class="btn-harmonic-select" style="padding: 3px 8px;"><i class="fas fa-rotate-left"></i> Reset</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <footer class="stationery-footer">
+            <span>Universidad Tecnológica de Pereira • 2026</span>
+            <span>Pág. 27 de 30</span>
+          </footer>
+        </div>
+
+        <!-- Página 28: Pregunta Didáctica de Lambda -->
+        <div class="book-page page-right" id="page-28">
+          <header class="stationery-header">
+            <div class="header-top-meta">
+              <span class="header-category-tag">TALLER CONCEPTUAL INTERACTIVO</span>
+              <span class="page-badge-pill">Pág. 28</span>
+            </div>
+            <div class="header-title-row">
+              <h2 class="page-title-script">Deducción de la Longitud (\(\lambda\))</h2>
+              <i class="fas fa-circle-question title-doodle"></i>
+            </div>
+          </header>
+
+          <div class="stationery-body">
+            <div class="lambda-quiz-card">
+              <div class="lambda-quiz-title">
+                <i class="fas fa-lightbulb" style="color: #f59e0b;"></i>
+                <span>¿Cuál es el valor exacto de la longitud de onda (\(\lambda\)) en \(y(x,t) = 4\sin[\frac{2\pi}{5}(x - 3t)]\)?</span>
+              </div>
+
+              <div class="lambda-options-grid">
+                <button class="lambda-btn" data-choice="A">
+                  <span style="width:20px; height:20px; border-radius:50%; background:#ece8fc; display:flex; align-items:center; justify-content:center;">A</span>
+                  <span>3 cm</span>
+                </button>
+                <button class="lambda-btn" data-choice="B">
+                  <span style="width:20px; height:20px; border-radius:50%; background:#ece8fc; display:flex; align-items:center; justify-content:center;">B</span>
+                  <span>4 cm</span>
+                </button>
+                <button class="lambda-btn" data-choice="C">
+                  <span style="width:20px; height:20px; border-radius:50%; background:#ece8fc; display:flex; align-items:center; justify-content:center;">C</span>
+                  <span>5 cm</span>
+                </button>
+                <button class="lambda-btn" data-choice="D">
+                  <span style="width:20px; height:20px; border-radius:50%; background:#ece8fc; display:flex; align-items:center; justify-content:center;">D</span>
+                  <span>10 cm</span>
+                </button>
+              </div>
+
+              <div class="lambda-feedback-box" id="lambda-feedback-box"></div>
+            </div>
+
+            <!-- Desglose Matemático Formal -->
+            <div class="note-block" style="padding: 8px 12px;">
+              <div class="note-banner-title"><i class="fas fa-calculator"></i> Desglose Canónico Paso a Paso</div>
+              <p class="note-content" style="font-size: 0.76rem;">
+                Comparando con \(y(x,t) = A\sin\left[\frac{2\pi}{\lambda}(x - vt)\right]\):
+              </p>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px; font-family:var(--font-mono); font-size: 0.72rem; margin-top: 4px;">
+                <div style="background:#f8fafc; padding:3px 6px; border-radius:4px;">Amplitud: A = 4 cm</div>
+                <div style="background:#f8fafc; padding:3px 6px; border-radius:4px;">Longitud: λ = 5 cm</div>
+                <div style="background:#f8fafc; padding:3px 6px; border-radius:4px;">Velocidad: v = 3 cm/s</div>
+                <div style="background:#f8fafc; padding:3px 6px; border-radius:4px;">Frecuencia: f = 0.60 Hz</div>
+              </div>
+            </div>
+          </div>
+
+          <footer class="stationery-footer">
+            <span>Universidad Tecnológica de Pereira • 2026</span>
+            <span>Pág. 28 de 30</span>
+          </footer>
+        </div>
+      </div>
+
+      <!-- ===================================================================
+           PLIEGO 15: PÁGS. 29 Y 30 (SIMULACIÓN INTERACTIVA DEL EFECTO DOPPLER)
+           =================================================================== -->
+      <div class="book-spread" id="spread-15" data-spread="15">
+        <!-- Página 29: SIMULACIÓN INTERACTIVA DEL EFECTO DOPPLER -->
+        <div class="book-page page-left" id="page-29">
+          <header class="stationery-header">
+            <div class="header-top-meta">
+              <span class="header-category-tag">LABORATORIO VIRTUAL • ACÚSTICA</span>
+              <span class="page-badge-pill">Pág. 29</span>
+            </div>
+            <div class="header-title-row">
+              <h2 class="page-title-script">Laboratorio virtual: Efecto Doppler</h2>
+              <i class="fas fa-truck-medical title-doodle" style="color: #ec4899;"></i>
+            </div>
+          </header>
+
+          <div class="stationery-body">
+            <div class="note-block" style="padding: 8px 12px; margin-bottom: 4px;">
+              <p class="note-content" style="font-size: 0.74rem; color: #475569; margin: 0; line-height: 1.45;">
+                Simulación interactiva de la propagación del sonido y el cambio de frecuencia percibida debido al movimiento relativo entre la fuente sonora y el observador.
+              </p>
+            </div>
+
+            <!-- Contenedor del Simulador Completo del Efecto Doppler -->
+            <div class="sim-stationery-card" style="margin-top: 4px; padding: 0; overflow: hidden; border: 1.5px solid rgba(138, 123, 235, 0.35); border-radius: 12px; height: 580px;">
+              <iframe src="Laboratorio virtual · Efecto Doppler.html" title="Laboratorio virtual · Efecto Doppler" style="width: 100%; height: 100%; border: none; display: block;" allow="autoplay; fullscreen" loading="lazy"></iframe>
+            </div>
+          </div>
+
+          <footer class="stationery-footer">
+            <span>Universidad Tecnológica de Pereira • 2026</span>
+            <span>Pág. 29 de 32</span>
+          </footer>
+        </div>
+
+        <!-- Página 30: Análisis y Casos del Efecto Doppler -->
+        <div class="book-page page-right" id="page-30">
+          <header class="stationery-header">
+            <div class="header-top-meta">
+              <span class="header-category-tag">GUÍA EXPERIMENTAL & FÍSICA</span>
+              <span class="page-badge-pill">Pág. 30</span>
+            </div>
+            <div class="header-title-row">
+              <h2 class="page-title-script">Análisis y Casos del Efecto Doppler</h2>
+              <i class="fas fa-flask-vial title-doodle" style="color: #6366f1;"></i>
+            </div>
+          </header>
+
+          <div class="stationery-body">
+            <!-- Bloque 1: Ecuaciones Formales -->
+            <div class="note-block" style="padding: 10px 14px;">
+              <div class="note-banner-title">
+                <i class="fas fa-wave-pulse"></i> Modelo Matemático de Frecuencia y Longitud de Onda
+              </div>
+              <p class="note-content" style="font-size: 0.74rem;">
+                Con la fuente sonora en movimiento y el observador en reposo (\(v_o = 0\)):
+              </p>
+              <div class="formula-stationery" style="margin: 4px 0;">
+                $$f' = f \left(\frac{v}{v \mp v_s}\right), \quad \lambda_{\text{delante}} = \frac{v - v_s}{f}, \quad \lambda_{\text{detrás}} = \frac{v + v_s}{f}$$
+              </div>
+              <p class="note-content" style="font-size: 0.71rem; color: #475569;">
+                Signo \((-)\) en denominador: fuente acercándose (\(f' > f\), compresión de frentes). Signo \((+)\): fuente alejándose (\(f' < f\), dilatación de frentes).
+              </p>
+            </div>
+
+            <!-- Bloque 2: Caso de Prueba Calibrado -->
+            <div class="note-block" style="padding: 10px 14px; background: rgba(245, 243, 255, 0.6); border-color: rgba(138, 123, 235, 0.4);">
+              <div class="note-banner-title" style="color: #4f46e5;">
+                <i class="fas fa-check-double"></i> Caso de Prueba Institucional y Verificación Física
+              </div>
+              <p class="note-content" style="font-size: 0.73rem;">
+                Parámetros patrón verificados en el simulador interactivo:
+              </p>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-family: var(--font-mono); font-size: 0.73rem; margin: 6px 0;">
+                <div style="background: #fff; padding: 6px 8px; border-radius: 6px; border: 1px solid #c4b5fd;">
+                  <strong style="color:#6366f1; display:block;">Entradas:</strong>
+                  \(f = 440\text{ Hz}\)<br>
+                  \(v = 343\text{ m/s}\)<br>
+                  \(v_s = 30\text{ m/s}\) (Acercándose)
+                </div>
+                <div style="background: #fff; padding: 6px 8px; border-radius: 6px; border: 1px solid #c4b5fd;">
+                  <strong style="color:#059669; display:block;">Resultados Obtenidos:</strong>
+                  \(f' \approx 482.2\text{ Hz}\)<br>
+                  \(\lambda_{\text{delante}} \approx 0.711\text{ m}\)<br>
+                  \(\lambda_{\text{detrás}} \approx 0.848\text{ m}\)
+                </div>
+              </div>
+              <p class="note-content" style="font-size: 0.70rem; color: #64748b;">
+                Número de Mach: \(\text{Ma} = v_s / v = 30 / 343 \approx 0.087\) (régimen subsónico).
+              </p>
+            </div>
+
+            <!-- Bloque 3: Tres Experimentos -->
+            <div class="note-block" style="padding: 10px 14px;">
+              <div class="note-banner-title">
+                <i class="fas fa-microscope"></i> Guía de los Tres Experimentos
+              </div>
+              <p class="note-content" style="font-size: 0.72rem; line-height: 1.4;">
+                • <strong>Exp. 1 (Fuente acercándose):</strong> Observa la compresión de frentes delanteros y el ascenso de frecuencia perceptible al oír el tono (\(f' > f\)).<br>
+                • <strong>Exp. 2 (Fuente alejándose):</strong> Comprueba la separación entre frentes y el descenso de tono (\(f' < f\)).<br>
+                • <strong>Exp. 3 (Variación de frecuencia):</strong> Modifica \(f\) a velocidad constante de \(30\text{ m/s}\) y comprueba la proporcionalidad directa de \(f'\).
+              </p>
+            </div>
+          </div>
+
+          <footer class="stationery-footer">
+            <span>Universidad Tecnológica de Pereira • 2026</span>
+            <span>Pág. 30 de 32</span>
+          </footer>
+        </div>
+      </div>
+
+      <!-- ===================================================================
+           PLIEGO 16: PÁGS. 31 Y 32 (REFERENCIAS & AGRADECIMIENTOS OFICIALES)
+           =================================================================== -->
+      <div class="book-spread" id="spread-16" data-spread="16">
+        <!-- Página 31: Referencias Bibliográficas Oficiales -->
+        <div class="book-page page-left full-image-page" id="page-31">
+          <img src="FUENTES.png" alt="Fuentes Académicas - Página 31" class="page-img-full">
+        </div>
+
+        <!-- Página 32: Cierre y Agradecimientos Oficiales UTP -->
+        <div class="book-page page-right full-image-page" id="page-32">
+          <img src="CIERRE.png" alt="Cierre y Agradecimientos Oficiales - Página 32" class="page-img-full">
+        </div>
+      </div>
+
+    </div><!-- /.notebook-container -->
+
+    <!-- ===================================================================
+         BARRA DE NAVEGACIÓN INFERIOR (MATCHING FOTO DE REFERENCIA)
+         =================================================================== -->
+    <div class="stationery-nav-bar">
+      <button class="btn-nav-pill prev" id="btn-spread-prev" title="Pliego anterior">
+        <i class="fas fa-arrow-left"></i> <span>Pág. Anterior</span>
+      </button>
+
+      <div class="nav-dropdown-pill">
+        <i class="fas fa-house home-icon"></i>
+        <span class="pages-text" id="spread-pages-label">Páginas 1-2 de 32</span>
+        <select id="spread-selector" class="spread-dropdown-native">
+          <option value="1">Pliego 1: Págs. 1 y 2 (Portada Oficial & Presentación)</option>
+          <option value="2">Pliego 2: Págs. 3 y 4 (¿Qué es una Onda? & Cinemática)</option>
+          <option value="3">Pliego 3: Págs. 5 y 6 (Clasificación por Medio & Dirección)</option>
+          <option value="4">Pliego 4: Págs. 7 y 8 (Magnitudes Fundamentales I & II)</option>
+          <option value="5">Pliego 5: Págs. 9 y 10 (Velocidad de Propagación & Calculadora)</option>
+          <option value="6">Pliego 6: Págs. 11 y 12 (Función Armónica & D'Alembert)</option>
+          <option value="7">Pliego 7: Págs. 13 y 14 (Energía, Potencia & Efecto Doppler)</option>
+          <option value="8">Pliego 8: Págs. 15 y 16 (Superposición, Interferencia & Estacionarias)</option>
+          <option value="9">Pliego 9: Págs. 17 y 18 (Reflexión, Refracción & Difracción)</option>
+          <option value="10">Pliego 10: Págs. 19 y 20 (Resonancia & Industria 4.0)</option>
+          <option value="11">Pliego 11: Págs. 21 y 22 (Taller de Ejercicios & Soluciones)</option>
+          <option value="12">Pliego 12: Págs. 23 y 24 (Laboratorio Gráfico & Quiz)</option>
+          <option value="13">Pliego 13: Págs. 25 y 26 (Simulaciones Interactivas)</option>
+          <option value="14">Pliego 14: Págs. 27 y 28 (Simulación Onda Viajera & Pregunta λ)</option>
+          <option value="15">Pliego 15: Págs. 29 y 30 (Laboratorio Virtual: Efecto Doppler)</option>
+          <option value="16">Pliego 16: Págs. 31 y 32 (Referencias & Agradecimientos UTP)</option>
+        </select>
+        <i class="fas fa-chevron-down arrow-down-icon"></i>
+      </div>
+
+      <button class="btn-nav-pill next-solid" id="btn-spread-next" title="Pliego siguiente">
+        <span>Pág. Siguiente</span> <i class="fas fa-arrow-right"></i>
+      </button>
+
+      <button class="btn-nav-pill icon-only" id="btn-sound-toggle" title="Sonido de hoja al pasar">
+        <i class="fas fa-volume-high" id="sound-icon"></i>
+      </button>
+
+      <button class="btn-nav-pill icon-only" id="btn-menu-toggle" title="Ver Índice Completo">
+        <i class="fas fa-bars"></i>
+      </button>
+
+      <button class="btn-nav-pill icon-only" id="btn-spread-fullscreen" title="Pantalla Completa (F11)">
+        <i class="fas fa-expand" id="nav-fullscreen-icon"></i>
+      </button>
+    </div>
+
+    <!-- Créditos Institucionales al Pie -->
+    <div class="notebook-credits-line">
+      Cuaderno Digital Universitario de Física III • Danna Yised Arias Martínez & Laura Yicel Ocampo Rodríguez • Universidad Tecnológica de Pereira
+    </div>
+
+  </main>
+
+  <!-- Scripts -->
+  <script src="js/canvas-simulations.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/v3-examples.js"></script>
+
+</body>
+</html>

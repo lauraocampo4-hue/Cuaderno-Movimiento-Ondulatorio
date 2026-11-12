@@ -1,0 +1,2640 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Superposición de Ondas — Física</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    /* ===== VARIABLES DE TEMA ===== */
+    :root {
+      --bg-app: #0f172a;
+      --bg-panel: #1e293b;
+      --bg-card: #1e293b;
+      --bg-input: #0f172a;
+      --border: #334155;
+      --text: #e2e8f0;
+      --text-muted: #94a3b8;
+      --primary: #6366f1;
+      --primary-h: #818cf8;
+      --accent: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --canvas-bg: #0a0e1a;
+      --grid-major: rgba(99,102,241,0.2);
+      --grid-minor: rgba(99,102,241,0.08);
+      --axis-color: rgba(226,232,240,0.6);
+      --tick-color: rgba(226,232,240,0.4);
+      --label-color: #94a3b8;
+    }
+    [data-theme="light"] {
+      --bg-app: #f1f5f9;
+      --bg-panel: #ffffff;
+      --bg-card: #f8fafc;
+      --bg-input: #ffffff;
+      --border: #cbd5e1;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --primary: #4f46e5;
+      --primary-h: #4338ca;
+      --accent: #059669;
+      --danger: #dc2626;
+      --warning: #d97706;
+      --canvas-bg: #ffffff;
+      --grid-major: rgba(79,70,229,0.15);
+      --grid-minor: rgba(79,70,229,0.06);
+      --axis-color: rgba(15,23,42,0.5);
+      --tick-color: rgba(15,23,42,0.3);
+      --label-color: #64748b;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg-app);
+      color: var(--text);
+      overflow: hidden;
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ===== HEADER ===== */
+    #app-header {
+      background: var(--bg-panel);
+      border-bottom: 1px solid var(--border);
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+      z-index: 100;
+    }
+    .header-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .header-title span.wave-icon {
+      font-size: 1.4rem;
+    }
+    .header-spacer { flex: 1; }
+    .btn-icon {
+      width: 36px; height: 36px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg-input);
+      color: var(--text);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+      transition: all 0.15s;
+    }
+    .btn-icon:hover { background: var(--primary); border-color: var(--primary); color: #fff; }
+    .btn-icon:focus { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+    /* ===== MAIN LAYOUT ===== */
+    #app-main {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* ===== LEFT PANEL ===== */
+    #left-panel {
+      width: 340px;
+      min-width: 260px;
+      max-width: 480px;
+      background: var(--bg-panel);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      flex-shrink: 0;
+      position: relative;
+    }
+    #panel-resizer {
+      position: absolute;
+      right: -4px;
+      top: 0; bottom: 0;
+      width: 8px;
+      cursor: col-resize;
+      z-index: 10;
+      background: transparent;
+    }
+    #panel-resizer:hover, #panel-resizer.dragging { background: var(--primary); }
+
+    .panel-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-panel);
+      flex-shrink: 0;
+    }
+    .panel-tab {
+      flex: 1;
+      padding: 8px 4px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      border-bottom: 2px solid transparent;
+      transition: all 0.15s;
+    }
+    .panel-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+    .panel-tab:hover:not(.active) { color: var(--text); }
+
+    .panel-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border) transparent;
+    }
+
+    /* ===== WAVE EDITOR ===== */
+    .section-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .wave-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin-bottom: 8px;
+      overflow: hidden;
+      transition: border-color 0.15s;
+    }
+    .wave-card:focus-within { border-color: var(--primary); }
+    .wave-card-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      cursor: pointer;
+    }
+    .wave-color-dot {
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      border: 2px solid rgba(255,255,255,0.3);
+      cursor: pointer;
+    }
+    .wave-name {
+      font-size: 0.82rem;
+      font-weight: 600;
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .wave-toggle {
+      position: relative;
+      width: 34px; height: 18px;
+      flex-shrink: 0;
+    }
+    .wave-toggle input { opacity: 0; width: 0; height: 0; }
+    .wave-toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background: var(--border);
+      border-radius: 18px;
+      transition: 0.2s;
+    }
+    .wave-toggle-slider:before {
+      content: '';
+      position: absolute;
+      width: 12px; height: 12px;
+      left: 3px; top: 3px;
+      background: white;
+      border-radius: 50%;
+      transition: 0.2s;
+    }
+    .wave-toggle input:checked + .wave-toggle-slider { background: var(--primary); }
+    .wave-toggle input:checked + .wave-toggle-slider:before { transform: translateX(16px); }
+
+    .wave-card-body {
+      padding: 0 10px 10px;
+    }
+    .equation-preview {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      background: var(--bg-input);
+      border-radius: 6px;
+      padding: 6px 8px;
+      margin-bottom: 6px;
+      min-height: 32px;
+      word-break: break-all;
+      font-family: 'Courier New', monospace;
+    }
+    .wave-actions {
+      display: flex;
+      gap: 4px;
+    }
+    .btn-sm {
+      padding: 4px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--bg-input);
+      color: var(--text);
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-sm:hover { border-color: var(--primary); color: var(--primary); }
+    .btn-sm.danger:hover { border-color: var(--danger); color: var(--danger); }
+
+    .btn-primary {
+      width: 100%;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: none;
+      background: var(--primary);
+      color: white;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 8px;
+      transition: all 0.15s;
+    }
+    .btn-primary:hover { background: var(--primary-h); }
+
+    /* ===== RESULTANTE CARD ===== */
+    .resultante-card {
+      background: linear-gradient(135deg, rgba(99,102,241,0.15), rgba(16,185,129,0.1));
+      border: 1px solid rgba(99,102,241,0.4);
+      border-radius: 10px;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+
+    /* ===== PARÁMETROS ===== */
+    .param-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .param-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      min-width: 80px;
+    }
+    .param-input {
+      flex: 1;
+      padding: 5px 8px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--bg-input);
+      color: var(--text);
+      font-size: 0.8rem;
+    }
+    .param-input:focus { outline: none; border-color: var(--primary); }
+
+    /* ===== INSPECTOR ===== */
+    #inspector-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+    .inspector-values {
+      font-size: 0.78rem;
+      font-family: 'Courier New', monospace;
+    }
+    .inspector-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 2px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    /* ===== EXAMPLES ===== */
+    .example-btn {
+      width: 100%;
+      text-align: left;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text);
+      font-size: 0.78rem;
+      cursor: pointer;
+      margin-bottom: 6px;
+      transition: all 0.15s;
+      line-height: 1.4;
+    }
+    .example-btn:hover { border-color: var(--primary); background: rgba(99,102,241,0.1); }
+    .example-title { font-weight: 600; display: block; }
+    .example-desc { color: var(--text-muted); display: block; font-size: 0.72rem; }
+
+    /* ===== QUESTIONS ===== */
+    .question-block {
+      background: rgba(245,158,11,0.1);
+      border-left: 3px solid var(--warning);
+      border-radius: 6px;
+      padding: 8px 10px;
+      margin-bottom: 8px;
+      font-size: 0.78rem;
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    /* ===== CANVAS AREA ===== */
+    #canvas-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: var(--bg-app);
+      position: relative;
+    }
+    #canvas-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 10px;
+      background: var(--bg-panel);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .toolbar-sep {
+      width: 1px;
+      height: 20px;
+      background: var(--border);
+      margin: 0 4px;
+    }
+    #canvas-container {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+    #main-canvas {
+      position: absolute;
+      inset: 0;
+      cursor: crosshair;
+      touch-action: none;
+    }
+    .tool-active { background: var(--primary) !important; color: white !important; border-color: var(--primary) !important; }
+
+    /* ===== ANIMATION CONTROLS ===== */
+    #anim-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      background: var(--bg-panel);
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .anim-btn {
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg-input);
+      color: var(--text);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.9rem;
+      transition: all 0.15s;
+    }
+    .anim-btn:hover { background: var(--primary); border-color: var(--primary); color: white; }
+    .anim-btn.active { background: var(--primary); border-color: var(--primary); color: white; }
+    #time-slider {
+      flex: 1;
+      -webkit-appearance: none;
+      height: 4px;
+      border-radius: 2px;
+      background: var(--border);
+      cursor: pointer;
+    }
+    #time-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      background: var(--primary);
+      cursor: pointer;
+    }
+    .time-display {
+      font-size: 0.78rem;
+      font-family: 'Courier New', monospace;
+      color: var(--text-muted);
+      min-width: 60px;
+    }
+    #speed-select {
+      padding: 3px 6px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--bg-input);
+      color: var(--text);
+      font-size: 0.75rem;
+    }
+
+    /* ===== MODAL ===== */
+    #modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 1000;
+      backdrop-filter: blur(4px);
+    }
+    #modal-overlay.open { display: flex; align-items: center; justify-content: center; }
+    #modal-window {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+      width: 90vw;
+      height: 85vh;
+      max-width: 1400px;
+      transition: all 0.2s;
+      position: relative;
+    }
+    #modal-window.maximized {
+      width: 100vw; height: 100vh;
+      border-radius: 0;
+    }
+    #modal-window.minimized {
+      height: 48px;
+      overflow: hidden;
+    }
+    .modal-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+      cursor: move;
+      background: var(--bg-panel);
+    }
+    .modal-title { font-size: 0.9rem; font-weight: 600; flex: 1; }
+    .modal-body {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+    #modal-canvas-container {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+    #modal-canvas {
+      position: absolute;
+      inset: 0;
+      cursor: crosshair;
+      touch-action: none;
+    }
+    #modal-controls {
+      width: 280px;
+      border-left: 1px solid var(--border);
+      overflow-y: auto;
+      padding: 12px;
+      flex-shrink: 0;
+    }
+
+    /* ===== KEYBOARD MODAL ===== */
+    #keyboard-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 2000;
+      align-items: flex-end;
+      justify-content: center;
+    }
+    #keyboard-modal.open { display: flex; }
+    #keyboard-panel {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 20px 20px 0 0;
+      padding: 16px;
+      width: 100%;
+      max-width: 700px;
+      box-shadow: 0 -10px 40px rgba(0,0,0,0.4);
+    }
+    .kb-input-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+      align-items: center;
+    }
+    #kb-input {
+      flex: 1;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1.5px solid var(--primary);
+      background: var(--bg-input);
+      color: var(--text);
+      font-size: 0.9rem;
+      font-family: 'Courier New', monospace;
+    }
+    #kb-preview {
+      min-height: 40px;
+      background: var(--bg-input);
+      border-radius: 8px;
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      margin-bottom: 10px;
+      overflow-x: auto;
+    }
+    .kb-section { margin-bottom: 10px; }
+    .kb-section-title {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 6px;
+    }
+    .kb-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-bottom: 4px;
+    }
+    .kb-key {
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text);
+      font-size: 0.82rem;
+      cursor: pointer;
+      min-width: 36px;
+      text-align: center;
+      transition: all 0.1s;
+      user-select: none;
+    }
+    .kb-key:hover { background: var(--primary); color: white; border-color: var(--primary); }
+    .kb-key:active { transform: scale(0.95); }
+    .kb-key.wide { min-width: 60px; }
+    .kb-key.wider { min-width: 80px; }
+    .kb-key.primary { background: var(--primary); color: white; border-color: var(--primary); }
+    .kb-key.danger { background: var(--danger); color: white; border-color: var(--danger); }
+
+    /* ===== PALETTE MODAL ===== */
+    #palette-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 1500;
+      align-items: center;
+      justify-content: center;
+    }
+    #palette-modal.open { display: flex; }
+    #palette-panel {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      width: 480px;
+      max-width: 95vw;
+      max-height: 80vh;
+      overflow-y: auto;
+      padding: 20px;
+    }
+    .palette-section { margin-bottom: 16px; }
+    .palette-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .palette-label { font-size: 0.8rem; color: var(--text-muted); min-width: 140px; }
+    input[type="color"] {
+      width: 36px; height: 28px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      cursor: pointer;
+      padding: 2px;
+      background: var(--bg-input);
+    }
+    input[type="range"] {
+      flex: 1;
+      -webkit-appearance: none;
+      height: 4px;
+      border-radius: 2px;
+      background: var(--border);
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      background: var(--primary);
+      cursor: pointer;
+    }
+    select {
+      padding: 4px 8px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--bg-input);
+      color: var(--text);
+      font-size: 0.8rem;
+    }
+
+    /* ===== INFO PANEL ===== */
+    .info-block {
+      background: rgba(16,185,129,0.1);
+      border-left: 3px solid var(--accent);
+      border-radius: 6px;
+      padding: 8px 10px;
+      font-size: 0.78rem;
+      line-height: 1.6;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    /* ===== TABS CONTENT ===== */
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; }
+
+    /* ===== SCROLLBAR ===== */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    /* ===== MOBILE ===== */
+    @media (max-width: 768px) {
+      #left-panel { position: absolute; left: 0; top: 0; bottom: 0; z-index: 200; transform: translateX(-100%); transition: transform 0.25s; width: 300px !important; }
+      #left-panel.open { transform: translateX(0); }
+      #canvas-area { flex: 1; }
+      #modal-controls { display: none; }
+    }
+
+    /* ===== COLOR PICKER POPUP ===== */
+    #color-picker-popup {
+      display: none;
+      position: fixed;
+      z-index: 3000;
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+      flex-direction: column;
+      gap: 8px;
+    }
+    #color-picker-popup.open { display: flex; }
+    .color-grid {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      gap: 4px;
+    }
+    .color-swatch {
+      width: 24px; height: 24px;
+      border-radius: 4px;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: transform 0.1s;
+    }
+    .color-swatch:hover { transform: scale(1.2); border-color: white; }
+
+    /* ===== TOOLTIP ===== */
+    [data-tooltip] { position: relative; }
+    [data-tooltip]::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: calc(100% + 6px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1e293b;
+      color: #e2e8f0;
+      font-size: 0.7rem;
+      padding: 3px 8px;
+      border-radius: 4px;
+      white-space: nowrap;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.15s;
+      z-index: 9999;
+    }
+    [data-tooltip]:hover::after { opacity: 1; }
+
+    /* Formula render */
+    .math-rendered {
+      font-style: italic;
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header id="app-header" role="banner">
+  <div class="header-title">
+    <span class="wave-icon">〜</span>
+    Superposición de Ondas
+  </div>
+  <div class="header-spacer"></div>
+  <button class="btn-icon" id="btn-toggle-panel" data-tooltip="Mostrar/ocultar panel" aria-label="Mostrar panel lateral">☰</button>
+  <button class="btn-icon" id="btn-examples-quick" data-tooltip="Ejemplos rápidos" aria-label="Ejemplos">📚</button>
+  <button class="btn-icon" id="btn-open-modal" data-tooltip="Ventana ampliada" aria-label="Abrir ventana ampliada">⛶</button>
+  <button class="btn-icon" id="btn-theme" data-tooltip="Cambiar tema" aria-label="Cambiar tema">☀️</button>
+  <button class="btn-icon" id="btn-export-img" data-tooltip="Exportar imagen" aria-label="Exportar como imagen">🖼</button>
+  <button class="btn-icon" id="btn-export-json" data-tooltip="Exportar configuración" aria-label="Exportar JSON">💾</button>
+  <label class="btn-icon" data-tooltip="Importar configuración" aria-label="Importar configuración" style="cursor:pointer">
+    📂<input type="file" id="btn-import-json" accept=".json" style="display:none">
+  </label>
+</header>
+
+<!-- ===== MAIN ===== -->
+<main id="app-main" role="main">
+
+  <!-- LEFT PANEL -->
+  <aside id="left-panel" aria-label="Panel de control">
+    <div id="panel-resizer" aria-hidden="true"></div>
+
+    <div class="panel-tabs" role="tablist">
+      <button class="panel-tab active" data-tab="ondas" role="tab" aria-selected="true">Ondas</button>
+      <button class="panel-tab" data-tab="parametros" role="tab" aria-selected="false">Parámetros</button>
+      <button class="panel-tab" data-tab="didactica" role="tab" aria-selected="false">Aprende</button>
+    </div>
+
+    <!-- TAB: ONDAS -->
+    <div class="panel-content tab-pane active" id="tab-ondas">
+
+      <div class="resultante-card">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+          <div class="wave-color-dot" id="resultante-color-dot" style="background:#10b981;cursor:pointer" title="Color resultante"></div>
+          <span style="font-size:0.82rem;font-weight:700;">Onda Resultante</span>
+          <label class="wave-toggle" style="margin-left:auto">
+            <input type="checkbox" id="toggle-resultante" checked aria-label="Mostrar resultante">
+            <span class="wave-toggle-slider"></span>
+          </label>
+        </div>
+        <div style="font-size:0.75rem;color:var(--text-muted);">y<sub>R</sub> = Σ yᵢ (principio de superposición)</div>
+        <div style="margin-top:8px;display:flex;gap:6px;">
+          <div class="palette-row" style="margin:0;gap:6px">
+            <span style="font-size:0.72rem;color:var(--text-muted)">Grosor</span>
+            <input type="range" id="resultante-width" min="1" max="8" value="3" style="width:80px">
+          </div>
+          <div class="palette-row" style="margin:0;gap:6px">
+            <span style="font-size:0.72rem;color:var(--text-muted)">Opac.</span>
+            <input type="range" id="resultante-opacity" min="10" max="100" value="100" style="width:60px">
+          </div>
+        </div>
+      </div>
+
+      <div class="section-title">🎵 Ondas Componentes</div>
+      <div id="waves-list"></div>
+
+      <button class="btn-primary" id="btn-add-wave" aria-label="Agregar nueva onda">
+        <span>＋</span> Agregar onda
+      </button>
+    </div>
+
+    <!-- TAB: PARÁMETROS -->
+    <div class="panel-content tab-pane" id="tab-parametros">
+      <div class="section-title">🔭 Vista del gráfico</div>
+      <div class="param-row">
+        <label class="param-label" for="param-xmin">x mín</label>
+        <input class="param-input" type="number" id="param-xmin" value="-10" step="1">
+      </div>
+      <div class="param-row">
+        <label class="param-label" for="param-xmax">x máx</label>
+        <input class="param-input" type="number" id="param-xmax" value="10" step="1">
+      </div>
+      <div class="param-row">
+        <label class="param-label" for="param-ymin">y mín</label>
+        <input class="param-input" type="number" id="param-ymin" value="-4" step="0.5">
+      </div>
+      <div class="param-row">
+        <label class="param-label" for="param-ymax">y máx</label>
+        <input class="param-input" type="number" id="param-ymax" value="4" step="0.5">
+      </div>
+      <div class="param-row">
+        <label class="param-label" for="param-samples">Muestras</label>
+        <input class="param-input" type="number" id="param-samples" value="800" min="100" max="3000" step="100">
+      </div>
+      <div class="section-title" style="margin-top:12px">🕐 Tiempo</div>
+      <div class="param-row">
+        <label class="param-label" for="param-tmax">t máx (s)</label>
+        <input class="param-input" type="number" id="param-tmax" value="20" min="1" max="1000">
+      </div>
+      <div class="section-title" style="margin-top:12px">🔢 Variable v</div>
+      <div class="param-row">
+        <label class="param-label" for="param-v">v =</label>
+        <input class="param-input" type="number" id="param-v" value="1" step="0.1">
+      </div>
+      <div class="info-block">
+        La variable <b>v</b> se puede usar directamente en las ecuaciones de las ondas como parámetro de velocidad.
+      </div>
+      <button class="btn-primary" id="btn-apply-params">Aplicar parámetros</button>
+
+      <div class="section-title" style="margin-top:12px">📏 Inspector de posición</div>
+      <div class="param-row">
+        <label class="param-label" for="inspector-x">x =</label>
+        <input class="param-input" type="number" id="inspector-x" value="0" step="0.1">
+        <button class="btn-sm" id="btn-inspect">Ver</button>
+      </div>
+      <div id="inspector-panel">
+        <div class="section-title" style="margin-bottom:6px">Valores en x</div>
+        <div class="inspector-values" id="inspector-values">
+          <div class="inspector-row" style="color:var(--text-muted)">Señala una posición x para ver los valores de cada componente.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: DIDÁCTICA -->
+    <div class="panel-content tab-pane" id="tab-didactica">
+      <div class="section-title">📖 ¿Qué es la superposición?</div>
+      <div class="info-block">
+        El <b>principio de superposición</b> establece que cuando dos o más ondas se encuentran en un mismo punto del espacio, el desplazamiento resultante es la <b>suma algebraica</b> de los desplazamientos individuales.
+        <br><br>
+        Si y₁(x,t) e y₂(x,t) son dos ondas, la resultante es:<br>
+        <b>yᴿ(x,t) = y₁(x,t) + y₂(x,t)</b>
+        <br><br>
+        Esto produce fenómenos como la <b>interferencia constructiva</b> (amplitudes se suman), la <b>interferencia destructiva</b> (amplitudes se cancelan) y las <b>ondas estacionarias</b>.
+      </div>
+
+      <div class="section-title">🎯 Ejemplos listos</div>
+
+      <button class="example-btn" data-example="0" aria-label="Cargar ejemplo: Dos pulsos iguales opuestos">
+        <span class="example-title">1. Dos pulsos iguales, sentidos opuestos</span>
+        <span class="example-desc">Observa la interferencia constructiva al cruzarse.</span>
+      </button>
+      <button class="example-btn" data-example="1" aria-label="Cargar ejemplo: Dos pulsos de signos contrarios">
+        <span class="example-title">2. Dos pulsos de signos contrarios</span>
+        <span class="example-desc">La suma puede cancelarse — interferencia destructiva.</span>
+      </button>
+      <button class="example-btn" data-example="2" aria-label="Cargar ejemplo: Amplitudes y anchos distintos">
+        <span class="example-title">3. Pulsos con diferente amplitud y ancho</span>
+        <span class="example-desc">La resultante tiene forma asimétrica al cruzarse.</span>
+      </button>
+      <button class="example-btn" data-example="3" aria-label="Cargar ejemplo: Tres o más componentes">
+        <span class="example-title">4. Superposición de 3 componentes</span>
+        <span class="example-desc">Síntesis de onda compleja a partir de senoidales.</span>
+      </button>
+      <button class="example-btn" data-example="4" aria-label="Cargar ejemplo: Dos senoidales con fase diferente">
+        <span class="example-title">5. Ondas sinusoidales con distinta fase</span>
+        <span class="example-desc">Batidos y modulación de amplitud.</span>
+      </button>
+      <button class="example-btn" data-example="5" aria-label="Cargar ejemplo: Onda estacionaria">
+        <span class="example-title">6. Onda estacionaria</span>
+        <span class="example-desc">Dos senoidales iguales en sentidos opuestos.</span>
+      </button>
+
+      <div class="section-title" style="margin-top:12px">🤔 Preguntas orientadoras</div>
+      <div class="question-block">¿Qué ocurre con la amplitud de la resultante cuando dos pulsos iguales se encuentran en el mismo punto?</div>
+      <div class="question-block">¿Puede la suma de dos ondas dar como resultado una amplitud menor que cualquiera de las dos? ¿Cuándo?</div>
+      <div class="question-block">¿Qué diferencia hay entre ocultar una onda y excluirla de la suma? Experimenta con el toggle vs eliminar.</div>
+      <div class="question-block">¿Qué pasa si aumentas la frecuencia de una onda y mantienes la otra constante? Predice antes de reproducir.</div>
+      <div class="question-block">¿Cómo cambia la forma de la onda resultante si agregas una tercera componente con diferente fase?</div>
+    </div>
+  </aside>
+
+  <!-- CANVAS AREA -->
+  <div id="canvas-area">
+    <!-- Toolbar del canvas estilo GeoGebra -->
+    <div id="canvas-toolbar" role="toolbar" aria-label="Herramientas de gráfico">
+      <button class="btn-icon tool-btn active" data-tool="pan" data-tooltip="Arrastrar" aria-label="Arrastrar lienzo">✥</button>
+      <button class="btn-icon tool-btn" data-tool="select" data-tooltip="Seleccionar" aria-label="Seleccionar">↖</button>
+      <button class="btn-icon tool-btn" data-tool="inspect" data-tooltip="Inspeccionar" aria-label="Inspeccionar punto">🔎</button>
+      <div class="toolbar-sep"></div>
+      <button class="btn-icon" id="btn-zoom-in" data-tooltip="Acercar" aria-label="Zoom in">🔍</button>
+      <button class="btn-icon" id="btn-zoom-out" data-tooltip="Alejar" aria-label="Zoom out">🔎</button>
+      <button class="btn-icon" id="btn-reset-view" data-tooltip="Restablecer vista" aria-label="Restablecer vista">⊡</button>
+      <button class="btn-icon" id="btn-fit" data-tooltip="Ajustar a datos" aria-label="Ajustar vista a datos">⤢</button>
+      <div class="toolbar-sep"></div>
+      <button class="btn-icon" id="btn-palette" data-tooltip="Paleta de estilos" aria-label="Paleta de estilos">🎨</button>
+      <button class="btn-icon" id="btn-grid-toggle" data-tooltip="Mostrar/ocultar cuadrícula" aria-label="Cuadrícula">⊞</button>
+      <div class="toolbar-sep"></div>
+      <span style="font-size:0.72rem;color:var(--text-muted);padding:0 4px" id="cursor-coords" aria-live="polite">x=0.00, y=0.00</span>
+    </div>
+
+    <div id="canvas-container">
+      <canvas id="main-canvas" tabindex="0" aria-label="Gráfico de superposición de ondas"></canvas>
+    </div>
+
+    <!-- Controles de animación -->
+    <div id="anim-controls" role="region" aria-label="Controles de animación">
+      <button class="anim-btn" id="btn-restart" data-tooltip="Reiniciar" aria-label="Reiniciar">⏮</button>
+      <button class="anim-btn active" id="btn-play" aria-label="Reproducir/pausar">⏸</button>
+      <button class="anim-btn" id="btn-step-back" data-tooltip="Paso atrás" aria-label="Paso atrás">⏴</button>
+      <button class="anim-btn" id="btn-step-fwd" data-tooltip="Paso adelante" aria-label="Paso adelante">⏵</button>
+      <input type="range" id="time-slider" min="0" max="1000" value="0" aria-label="Control de tiempo">
+      <span class="time-display" id="time-display" aria-live="polite">t=0.00s</span>
+      <label style="font-size:0.72rem;color:var(--text-muted)">Vel:</label>
+      <select id="speed-select" aria-label="Velocidad de animación">
+        <option value="0.25">×0.25</option>
+        <option value="0.5">×0.5</option>
+        <option value="1" selected>×1</option>
+        <option value="2">×2</option>
+        <option value="4">×4</option>
+      </select>
+    </div>
+  </div>
+</main>
+
+<!-- ===== MODAL AMPLIADA ===== -->
+<div id="modal-overlay" role="dialog" aria-modal="true" aria-label="Ventana ampliada de simulación">
+  <div id="modal-window">
+    <div class="modal-header" id="modal-drag-handle">
+      <span class="wave-icon">〜</span>
+      <span class="modal-title">Superposición de Ondas — Vista Ampliada</span>
+      <button class="btn-icon" id="btn-modal-fullscreen" data-tooltip="Pantalla completa" aria-label="Pantalla completa">⛶</button>
+      <button class="btn-icon" id="btn-modal-maximize" data-tooltip="Maximizar" aria-label="Maximizar">🗖</button>
+      <button class="btn-icon" id="btn-modal-minimize" data-tooltip="Minimizar" aria-label="Minimizar">🗕</button>
+      <button class="btn-icon" id="btn-modal-close" data-tooltip="Cerrar" aria-label="Cerrar ventana">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="modal-canvas-container">
+        <canvas id="modal-canvas" tabindex="0" aria-label="Gráfico ampliado"></canvas>
+      </div>
+      <div id="modal-controls">
+        <div class="section-title" style="margin-bottom:10px">Controles rápidos</div>
+        <div class="resultante-card" style="margin-bottom:10px">
+          <div style="font-size:0.8rem;font-weight:700;margin-bottom:6px;">Ondas activas</div>
+          <div id="modal-waves-list"></div>
+        </div>
+        <div id="modal-anim-controls" style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;gap:6px;align-items:center">
+            <button class="anim-btn" id="mbtn-restart" aria-label="Reiniciar">⏮</button>
+            <button class="anim-btn active" id="mbtn-play" aria-label="Reproducir">⏸</button>
+            <button class="anim-btn" id="mbtn-step-back" aria-label="Paso atrás">⏴</button>
+            <button class="anim-btn" id="mbtn-step-fwd" aria-label="Paso adelante">⏵</button>
+          </div>
+          <input type="range" id="mtime-slider" min="0" max="1000" value="0" style="width:100%" aria-label="Control de tiempo modal">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <span class="time-display" id="mtime-display">t=0.00s</span>
+            <select id="mspeed-select" aria-label="Velocidad modal">
+              <option value="0.25">×0.25</option>
+              <option value="0.5">×0.5</option>
+              <option value="1" selected>×1</option>
+              <option value="2">×2</option>
+              <option value="4">×4</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== KEYBOARD MODAL ===== -->
+<div id="keyboard-modal" role="dialog" aria-modal="true" aria-label="Teclado matemático virtual">
+  <div id="keyboard-panel">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+      <span style="font-size:0.9rem;font-weight:700;">🎹 Teclado Matemático</span>
+      <span id="kb-wave-label" style="color:var(--primary);font-size:0.8rem"></span>
+      <div style="flex:1"></div>
+      <button class="btn-icon" id="btn-kb-close" aria-label="Cerrar teclado">✕</button>
+    </div>
+    <div class="kb-input-row">
+      <input type="text" id="kb-input" placeholder="Escribe o usa el teclado..." aria-label="Ecuación de la onda" autocomplete="off" spellcheck="false">
+      <button class="kb-key wider primary" id="btn-kb-insert" aria-label="Insertar ecuación">✓ Insertar</button>
+    </div>
+    <div id="kb-preview" aria-label="Vista previa de la ecuación"></div>
+
+    <div class="kb-section">
+      <div class="kb-section-title">Números y operadores básicos</div>
+      <div class="kb-row">
+        <span class="kb-key" data-insert="0">0</span>
+        <span class="kb-key" data-insert="1">1</span>
+        <span class="kb-key" data-insert="2">2</span>
+        <span class="kb-key" data-insert="3">3</span>
+        <span class="kb-key" data-insert="4">4</span>
+        <span class="kb-key" data-insert="5">5</span>
+        <span class="kb-key" data-insert="6">6</span>
+        <span class="kb-key" data-insert="7">7</span>
+        <span class="kb-key" data-insert="8">8</span>
+        <span class="kb-key" data-insert="9">9</span>
+        <span class="kb-key" data-insert=".">.</span>
+        <span class="kb-key" data-insert="π">π</span>
+        <span class="kb-key" data-insert="e">e</span>
+      </div>
+      <div class="kb-row">
+        <span class="kb-key" data-insert="+">+</span>
+        <span class="kb-key" data-insert="-">−</span>
+        <span class="kb-key" data-insert="*">×</span>
+        <span class="kb-key" data-insert="/">/</span>
+        <span class="kb-key" data-insert="^">^</span>
+        <span class="kb-key" data-insert="(">(</span>
+        <span class="kb-key" data-insert=")">)</span>
+        <span class="kb-key" data-insert=" "> </span>
+        <span class="kb-key wide" data-action="backspace">⌫ Borrar</span>
+        <span class="kb-key wider danger" data-action="clear">⌧ Limpiar</span>
+      </div>
+    </div>
+
+    <div class="kb-section">
+      <div class="kb-section-title">Variables</div>
+      <div class="kb-row">
+        <span class="kb-key" data-insert="x">x</span>
+        <span class="kb-key" data-insert="t">t</span>
+        <span class="kb-key" data-insert="v">v</span>
+        <span class="kb-key" data-insert="k">k</span>
+        <span class="kb-key" data-insert="w">ω</span>
+        <span class="kb-key" data-insert="A">A</span>
+        <span class="kb-key" data-insert="n">n</span>
+        <span class="kb-key" data-insert="m">m</span>
+      </div>
+    </div>
+
+    <div class="kb-section">
+      <div class="kb-section-title">Funciones trigonométricas</div>
+      <div class="kb-row">
+        <span class="kb-key wide" data-insert="sin(">sen(</span>
+        <span class="kb-key wide" data-insert="cos(">cos(</span>
+        <span class="kb-key wide" data-insert="tan(">tan(</span>
+        <span class="kb-key wide" data-insert="asin(">arcsen(</span>
+        <span class="kb-key wide" data-insert="acos(">arccos(</span>
+        <span class="kb-key wide" data-insert="atan(">arctan(</span>
+        <span class="kb-key wide" data-insert="atan2(">atan2(</span>
+      </div>
+    </div>
+
+    <div class="kb-section">
+      <div class="kb-section-title">Funciones matemáticas</div>
+      <div class="kb-row">
+        <span class="kb-key wide" data-insert="sqrt(">√(</span>
+        <span class="kb-key wide" data-insert="abs(">|·|(</span>
+        <span class="kb-key wide" data-insert="exp(">eˣ(</span>
+        <span class="kb-key wide" data-insert="log(">log(</span>
+        <span class="kb-key wide" data-insert="log2(">log₂(</span>
+        <span class="kb-key wide" data-insert="log10(">log₁₀(</span>
+        <span class="kb-key wide" data-insert="ceil(">⌈·⌉(</span>
+        <span class="kb-key wide" data-insert="floor(">⌊·⌋(</span>
+        <span class="kb-key wide" data-insert="round(">rnd(</span>
+        <span class="kb-key wide" data-insert="sign(">sgn(</span>
+      </div>
+    </div>
+
+    <div class="kb-section">
+      <div class="kb-section-title">Construcciones especiales</div>
+      <div class="kb-row">
+        <span class="kb-key wider" data-insert="2*sin(x - v*t)">2·sen(x−vt)</span>
+        <span class="kb-key wider" data-insert="1/((x-v*t)^2+1)">Pulso Lorentz</span>
+        <span class="kb-key wider" data-insert="exp(-((x-v*t)^2)/2)">Pulso Gauss</span>
+        <span class="kb-key wider" data-insert="sin(2*PI*x - 2*PI*t)">Senoidal</span>
+      </div>
+      <div class="kb-row">
+        <span class="kb-key wide" data-insert="PI">PI</span>
+        <span class="kb-key wider" data-insert="sin(x-v*t)+sin(x+v*t)">Onda est.</span>
+        <span class="kb-key wider" data-insert="2/((x-v*t)^4+1)">Pulso suave</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PALETTE MODAL ===== -->
+<div id="palette-modal" role="dialog" aria-modal="true" aria-label="Paleta de estilos">
+  <div id="palette-panel">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">
+      <span style="font-size:1rem;font-weight:700;">🎨 Paleta de Estilos</span>
+      <div style="flex:1"></div>
+      <button class="btn-icon" id="btn-palette-close" aria-label="Cerrar paleta">✕</button>
+    </div>
+
+    <div class="palette-section">
+      <div class="section-title">Fondo del gráfico</div>
+      <div class="palette-row">
+        <span class="palette-label">Color de fondo</span>
+        <input type="color" id="pal-bg" value="#0a0e1a" aria-label="Color de fondo">
+      </div>
+    </div>
+
+    <div class="palette-section">
+      <div class="section-title">Cuadrículas</div>
+      <div class="palette-row">
+        <span class="palette-label">Cuadrícula mayor</span>
+        <input type="color" id="pal-grid-major-color" value="#6366f1" aria-label="Color cuadrícula mayor">
+        <input type="range" id="pal-grid-major-alpha" min="0" max="100" value="20" aria-label="Opacidad cuadrícula mayor">
+        <span id="pal-gma-val" style="font-size:0.72rem;min-width:28px">20%</span>
+      </div>
+      <div class="palette-row">
+        <span class="palette-label">Cuadrícula menor</span>
+        <input type="color" id="pal-grid-minor-color" value="#6366f1" aria-label="Color cuadrícula menor">
+        <input type="range" id="pal-grid-minor-alpha" min="0" max="100" value="8" aria-label="Opacidad cuadrícula menor">
+        <span id="pal-gmn-val" style="font-size:0.72rem;min-width:28px">8%</span>
+      </div>
+    </div>
+
+    <div class="palette-section">
+      <div class="section-title">Ejes y etiquetas</div>
+      <div class="palette-row">
+        <span class="palette-label">Color de ejes</span>
+        <input type="color" id="pal-axis-color" value="#e2e8f0" aria-label="Color de ejes">
+      </div>
+      <div class="palette-row">
+        <span class="palette-label">Grosor de ejes</span>
+        <input type="range" id="pal-axis-width" min="0.5" max="4" step="0.5" value="1.5" aria-label="Grosor de ejes">
+        <span id="pal-aw-val" style="font-size:0.72rem;min-width:28px">1.5</span>
+      </div>
+      <div class="palette-row">
+        <span class="palette-label">Tamaño etiquetas</span>
+        <input type="range" id="pal-label-size" min="9" max="20" value="12" aria-label="Tamaño de etiquetas">
+        <span id="pal-ls-val" style="font-size:0.72rem;min-width:28px">12</span>
+      </div>
+    </div>
+
+    <div class="palette-section">
+      <div class="section-title">Onda Resultante</div>
+      <div class="palette-row">
+        <span class="palette-label">Color</span>
+        <input type="color" id="pal-resultante-color" value="#10b981" aria-label="Color resultante">
+      </div>
+      <div class="palette-row">
+        <span class="palette-label">Grosor</span>
+        <input type="range" id="pal-resultante-width" min="1" max="8" value="3" aria-label="Grosor resultante">
+        <span id="pal-rw-val" style="font-size:0.72rem;min-width:28px">3</span>
+      </div>
+      <div class="palette-row">
+        <span class="palette-label">Estilo línea</span>
+        <select id="pal-resultante-dash" aria-label="Estilo de línea resultante">
+          <option value="">Sólida</option>
+          <option value="8,4">Guiones</option>
+          <option value="2,4">Puntos</option>
+          <option value="12,4,3,4">Punto-guión</option>
+        </select>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:8px;margin-top:16px">
+      <button class="btn-primary" id="btn-palette-apply" style="flex:1">✓ Aplicar</button>
+      <button class="btn-sm" id="btn-palette-theme-light">☀ Claro</button>
+      <button class="btn-sm" id="btn-palette-theme-dark">🌙 Oscuro</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== COLOR PICKER POPUP ===== -->
+<div id="color-picker-popup" role="dialog" aria-label="Seleccionar color">
+  <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:6px">Elegir color</div>
+  <div class="color-grid" id="color-grid"></div>
+  <div style="display:flex;gap:8px;margin-top:8px;align-items:center">
+    <input type="color" id="custom-color-picker" aria-label="Color personalizado" style="width:40px;height:28px">
+    <span style="font-size:0.75rem;color:var(--text-muted)">Personalizado</span>
+    <button class="btn-sm" id="btn-color-cancel" style="margin-left:auto">Cancelar</button>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// CONSTANTES Y PALETA DE COLORES
+// ============================================================
+const COLORS = [
+  '#ef4444','#f97316','#f59e0b','#eab308','#84cc16','#22c55e',
+  '#10b981','#14b8a6','#06b6d4','#3b82f6','#6366f1','#8b5cf6',
+  '#a855f7','#ec4899','#f43f5e','#64748b','#ffffff','#94a3b8'
+];
+const DEFAULT_WAVE_COLORS = [
+  '#ef4444','#3b82f6','#f59e0b','#a855f7','#06b6d4','#84cc16',
+  '#ec4899','#14b8a6','#f97316','#8b5cf6'
+];
+
+// ============================================================
+// MODELO: Estado de la aplicación
+// ============================================================
+const state = {
+  waves: [],
+  nextId: 1,
+  time: 0,
+  tMax: 20,
+  playing: true,
+  speed: 1,
+  v: 1,
+  view: { xMin: -10, xMax: 10, yMin: -4, yMax: 4 },
+  samples: 800,
+  showResultante: true,
+  resultante: { color: '#10b981', width: 3, opacity: 1, dash: '' },
+  tool: 'pan',
+  showGrid: true,
+  inspectX: null,
+  // Paleta de estilos del gráfico
+  graph: {
+    bg: '#0a0e1a',
+    gridMajorColor: '#6366f1',
+    gridMajorAlpha: 0.20,
+    gridMinorColor: '#6366f1',
+    gridMinorAlpha: 0.08,
+    axisColor: '#e2e8f0',
+    axisWidth: 1.5,
+    labelSize: 12,
+  },
+  // Para pan/zoom
+  _pan: null,
+  _pinch: null,
+};
+
+// ============================================================
+// EVALUADOR DE EXPRESIONES
+// ============================================================
+const mathScope = {
+  PI: Math.PI, pi: Math.PI, e: Math.E,
+  sin: Math.sin, cos: Math.cos, tan: Math.tan,
+  asin: Math.asin, acos: Math.acos, atan: Math.atan, atan2: Math.atan2,
+  sinh: Math.sinh, cosh: Math.cosh, tanh: Math.tanh,
+  sqrt: Math.sqrt, cbrt: Math.cbrt, abs: Math.abs,
+  exp: Math.exp, log: Math.log, log2: Math.log2, log10: Math.log10,
+  ceil: Math.ceil, floor: Math.floor, round: Math.round,
+  sign: Math.sign, max: Math.max, min: Math.min,
+  pow: Math.pow, hypot: Math.hypot,
+};
+
+function parseExpression(expr) {
+  // Reemplazos para hacer la expresión más natural
+  let e = expr
+    .replace(/π/g, 'PI')
+    .replace(/×/g, '*')
+    .replace(/÷/g, '/')
+    .replace(/−/g, '-')
+    .replace(/\bsen\b/gi, 'sin')
+    .replace(/\bseno\b/gi, 'sin')
+    .replace(/\barcsen\b/gi, 'asin')
+    .replace(/\barccos\b/gi, 'acos')
+    .replace(/\barctan\b/gi, 'atan')
+    .replace(/(\d)(x|t|v|k|A|n|m|s|c|\()/g, '$1*$2')  // multiplicación implícita
+    .replace(/\)(x|t|v|\d)/g, ')*$1')
+    .replace(/\^/g, '**');
+  return e;
+}
+
+function compileWave(expr) {
+  try {
+    const parsed = parseExpression(expr);
+    // Construir función segura con scope
+    const keys = Object.keys(mathScope).join(',');
+    const fn = new Function('x','t','v', ...Object.keys(mathScope), `"use strict"; return (${parsed});`);
+    return function(x, t, v) {
+      try {
+        const result = fn(x, t, v, ...Object.values(mathScope));
+        if (!isFinite(result)) return NaN;
+        return result;
+      } catch { return NaN; }
+    };
+  } catch(err) {
+    return null;
+  }
+}
+
+// ============================================================
+// GESTIÓN DE ONDAS
+// ============================================================
+function createWave(expr = 'sin(x - v*t)', name = null) {
+  const id = state.nextId++;
+  const color = DEFAULT_WAVE_COLORS[(id - 1) % DEFAULT_WAVE_COLORS.length];
+  const wave = {
+    id,
+    name: name || `Onda ${id}`,
+    expr,
+    fn: compileWave(expr),
+    color,
+    width: 2,
+    opacity: 1,
+    dash: '',
+    visible: true,
+    includeInSum: true,
+    error: null,
+  };
+  state.waves.push(wave);
+  return wave;
+}
+
+function deleteWave(id) {
+  const idx = state.waves.findIndex(w => w.id === id);
+  if (idx >= 0) state.waves.splice(idx, 1);
+}
+
+function updateWaveExpr(id, expr) {
+  const wave = state.waves.find(w => w.id === id);
+  if (!wave) return;
+  wave.expr = expr;
+  wave.fn = compileWave(expr);
+  wave.error = wave.fn ? null : 'Error en la expresión';
+}
+
+// ============================================================
+// EVALUACIÓN
+// ============================================================
+function evalWave(wave, x, t) {
+  if (!wave.fn) return NaN;
+  return wave.fn(x, t, state.v);
+}
+
+function evalResultante(x, t) {
+  let sum = 0;
+  for (const w of state.waves) {
+    if (!w.includeInSum || !w.visible) continue;
+    const v = evalWave(w, x, t);
+    if (isNaN(v)) return NaN;
+    sum += v;
+  }
+  return sum;
+}
+
+// ============================================================
+// RENDERIZADO DEL CANVAS (estilo GeoGebra)
+// ============================================================
+function setupCanvas(canvas) {
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.parentElement.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  canvas.style.width = rect.width + 'px';
+  canvas.style.height = rect.height + 'px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+  return { ctx, W: rect.width, H: rect.height };
+}
+
+function worldToScreen(x, y, view, W, H) {
+  const px = (x - view.xMin) / (view.xMax - view.xMin) * W;
+  const py = H - (y - view.yMin) / (view.yMax - view.yMin) * H;
+  return [px, py];
+}
+
+function screenToWorld(px, py, view, W, H) {
+  const x = view.xMin + (px / W) * (view.xMax - view.xMin);
+  const y = view.yMin + (1 - py / H) * (view.yMax - view.yMin);
+  return [x, y];
+}
+
+function getNiceStep(range, maxDivs) {
+  const raw = range / maxDivs;
+  const mag = Math.pow(10, Math.floor(Math.log10(raw)));
+  const frac = raw / mag;
+  let step;
+  if (frac < 1.5) step = 1;
+  else if (frac < 3.5) step = 2;
+  else if (frac < 7.5) step = 5;
+  else step = 10;
+  return step * mag;
+}
+
+function drawGraph(canvas, view, t, isModal = false) {
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.parentElement.getBoundingClientRect();
+  if (rect.width === 0 || rect.height === 0) return;
+
+  if (canvas.width !== rect.width * dpr || canvas.height !== rect.height * dpr) {
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    canvas.style.width = rect.width + 'px';
+    canvas.style.height = rect.height + 'px';
+  }
+
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const W = rect.width, H = rect.height;
+  const g = state.graph;
+
+  // Fondo
+  ctx.fillStyle = g.bg;
+  ctx.fillRect(0, 0, W, H);
+
+  if (!state.showGrid) {
+    // Solo ejes si no hay cuadrícula
+    drawAxes(ctx, view, W, H, g, t);
+    drawWaves(ctx, view, W, H, t);
+    drawInspector(ctx, view, W, H, t);
+    return;
+  }
+
+  // ===== CUADRÍCULA MAYOR =====
+  const xRange = view.xMax - view.xMin;
+  const yRange = view.yMax - view.yMin;
+  const majorStepX = getNiceStep(xRange, 10);
+  const majorStepY = getNiceStep(yRange, 8);
+  const minorDivs = 5; // subdivisiones
+
+  // Cuadrícula menor (milimetrado)
+  const minorStepX = majorStepX / minorDivs;
+  const minorStepY = majorStepY / minorDivs;
+
+  ctx.save();
+  const gmc = hexToRgb(g.gridMinorColor);
+  ctx.strokeStyle = `rgba(${gmc.r},${gmc.g},${gmc.b},${g.gridMinorAlpha})`;
+  ctx.lineWidth = 0.5;
+  ctx.setLineDash([]);
+
+  let startX = Math.ceil(view.xMin / minorStepX) * minorStepX;
+  for (let x = startX; x <= view.xMax + 1e-9; x += minorStepX) {
+    if (Math.abs(x % majorStepX) < minorStepX * 0.01) continue;
+    const [px] = worldToScreen(x, 0, view, W, H);
+    ctx.beginPath(); ctx.moveTo(px, 0); ctx.lineTo(px, H); ctx.stroke();
+  }
+  let startY = Math.ceil(view.yMin / minorStepY) * minorStepY;
+  for (let y = startY; y <= view.yMax + 1e-9; y += minorStepY) {
+    if (Math.abs(y % majorStepY) < minorStepY * 0.01) continue;
+    const [, py] = worldToScreen(0, y, view, W, H);
+    ctx.beginPath(); ctx.moveTo(0, py); ctx.lineTo(W, py); ctx.stroke();
+  }
+  ctx.restore();
+
+  // Cuadrícula mayor
+  ctx.save();
+  const gMajC = hexToRgb(g.gridMajorColor);
+  ctx.strokeStyle = `rgba(${gMajC.r},${gMajC.g},${gMajC.b},${g.gridMajorAlpha})`;
+  ctx.lineWidth = 1;
+
+  startX = Math.ceil(view.xMin / majorStepX) * majorStepX;
+  for (let x = startX; x <= view.xMax + 1e-9; x += majorStepX) {
+    const [px] = worldToScreen(x, 0, view, W, H);
+    ctx.beginPath(); ctx.moveTo(px, 0); ctx.lineTo(px, H); ctx.stroke();
+  }
+  startY = Math.ceil(view.yMin / majorStepY) * majorStepY;
+  for (let y = startY; y <= view.yMax + 1e-9; y += majorStepY) {
+    const [, py] = worldToScreen(0, y, view, W, H);
+    ctx.beginPath(); ctx.moveTo(0, py); ctx.lineTo(W, py); ctx.stroke();
+  }
+  ctx.restore();
+
+  // ===== EJES =====
+  drawAxes(ctx, view, W, H, g, t, majorStepX, majorStepY, minorStepX, minorStepY);
+
+  // ===== ONDAS =====
+  drawWaves(ctx, view, W, H, t);
+
+  // ===== INSPECTOR =====
+  drawInspector(ctx, view, W, H, t);
+}
+
+function drawAxes(ctx, view, W, H, g, t, majorStepX, majorStepY, minorStepX, minorStepY) {
+  const axC = hexToRgb(g.axisColor);
+  ctx.strokeStyle = `rgba(${axC.r},${axC.g},${axC.b},0.7)`;
+  ctx.lineWidth = g.axisWidth;
+  ctx.setLineDash([]);
+
+  // Eje X
+  const [, yAxis] = worldToScreen(0, 0, view, W, H);
+  const clampedY = Math.max(0, Math.min(H, yAxis));
+  ctx.beginPath(); ctx.moveTo(0, clampedY); ctx.lineTo(W, clampedY); ctx.stroke();
+  // Flecha eje X
+  ctx.fillStyle = `rgba(${axC.r},${axC.g},${axC.b},0.7)`;
+  ctx.beginPath(); ctx.moveTo(W-2, clampedY); ctx.lineTo(W-10, clampedY-4); ctx.lineTo(W-10, clampedY+4); ctx.fill();
+  // Etiqueta eje X
+  ctx.font = `${g.labelSize}px 'Segoe UI', sans-serif`;
+  ctx.fillStyle = `rgba(${axC.r},${axC.g},${axC.b},0.9)`;
+  ctx.fillText('x', W-14, clampedY-8);
+
+  // Eje Y
+  const [xAxis] = worldToScreen(0, 0, view, W, H);
+  const clampedX = Math.max(0, Math.min(W, xAxis));
+  ctx.strokeStyle = `rgba(${axC.r},${axC.g},${axC.b},0.7)`;
+  ctx.beginPath(); ctx.moveTo(clampedX, H); ctx.lineTo(clampedX, 0); ctx.stroke();
+  // Flecha eje Y
+  ctx.beginPath(); ctx.moveTo(clampedX, 2); ctx.lineTo(clampedX-4, 12); ctx.lineTo(clampedX+4, 12); ctx.fill();
+  ctx.fillText('y', clampedX+6, 16);
+
+  if (!majorStepX) return;
+
+  // Ticks y números en eje X
+  ctx.lineWidth = 1;
+  ctx.strokeStyle = `rgba(${axC.r},${axC.g},${axC.b},0.5)`;
+  ctx.font = `${Math.max(9, g.labelSize - 2)}px 'Segoe UI', sans-serif`;
+  ctx.fillStyle = `rgba(${axC.r},${axC.g},${axC.b},0.75)`;
+  ctx.textAlign = 'center';
+
+  let startX = Math.ceil(view.xMin / majorStepX) * majorStepX;
+  for (let x = startX; x <= view.xMax + 1e-9; x += majorStepX) {
+    if (Math.abs(x) < 1e-10) continue;
+    const [px] = worldToScreen(x, 0, view, W, H);
+    const ty = Math.max(4, Math.min(H - 4, clampedY));
+    // Tick
+    ctx.beginPath(); ctx.moveTo(px, ty-5); ctx.lineTo(px, ty+5); ctx.stroke();
+    // Número
+    const label = formatTickLabel(x, majorStepX);
+    ctx.fillText(label, px, ty + g.labelSize + 2);
+  }
+
+  // Ticks menores en eje X
+  if (minorStepX) {
+    ctx.lineWidth = 0.5;
+    let startXm = Math.ceil(view.xMin / minorStepX) * minorStepX;
+    for (let x = startXm; x <= view.xMax + 1e-9; x += minorStepX) {
+      if (Math.abs(x % majorStepX) < minorStepX * 0.01) continue;
+      const [px] = worldToScreen(x, 0, view, W, H);
+      const ty = Math.max(4, Math.min(H-4, clampedY));
+      ctx.beginPath(); ctx.moveTo(px, ty-3); ctx.lineTo(px, ty+3); ctx.stroke();
+    }
+  }
+
+  // Ticks y números en eje Y
+  ctx.lineWidth = 1;
+  ctx.textAlign = 'right';
+  let startY = Math.ceil(view.yMin / majorStepY) * majorStepY;
+  for (let y = startY; y <= view.yMax + 1e-9; y += majorStepY) {
+    if (Math.abs(y) < 1e-10) continue;
+    const [, py] = worldToScreen(0, y, view, W, H);
+    const tx = Math.max(4, Math.min(W-4, clampedX));
+    ctx.beginPath(); ctx.moveTo(tx-5, py); ctx.lineTo(tx+5, py); ctx.stroke();
+    const label = formatTickLabel(y, majorStepY);
+    ctx.fillText(label, tx - 8, py + g.labelSize * 0.4);
+  }
+
+  // Ticks menores en eje Y
+  if (minorStepY) {
+    ctx.lineWidth = 0.5;
+    let startYm = Math.ceil(view.yMin / minorStepY) * minorStepY;
+    for (let y = startYm; y <= view.yMax + 1e-9; y += minorStepY) {
+      if (Math.abs(y % majorStepY) < minorStepY * 0.01) continue;
+      const [, py] = worldToScreen(0, y, view, W, H);
+      const tx = Math.max(4, Math.min(W-4, clampedX));
+      ctx.beginPath(); ctx.moveTo(tx-3, py); ctx.lineTo(tx+3, py); ctx.stroke();
+    }
+  }
+
+  ctx.textAlign = 'left';
+}
+
+function formatTickLabel(v, step) {
+  const decimals = Math.max(0, -Math.floor(Math.log10(step)));
+  return v.toFixed(Math.min(decimals, 3));
+}
+
+function drawWaves(ctx, view, W, H, t) {
+  const samples = state.samples;
+  const dx = (view.xMax - view.xMin) / samples;
+
+  // Dibuja componentes
+  for (const wave of state.waves) {
+    if (!wave.visible) continue;
+    ctx.save();
+    const rgb = hexToRgb(wave.color);
+    ctx.strokeStyle = `rgba(${rgb.r},${rgb.g},${rgb.b},${wave.opacity})`;
+    ctx.lineWidth = wave.width;
+    if (wave.dash) ctx.setLineDash(wave.dash.split(',').map(Number));
+    else ctx.setLineDash([]);
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+
+    let inPath = false;
+    let prevNaN = true;
+    ctx.beginPath();
+    for (let i = 0; i <= samples; i++) {
+      const x = view.xMin + i * dx;
+      const y = evalWave(wave, x, t);
+      if (!isFinite(y) || isNaN(y)) {
+        prevNaN = true;
+        inPath = false;
+        continue;
+      }
+      const [px, py] = worldToScreen(x, y, view, W, H);
+      if (prevNaN || !inPath) {
+        ctx.moveTo(px, py);
+        inPath = true;
+        prevNaN = false;
+      } else {
+        // Detectar singularidad/discontinuidad
+        const prevX = view.xMin + (i - 1) * dx;
+        const prevY = evalWave(wave, prevX, t);
+        if (isFinite(prevY) && Math.abs(y - prevY) > (view.yMax - view.yMin) * 0.5) {
+          ctx.moveTo(px, py);
+        } else {
+          ctx.lineTo(px, py);
+        }
+      }
+    }
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  // Dibuja resultante
+  if (state.showResultante) {
+    const r = state.resultante;
+    const rgb = hexToRgb(r.color);
+    ctx.save();
+    ctx.strokeStyle = `rgba(${rgb.r},${rgb.g},${rgb.b},${r.opacity})`;
+    ctx.lineWidth = r.width;
+    if (r.dash) ctx.setLineDash(r.dash.split(',').map(Number));
+    else ctx.setLineDash([]);
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+
+    let prevNaN = true;
+    let inPath = false;
+    ctx.beginPath();
+    for (let i = 0; i <= samples; i++) {
+      const x = view.xMin + i * dx;
+      const y = evalResultante(x, t);
+      if (!isFinite(y) || isNaN(y)) { prevNaN = true; inPath = false; continue; }
+      const [px, py] = worldToScreen(x, y, view, W, H);
+      if (prevNaN || !inPath) {
+        ctx.moveTo(px, py); inPath = true; prevNaN = false;
+      } else {
+        const prevX = view.xMin + (i-1)*dx;
+        const prevY = evalResultante(prevX, t);
+        if (isFinite(prevY) && Math.abs(y - prevY) > (view.yMax - view.yMin) * 0.5) {
+          ctx.moveTo(px, py);
+        } else {
+          ctx.lineTo(px, py);
+        }
+      }
+    }
+    ctx.stroke();
+    ctx.restore();
+  }
+}
+
+function drawInspector(ctx, view, W, H, t) {
+  if (state.inspectX === null) return;
+  const ix = state.inspectX;
+  const [px] = worldToScreen(ix, 0, view, W, H);
+  
+  ctx.save();
+  ctx.strokeStyle = 'rgba(245,158,11,0.7)';
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([5,4]);
+  ctx.beginPath(); ctx.moveTo(px, 0); ctx.lineTo(px, H); ctx.stroke();
+
+  // Puntos en cada onda
+  for (const wave of state.waves) {
+    if (!wave.visible) continue;
+    const y = evalWave(wave, ix, t);
+    if (!isFinite(y)) continue;
+    const [, py] = worldToScreen(ix, y, view, W, H);
+    const rgb = hexToRgb(wave.color);
+    ctx.fillStyle = `rgba(${rgb.r},${rgb.g},${rgb.b},0.9)`;
+    ctx.beginPath(); ctx.arc(px, py, 5, 0, Math.PI*2); ctx.fill();
+  }
+  // Resultante
+  if (state.showResultante) {
+    const yr = evalResultante(ix, t);
+    if (isFinite(yr)) {
+      const [, py] = worldToScreen(ix, yr, view, W, H);
+      const rgb = hexToRgb(state.resultante.color);
+      ctx.fillStyle = `rgba(${rgb.r},${rgb.g},${rgb.b},0.9)`;
+      ctx.strokeStyle = 'white';
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([]);
+      ctx.beginPath(); ctx.arc(px, py, 6, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+    }
+  }
+  ctx.restore();
+}
+
+// ============================================================
+// INTERFAZ: Lista de ondas
+// ============================================================
+function renderWavesList(containerId) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  container.innerHTML = '';
+  for (const wave of state.waves) {
+    const card = document.createElement('div');
+    card.className = 'wave-card';
+    card.dataset.waveId = wave.id;
+
+    const isModal = containerId === 'modal-waves-list';
+
+    card.innerHTML = `
+      <div class="wave-card-header" role="button" tabindex="0" aria-expanded="true">
+        <div class="wave-color-dot" style="background:${wave.color}" 
+             data-action="pick-color" data-wave-id="${wave.id}" 
+             title="Cambiar color" aria-label="Color de ${wave.name}"></div>
+        <span class="wave-name">${escHtml(wave.name)}</span>
+        ${!isModal ? `
+        <label class="wave-toggle" title="Mostrar/ocultar onda">
+          <input type="checkbox" ${wave.visible ? 'checked' : ''} 
+                 data-action="toggle-visible" data-wave-id="${wave.id}"
+                 aria-label="Mostrar ${wave.name}">
+          <span class="wave-toggle-slider"></span>
+        </label>` : `
+        <label class="wave-toggle" title="Incluir en suma">
+          <input type="checkbox" ${wave.includeInSum ? 'checked' : ''} 
+                 data-action="toggle-sum" data-wave-id="${wave.id}"
+                 aria-label="Incluir ${wave.name} en suma">
+          <span class="wave-toggle-slider"></span>
+        </label>`}
+      </div>
+      ${!isModal ? `
+      <div class="wave-card-body">
+        <div class="equation-preview" aria-label="Ecuación: ${escHtml(wave.expr)}">${escHtml(wave.expr)}</div>
+        ${wave.error ? `<div style="color:var(--danger);font-size:0.72rem;margin-bottom:6px">${escHtml(wave.error)}</div>` : ''}
+        <div class="wave-actions">
+          <button class="btn-sm" data-action="edit-wave" data-wave-id="${wave.id}" aria-label="Editar ${wave.name}">✏ Editar</button>
+          <button class="btn-sm" data-action="edit-style" data-wave-id="${wave.id}" aria-label="Estilo de ${wave.name}">🎨 Estilo</button>
+          <button class="btn-sm" data-action="toggle-sum" data-wave-id="${wave.id}" 
+                  style="${wave.includeInSum ? '' : 'color:var(--danger)'}" 
+                  aria-label="${wave.includeInSum ? 'Excluir de suma' : 'Incluir en suma'}"
+                  title="${wave.includeInSum ? 'Excluir de la suma (pero mantener visible)' : 'Incluir en la suma'}"
+                  data-sum-btn="${wave.id}">
+            ${wave.includeInSum ? '∑ En suma' : '∑ Excluida'}
+          </button>
+          <button class="btn-sm danger" data-action="delete-wave" data-wave-id="${wave.id}" aria-label="Eliminar ${wave.name}">🗑</button>
+        </div>
+      </div>` : ''}
+    `;
+    container.appendChild(card);
+  }
+}
+
+function renderAllWaveLists() {
+  renderWavesList('waves-list');
+  renderWavesList('modal-waves-list');
+}
+
+// ============================================================
+// TECLADO VIRTUAL
+// ============================================================
+let kbTargetWaveId = null;
+let kbInput = null;
+
+function openKeyboard(waveId) {
+  kbTargetWaveId = waveId;
+  const wave = state.waves.find(w => w.id === waveId);
+  kbInput = document.getElementById('kb-input');
+  document.getElementById('kb-wave-label').textContent = wave ? `— ${wave.name}` : '';
+  kbInput.value = wave ? wave.expr : '';
+  document.getElementById('keyboard-modal').classList.add('open');
+  kbInput.focus();
+  updateKbPreview();
+}
+
+function closeKeyboard() {
+  document.getElementById('keyboard-modal').classList.remove('open');
+  kbTargetWaveId = null;
+}
+
+function updateKbPreview() {
+  const expr = document.getElementById('kb-input').value;
+  const preview = document.getElementById('kb-preview');
+  preview.textContent = expr;
+}
+
+// ============================================================
+// ESTILOS INLINE DE ONDA
+// ============================================================
+let styleTargetWaveId = null;
+let stylePopup = null;
+
+function openStyleEditor(waveId) {
+  const wave = state.waves.find(w => w.id === waveId);
+  if (!wave) return;
+  
+  // Crear popup de estilo inline
+  let popup = document.getElementById('wave-style-popup');
+  if (popup) popup.remove();
+  
+  popup = document.createElement('div');
+  popup.id = 'wave-style-popup';
+  popup.setAttribute('role','dialog');
+  popup.setAttribute('aria-label', `Estilo de ${wave.name}`);
+  popup.style.cssText = `
+    position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+    z-index:3000;background:var(--bg-panel);border:1px solid var(--border);
+    border-radius:12px;padding:16px;width:320px;box-shadow:0 10px 40px rgba(0,0,0,0.5)
+  `;
+  popup.innerHTML = `
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+      <span style="font-weight:700;font-size:0.9rem">Estilo: ${escHtml(wave.name)}</span>
+      <div style="flex:1"></div>
+      <button class="btn-icon" onclick="document.getElementById('wave-style-popup').remove()" aria-label="Cerrar">✕</button>
+    </div>
+    <div class="palette-row">
+      <span class="palette-label">Color</span>
+      <input type="color" id="ws-color" value="${wave.color}" aria-label="Color de la onda">
+    </div>
+    <div class="palette-row">
+      <span class="palette-label">Grosor</span>
+      <input type="range" id="ws-width" min="0.5" max="8" step="0.5" value="${wave.width}" aria-label="Grosor">
+      <span id="ws-width-val" style="font-size:0.72rem;min-width:24px">${wave.width}</span>
+    </div>
+    <div class="palette-row">
+      <span class="palette-label">Opacidad</span>
+      <input type="range" id="ws-opacity" min="0.1" max="1" step="0.05" value="${wave.opacity}" aria-label="Opacidad">
+      <span id="ws-opacity-val" style="font-size:0.72rem;min-width:28px">${Math.round(wave.opacity*100)}%</span>
+    </div>
+    <div class="palette-row">
+      <span class="palette-label">Línea</span>
+      <select id="ws-dash" aria-label="Estilo de línea">
+        <option value="">Sólida</option>
+        <option value="8,4">Guiones</option>
+        <option value="2,4">Puntos</option>
+        <option value="12,4,3,4">Punto-guión</option>
+      </select>
+    </div>
+    <div class="palette-row" style="margin-top:4px">
+      <span class="palette-label">Nombre</span>
+      <input class="param-input" type="text" id="ws-name" value="${escHtml(wave.name)}" aria-label="Nombre de la onda">
+    </div>
+    <div style="display:flex;gap:8px;margin-top:12px">
+      <button class="btn-primary" id="ws-apply" style="flex:1">✓ Aplicar</button>
+    </div>
+  `;
+  document.body.appendChild(popup);
+  document.getElementById('ws-dash').value = wave.dash || '';
+
+  document.getElementById('ws-width').oninput = function() {
+    document.getElementById('ws-width-val').textContent = this.value;
+  };
+  document.getElementById('ws-opacity').oninput = function() {
+    document.getElementById('ws-opacity-val').textContent = Math.round(this.value*100)+'%';
+  };
+  document.getElementById('ws-apply').onclick = function() {
+    wave.color = document.getElementById('ws-color').value;
+    wave.width = parseFloat(document.getElementById('ws-width').value);
+    wave.opacity = parseFloat(document.getElementById('ws-opacity').value);
+    wave.dash = document.getElementById('ws-dash').value;
+    wave.name = document.getElementById('ws-name').value || wave.name;
+    renderAllWaveLists();
+    popup.remove();
+  };
+}
+
+// ============================================================
+// COLOR PICKER
+// ============================================================
+let colorPickerTarget = null;
+let colorPickerCallback = null;
+
+function openColorPicker(el, callback) {
+  const popup = document.getElementById('color-picker-popup');
+  colorPickerCallback = callback;
+  const rect = el.getBoundingClientRect();
+  popup.style.top = (rect.bottom + 8) + 'px';
+  popup.style.left = rect.left + 'px';
+  popup.classList.add('open');
+}
+
+function buildColorGrid() {
+  const grid = document.getElementById('color-grid');
+  grid.innerHTML = '';
+  for (const color of COLORS) {
+    const swatch = document.createElement('div');
+    swatch.className = 'color-swatch';
+    swatch.style.background = color;
+    swatch.title = color;
+    swatch.setAttribute('tabindex', '0');
+    swatch.setAttribute('aria-label', `Color ${color}`);
+    swatch.onclick = () => {
+      if (colorPickerCallback) colorPickerCallback(color);
+      document.getElementById('color-picker-popup').classList.remove('open');
+    };
+    grid.appendChild(swatch);
+  }
+}
+
+// ============================================================
+// INSPECTOR
+// ============================================================
+function updateInspector(x) {
+  state.inspectX = x;
+  const t = state.time;
+  const container = document.getElementById('inspector-values');
+  if (!container) return;
+  let html = '';
+  for (const wave of state.waves) {
+    const y = evalWave(wave, x, t);
+    const dot = `<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${wave.color};margin-right:4px"></span>`;
+    html += `<div class="inspector-row">${dot}${escHtml(wave.name)}<span style="color:${wave.color};font-weight:600">${isFinite(y) ? y.toFixed(4) : 'N/A'}</span></div>`;
+  }
+  const yr = evalResultante(x, t);
+  html += `<div class="inspector-row" style="border-top:1px solid var(--border);margin-top:4px;padding-top:4px;font-weight:700">
+    <span style="color:${state.resultante.color}">∑ Resultante</span>
+    <span style="color:${state.resultante.color}">${isFinite(yr) ? yr.toFixed(4) : 'N/A'}</span>
+  </div>`;
+  container.innerHTML = html;
+}
+
+// ============================================================
+// ANIMACIÓN
+// ============================================================
+let animFrame = null;
+let lastTimestamp = null;
+
+function animate(ts) {
+  if (lastTimestamp === null) lastTimestamp = ts;
+  const dt = (ts - lastTimestamp) / 1000;
+  lastTimestamp = ts;
+
+  if (state.playing) {
+    state.time += dt * state.speed;
+    if (state.time > state.tMax) state.time = 0;
+    syncTimeControls();
+  }
+
+  renderAll();
+  animFrame = requestAnimationFrame(animate);
+}
+
+function renderAll() {
+  drawGraph(mainCanvas, state.view, state.time, false);
+  if (document.getElementById('modal-overlay').classList.contains('open')) {
+    drawGraph(modalCanvas, state.view, state.time, true);
+  }
+  updateInspector(state.inspectX !== null ? state.inspectX : 0);
+}
+
+function syncTimeControls() {
+  const pct = (state.time / state.tMax) * 1000;
+  document.getElementById('time-slider').value = pct;
+  document.getElementById('mtime-slider').value = pct;
+  document.getElementById('time-display').textContent = `t=${state.time.toFixed(2)}s`;
+  document.getElementById('mtime-display').textContent = `t=${state.time.toFixed(2)}s`;
+}
+
+function setPlaying(playing) {
+  state.playing = playing;
+  lastTimestamp = null;
+  const btn = document.getElementById('btn-play');
+  const mbtn = document.getElementById('mbtn-play');
+  btn.textContent = playing ? '⏸' : '▶';
+  mbtn.textContent = playing ? '⏸' : '▶';
+  btn.setAttribute('aria-label', playing ? 'Pausar' : 'Reproducir');
+  mbtn.setAttribute('aria-label', playing ? 'Pausar' : 'Reproducir');
+  if (playing) {
+    btn.classList.add('active'); mbtn.classList.add('active');
+  } else {
+    btn.classList.remove('active'); mbtn.classList.remove('active');
+  }
+}
+
+// ============================================================
+// ZOOM / PAN
+// ============================================================
+function zoomView(factor, cx, cy) {
+  const view = state.view;
+  const [wx, wy] = screenToWorld(cx, cy, view, mainCanvas.offsetWidth, mainCanvas.offsetHeight);
+  const newW = (view.xMax - view.xMin) * factor;
+  const newH = (view.yMax - view.yMin) * factor;
+  const rx = (wx - view.xMin) / (view.xMax - view.xMin);
+  const ry = (wy - view.yMin) / (view.yMax - view.yMin);
+  view.xMin = wx - newW * rx;
+  view.xMax = view.xMin + newW;
+  view.yMin = wy - newH * ry;
+  view.yMax = view.yMin + newH;
+  syncParamInputs();
+}
+
+function panView(dx, dy) {
+  const view = state.view;
+  const W = mainCanvas.offsetWidth, H = mainCanvas.offsetHeight;
+  const worldDx = (dx / W) * (view.xMax - view.xMin);
+  const worldDy = (dy / H) * (view.yMax - view.yMin);
+  view.xMin -= worldDx; view.xMax -= worldDx;
+  view.yMin += worldDy; view.yMax += worldDy;
+  syncParamInputs();
+}
+
+function resetView() {
+  state.view = { xMin: -10, xMax: 10, yMin: -4, yMax: 4 };
+  syncParamInputs();
+}
+
+function fitView() {
+  // Calcula los límites de las ondas visibles en el tiempo actual
+  let minY = Infinity, maxY = -Infinity;
+  const t = state.time;
+  const n = 500;
+  for (let i = 0; i <= n; i++) {
+    const x = state.view.xMin + (i / n) * (state.view.xMax - state.view.xMin);
+    const yr = evalResultante(x, t);
+    if (isFinite(yr)) { minY = Math.min(minY, yr); maxY = Math.max(maxY, yr); }
+    for (const w of state.waves) {
+      if (!w.visible) continue;
+      const y = evalWave(w, x, t);
+      if (isFinite(y)) { minY = Math.min(minY, y); maxY = Math.max(maxY, y); }
+    }
+  }
+  if (!isFinite(minY) || !isFinite(maxY)) return;
+  const margin = (maxY - minY) * 0.2 || 1;
+  state.view.yMin = minY - margin;
+  state.view.yMax = maxY + margin;
+  syncParamInputs();
+}
+
+function syncParamInputs() {
+  const v = state.view;
+  document.getElementById('param-xmin').value = v.xMin.toFixed(2);
+  document.getElementById('param-xmax').value = v.xMax.toFixed(2);
+  document.getElementById('param-ymin').value = v.yMin.toFixed(2);
+  document.getElementById('param-ymax').value = v.yMax.toFixed(2);
+}
+
+// ============================================================
+// EJEMPLOS
+// ============================================================
+const EXAMPLES = [
+  {
+    name: 'Dos pulsos iguales, sentidos opuestos',
+    waves: [
+      { expr: '2/((x-v*t)^2+1)', name: 'Pulso →' },
+      { expr: '2/((x+v*t)^2+1)', name: 'Pulso ←' },
+    ]
+  },
+  {
+    name: 'Dos pulsos de signos contrarios',
+    waves: [
+      { expr: '2/((x-v*t)^2+1)', name: 'Pulso + →' },
+      { expr: '-2/((x+v*t)^2+1)', name: 'Pulso − ←' },
+    ]
+  },
+  {
+    name: 'Pulsos con diferente amplitud y ancho',
+    waves: [
+      { expr: '3*exp(-((x-v*t)^2)/0.5)', name: 'Pulso amplio →' },
+      { expr: '1.5*exp(-((x+v*t)^2)/4)', name: 'Pulso estrecho ←' },
+    ]
+  },
+  {
+    name: 'Superposición de 3 componentes',
+    waves: [
+      { expr: 'sin(x - v*t)', name: 'Fundamental' },
+      { expr: '0.5*sin(3*x - 3*v*t)', name: '3er armónico' },
+      { expr: '0.25*sin(5*x - 5*v*t)', name: '5o armónico' },
+    ]
+  },
+  {
+    name: 'Ondas sinusoidales con distinta fase',
+    waves: [
+      { expr: 'sin(x - v*t)', name: 'Onda 1 (fase 0)' },
+      { expr: 'sin(1.1*x - 1.1*v*t)', name: 'Onda 2 (Δf)' },
+    ]
+  },
+  {
+    name: 'Onda estacionaria',
+    waves: [
+      { expr: 'sin(x - v*t)', name: 'Onda →' },
+      { expr: 'sin(x + v*t)', name: 'Onda ←' },
+    ]
+  },
+];
+
+function loadExample(idx) {
+  const ex = EXAMPLES[idx];
+  if (!ex) return;
+  state.waves = [];
+  state.nextId = 1;
+  for (const w of ex.waves) createWave(w.expr, w.name);
+  renderAllWaveLists();
+  resetView();
+}
+
+// ============================================================
+// EXPORTAR / IMPORTAR
+// ============================================================
+function exportJSON() {
+  const data = {
+    version: 1,
+    waves: state.waves.map(w => ({ name: w.name, expr: w.expr, color: w.color, width: w.width, opacity: w.opacity, dash: w.dash, visible: w.visible, includeInSum: w.includeInSum })),
+    view: { ...state.view },
+    resultante: { ...state.resultante },
+    graph: { ...state.graph },
+    v: state.v,
+    tMax: state.tMax,
+    showResultante: state.showResultante,
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'superposicion_ondas.json';
+  a.click();
+}
+
+function importJSON(file) {
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (data.version !== 1) throw new Error('Versión no compatible');
+      state.waves = [];
+      state.nextId = 1;
+      for (const w of data.waves) {
+        const wave = createWave(w.expr, w.name);
+        Object.assign(wave, { color: w.color, width: w.width, opacity: w.opacity, dash: w.dash, visible: w.visible, includeInSum: w.includeInSum });
+      }
+      if (data.view) state.view = data.view;
+      if (data.resultante) state.resultante = data.resultante;
+      if (data.graph) state.graph = data.graph;
+      if (data.v !== undefined) { state.v = data.v; document.getElementById('param-v').value = data.v; }
+      if (data.tMax) { state.tMax = data.tMax; document.getElementById('param-tmax').value = data.tMax; }
+      if (data.showResultante !== undefined) state.showResultante = data.showResultante;
+      renderAllWaveLists();
+      syncParamInputs();
+      applyPaletteToUI();
+    } catch(err) {
+      alert('Error al importar: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+}
+
+function exportImage() {
+  const canvas = mainCanvas;
+  const link = document.createElement('a');
+  link.download = 'superposicion_ondas.png';
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+}
+
+// ============================================================
+// PALETA DE ESTILOS
+// ============================================================
+function applyPaletteToUI() {
+  const g = state.graph;
+  document.getElementById('pal-bg').value = g.bg;
+  document.getElementById('pal-grid-major-color').value = g.gridMajorColor;
+  document.getElementById('pal-grid-major-alpha').value = Math.round(g.gridMajorAlpha * 100);
+  document.getElementById('pal-grid-minor-color').value = g.gridMinorColor;
+  document.getElementById('pal-grid-minor-alpha').value = Math.round(g.gridMinorAlpha * 100);
+  document.getElementById('pal-axis-color').value = g.axisColor;
+  document.getElementById('pal-axis-width').value = g.axisWidth;
+  document.getElementById('pal-label-size').value = g.labelSize;
+  document.getElementById('pal-resultante-color').value = state.resultante.color;
+  document.getElementById('pal-resultante-width').value = state.resultante.width;
+  document.getElementById('pal-resultante-dash').value = state.resultante.dash || '';
+
+  document.getElementById('pal-gma-val').textContent = Math.round(g.gridMajorAlpha * 100) + '%';
+  document.getElementById('pal-gmn-val').textContent = Math.round(g.gridMinorAlpha * 100) + '%';
+  document.getElementById('pal-aw-val').textContent = g.axisWidth;
+  document.getElementById('pal-ls-val').textContent = g.labelSize;
+  document.getElementById('pal-rw-val').textContent = state.resultante.width;
+}
+
+function applyPaletteFromUI() {
+  const g = state.graph;
+  g.bg = document.getElementById('pal-bg').value;
+  g.gridMajorColor = document.getElementById('pal-grid-major-color').value;
+  g.gridMajorAlpha = parseInt(document.getElementById('pal-grid-major-alpha').value) / 100;
+  g.gridMinorColor = document.getElementById('pal-grid-minor-color').value;
+  g.gridMinorAlpha = parseInt(document.getElementById('pal-grid-minor-alpha').value) / 100;
+  g.axisColor = document.getElementById('pal-axis-color').value;
+  g.axisWidth = parseFloat(document.getElementById('pal-axis-width').value);
+  g.labelSize = parseInt(document.getElementById('pal-label-size').value);
+  state.resultante.color = document.getElementById('pal-resultante-color').value;
+  state.resultante.width = parseInt(document.getElementById('pal-resultante-width').value);
+  state.resultante.dash = document.getElementById('pal-resultante-dash').value;
+  document.getElementById('resultante-color-dot').style.background = state.resultante.color;
+}
+
+function setLightTheme() {
+  state.graph.bg = '#ffffff';
+  state.graph.gridMajorColor = '#4f46e5';
+  state.graph.gridMajorAlpha = 0.15;
+  state.graph.gridMinorColor = '#4f46e5';
+  state.graph.gridMinorAlpha = 0.06;
+  state.graph.axisColor = '#0f172a';
+  applyPaletteToUI();
+}
+
+function setDarkTheme() {
+  state.graph.bg = '#0a0e1a';
+  state.graph.gridMajorColor = '#6366f1';
+  state.graph.gridMajorAlpha = 0.20;
+  state.graph.gridMinorColor = '#6366f1';
+  state.graph.gridMinorAlpha = 0.08;
+  state.graph.axisColor = '#e2e8f0';
+  applyPaletteToUI();
+}
+
+// ============================================================
+// UTILIDADES
+// ============================================================
+function hexToRgb(hex) {
+  const h = hex.replace('#','');
+  const r = parseInt(h.substring(0,2),16);
+  const g = parseInt(h.substring(2,4),16);
+  const b = parseInt(h.substring(4,6),16);
+  return {r,g,b};
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ============================================================
+// REFERENCIAS A ELEMENTOS DOM
+// ============================================================
+const mainCanvas = document.getElementById('main-canvas');
+const modalCanvas = document.getElementById('modal-canvas');
+
+// ============================================================
+// EVENTOS
+// ============================================================
+function initEvents() {
+  // Tabs
+  document.querySelectorAll('.panel-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.panel-tab').forEach(t => { t.classList.remove('active'); t.setAttribute('aria-selected','false'); });
+      document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      tab.setAttribute('aria-selected','true');
+      document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+    });
+  });
+
+  // Toggle panel móvil
+  document.getElementById('btn-toggle-panel').addEventListener('click', () => {
+    document.getElementById('left-panel').classList.toggle('open');
+  });
+
+  // Agregar onda
+  document.getElementById('btn-add-wave').addEventListener('click', () => {
+    const wave = createWave('sin(x - v*t)');
+    renderAllWaveLists();
+    openKeyboard(wave.id);
+  });
+
+  // Delegación de eventos en lista de ondas
+  function handleWaveListEvents(e) {
+    const el = e.target;
+    const action = el.dataset.action || el.closest('[data-action]')?.dataset.action;
+    const waveId = parseInt(el.dataset.waveId || el.closest('[data-wave-id]')?.dataset.waveId);
+    if (!action || isNaN(waveId)) return;
+
+    const wave = state.waves.find(w => w.id === waveId);
+    if (!wave) return;
+
+    if (action === 'edit-wave') { openKeyboard(waveId); }
+    else if (action === 'edit-style') { openStyleEditor(waveId); }
+    else if (action === 'delete-wave') { deleteWave(waveId); renderAllWaveLists(); }
+    else if (action === 'toggle-visible') { wave.visible = el.checked; renderAllWaveLists(); }
+    else if (action === 'toggle-sum') {
+      if (el.type === 'checkbox') {
+        wave.includeInSum = el.checked;
+      } else {
+        wave.includeInSum = !wave.includeInSum;
+      }
+      renderAllWaveLists();
+    }
+    else if (action === 'pick-color') {
+      openColorPicker(el, (color) => {
+        wave.color = color;
+        renderAllWaveLists();
+      });
+    }
+  }
+
+  document.getElementById('waves-list').addEventListener('click', handleWaveListEvents);
+  document.getElementById('modal-waves-list').addEventListener('click', handleWaveListEvents);
+  document.getElementById('waves-list').addEventListener('change', handleWaveListEvents);
+  document.getElementById('modal-waves-list').addEventListener('change', handleWaveListEvents);
+
+  // Resultante color dot
+  document.getElementById('resultante-color-dot').addEventListener('click', function(e) {
+    openColorPicker(this, (color) => {
+      state.resultante.color = color;
+      this.style.background = color;
+      document.getElementById('pal-resultante-color').value = color;
+    });
+  });
+
+  // Toggle resultante
+  document.getElementById('toggle-resultante').addEventListener('change', function() {
+    state.showResultante = this.checked;
+  });
+
+  // Resultante width/opacity sliders
+  document.getElementById('resultante-width').addEventListener('input', function() {
+    state.resultante.width = parseFloat(this.value);
+    document.getElementById('pal-resultante-width').value = this.value;
+    document.getElementById('pal-rw-val').textContent = this.value;
+  });
+  document.getElementById('resultante-opacity').addEventListener('input', function() {
+    state.resultante.opacity = this.value / 100;
+  });
+
+  // Animación
+  document.getElementById('btn-play').addEventListener('click', () => setPlaying(!state.playing));
+  document.getElementById('mbtn-play').addEventListener('click', () => setPlaying(!state.playing));
+  document.getElementById('btn-restart').addEventListener('click', () => { state.time = 0; syncTimeControls(); });
+  document.getElementById('mbtn-restart').addEventListener('click', () => { state.time = 0; syncTimeControls(); });
+  document.getElementById('btn-step-back').addEventListener('click', () => { state.time = Math.max(0, state.time - 0.1); syncTimeControls(); });
+  document.getElementById('mbtn-step-back').addEventListener('click', () => { state.time = Math.max(0, state.time - 0.1); syncTimeControls(); });
+  document.getElementById('btn-step-fwd').addEventListener('click', () => { state.time = Math.min(state.tMax, state.time + 0.1); syncTimeControls(); });
+  document.getElementById('mbtn-step-fwd').addEventListener('click', () => { state.time = Math.min(state.tMax, state.time + 0.1); syncTimeControls(); });
+
+  function syncFromSlider(val) {
+    state.time = (val / 1000) * state.tMax;
+    syncTimeControls();
+  }
+  document.getElementById('time-slider').addEventListener('input', function() { syncFromSlider(this.value); });
+  document.getElementById('mtime-slider').addEventListener('input', function() { syncFromSlider(this.value); });
+
+  document.getElementById('speed-select').addEventListener('change', function() { state.speed = parseFloat(this.value); });
+  document.getElementById('mspeed-select').addEventListener('change', function() {
+    state.speed = parseFloat(this.value);
+    document.getElementById('speed-select').value = this.value;
+  });
+
+  // Parámetros
+  document.getElementById('btn-apply-params').addEventListener('click', () => {
+    state.view.xMin = parseFloat(document.getElementById('param-xmin').value);
+    state.view.xMax = parseFloat(document.getElementById('param-xmax').value);
+    state.view.yMin = parseFloat(document.getElementById('param-ymin').value);
+    state.view.yMax = parseFloat(document.getElementById('param-ymax').value);
+    state.samples = parseInt(document.getElementById('param-samples').value);
+    state.tMax = parseFloat(document.getElementById('param-tmax').value);
+    state.v = parseFloat(document.getElementById('param-v').value);
+  });
+
+  // Inspector
+  document.getElementById('btn-inspect').addEventListener('click', () => {
+    const x = parseFloat(document.getElementById('inspector-x').value);
+    state.inspectX = x;
+    updateInspector(x);
+  });
+
+  // Zoom
+  document.getElementById('btn-zoom-in').addEventListener('click', () => zoomView(0.75, mainCanvas.offsetWidth/2, mainCanvas.offsetHeight/2));
+  document.getElementById('btn-zoom-out').addEventListener('click', () => zoomView(1.33, mainCanvas.offsetWidth/2, mainCanvas.offsetHeight/2));
+  document.getElementById('btn-reset-view').addEventListener('click', resetView);
+  document.getElementById('btn-fit').addEventListener('click', fitView);
+  document.getElementById('btn-grid-toggle').addEventListener('click', () => {
+    state.showGrid = !state.showGrid;
+    document.getElementById('btn-grid-toggle').style.color = state.showGrid ? '' : 'var(--danger)';
+  });
+
+  // Herramientas
+  document.querySelectorAll('.tool-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('tool-active'));
+      btn.classList.add('tool-active');
+      state.tool = btn.dataset.tool;
+      mainCanvas.style.cursor = state.tool === 'pan' ? 'grab' : state.tool === 'inspect' ? 'crosshair' : 'default';
+    });
+  });
+
+  // Canvas: mouse wheel zoom
+  mainCanvas.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    const rect = mainCanvas.getBoundingClientRect();
+    const cx = e.clientX - rect.left;
+    const cy = e.clientY - rect.top;
+    const factor = e.deltaY > 0 ? 1.1 : 0.9;
+    zoomView(factor, cx, cy);
+  }, { passive: false });
+
+  // Canvas: mouse pan / inspect
+  let isDragging = false, dragStart = null;
+  mainCanvas.addEventListener('mousedown', (e) => {
+    if (state.tool === 'pan') {
+      isDragging = true;
+      dragStart = { x: e.clientX, y: e.clientY };
+      mainCanvas.style.cursor = 'grabbing';
+    }
+    if (state.tool === 'inspect') {
+      const rect = mainCanvas.getBoundingClientRect();
+      const [wx] = screenToWorld(e.clientX - rect.left, e.clientY - rect.top, state.view, mainCanvas.offsetWidth, mainCanvas.offsetHeight);
+      state.inspectX = wx;
+      document.getElementById('inspector-x').value = wx.toFixed(3);
+      updateInspector(wx);
+    }
+  });
+  window.addEventListener('mousemove', (e) => {
+    if (isDragging && dragStart) {
+      const dx = e.clientX - dragStart.x;
+      const dy = e.clientY - dragStart.y;
+      panView(dx, dy);
+      dragStart = { x: e.clientX, y: e.clientY };
+    }
+    // Coordenadas del cursor
+    const rect = mainCanvas.getBoundingClientRect();
+    if (e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom) {
+      const [wx, wy] = screenToWorld(e.clientX - rect.left, e.clientY - rect.top, state.view, mainCanvas.offsetWidth, mainCanvas.offsetHeight);
+      document.getElementById('cursor-coords').textContent = `x=${wx.toFixed(2)}, y=${wy.toFixed(2)}`;
+    }
+  });
+  window.addEventListener('mouseup', () => {
+    isDragging = false;
+    if (state.tool === 'pan') mainCanvas.style.cursor = 'grab';
+  });
+
+  // Touch: pinch zoom y pan
+  let touches = [];
+  mainCanvas.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    touches = Array.from(e.touches);
+  }, { passive: false });
+  mainCanvas.addEventListener('touchmove', (e) => {
+    e.preventDefault();
+    const newTouches = Array.from(e.touches);
+    if (newTouches.length === 1 && touches.length === 1) {
+      const dx = newTouches[0].clientX - touches[0].clientX;
+      const dy = newTouches[0].clientY - touches[0].clientY;
+      panView(dx, dy);
+    } else if (newTouches.length === 2 && touches.length === 2) {
+      const oldDist = Math.hypot(touches[1].clientX-touches[0].clientX, touches[1].clientY-touches[0].clientY);
+      const newDist = Math.hypot(newTouches[1].clientX-newTouches[0].clientX, newTouches[1].clientY-newTouches[0].clientY);
+      const factor = oldDist / newDist;
+      const cx = (newTouches[0].clientX + newTouches[1].clientX) / 2;
+      const cy = (newTouches[0].clientY + newTouches[1].clientY) / 2;
+      const rect = mainCanvas.getBoundingClientRect();
+      zoomView(factor, cx - rect.left, cy - rect.top);
+    }
+    touches = newTouches;
+  }, { passive: false });
+
+  // Modal
+  document.getElementById('btn-open-modal').addEventListener('click', openModal);
+  document.getElementById('btn-modal-close').addEventListener('click', closeModal);
+  document.getElementById('btn-modal-maximize').addEventListener('click', () => {
+    document.getElementById('modal-window').classList.toggle('maximized');
+  });
+  document.getElementById('btn-modal-minimize').addEventListener('click', () => {
+    document.getElementById('modal-window').classList.toggle('minimized');
+  });
+  document.getElementById('btn-modal-fullscreen').addEventListener('click', () => {
+    const el = document.getElementById('modal-overlay');
+    if (!document.fullscreenElement) el.requestFullscreen?.();
+    else document.exitFullscreen?.();
+  });
+
+  // Keyboard Escape
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      if (document.getElementById('keyboard-modal').classList.contains('open')) closeKeyboard();
+      else if (document.getElementById('palette-modal').classList.contains('open')) document.getElementById('palette-modal').classList.remove('open');
+      else if (document.getElementById('modal-overlay').classList.contains('open')) closeModal();
+    }
+    // Teclado de accesibilidad en canvas
+    if (document.activeElement === mainCanvas) {
+      if (e.key === 'ArrowRight') panView(-20, 0);
+      if (e.key === 'ArrowLeft') panView(20, 0);
+      if (e.key === 'ArrowUp') panView(0, -20);
+      if (e.key === 'ArrowDown') panView(0, 20);
+      if (e.key === '+') zoomView(0.8, mainCanvas.offsetWidth/2, mainCanvas.offsetHeight/2);
+      if (e.key === '-') zoomView(1.25, mainCanvas.offsetWidth/2, mainCanvas.offsetHeight/2);
+      if (e.key === ' ') { e.preventDefault(); setPlaying(!state.playing); }
+    }
+  });
+
+  // Paleta
+  document.getElementById('btn-palette').addEventListener('click', () => {
+    applyPaletteToUI();
+    document.getElementById('palette-modal').classList.add('open');
+  });
+  document.getElementById('btn-palette-close').addEventListener('click', () => document.getElementById('palette-modal').classList.remove('open'));
+  document.getElementById('btn-palette-apply').addEventListener('click', () => {
+    applyPaletteFromUI();
+    document.getElementById('palette-modal').classList.remove('open');
+  });
+  document.getElementById('btn-palette-theme-light').addEventListener('click', setLightTheme);
+  document.getElementById('btn-palette-theme-dark').addEventListener('click', setDarkTheme);
+
+  // Palette live preview
+  ['pal-grid-major-alpha','pal-grid-minor-alpha','pal-axis-width','pal-label-size','pal-resultante-width'].forEach(id => {
+    document.getElementById(id).addEventListener('input', function() {
+      const valEl = { 'pal-grid-major-alpha': 'pal-gma-val', 'pal-grid-minor-alpha': 'pal-gmn-val', 'pal-axis-width': 'pal-aw-val', 'pal-label-size': 'pal-ls-val', 'pal-resultante-width': 'pal-rw-val' }[id];
+      if (valEl) document.getElementById(valEl).textContent = this.value + (id.includes('alpha') ? '%' : '');
+    });
+  });
+
+  // Tema
+  let isDark = true;
+  document.getElementById('btn-theme').addEventListener('click', () => {
+    isDark = !isDark;
+    document.documentElement.setAttribute('data-theme', isDark ? '' : 'light');
+    document.getElementById('btn-theme').textContent = isDark ? '☀️' : '🌙';
+    if (isDark) setDarkTheme(); else setLightTheme();
+  });
+
+  // Exportar/Importar
+  document.getElementById('btn-export-img').addEventListener('click', exportImage);
+  document.getElementById('btn-export-json').addEventListener('click', exportJSON);
+  document.getElementById('btn-import-json').addEventListener('change', function() {
+    if (this.files[0]) importJSON(this.files[0]);
+    this.value = '';
+  });
+
+  // Teclado virtual
+  document.querySelectorAll('.kb-key').forEach(key => {
+    key.addEventListener('click', () => {
+      const input = document.getElementById('kb-input');
+      const action = key.dataset.action;
+      if (action === 'backspace') {
+        const s = input.selectionStart, e = input.selectionEnd;
+        if (s !== e) { input.value = input.value.slice(0, s) + input.value.slice(e); input.setSelectionRange(s, s); }
+        else if (s > 0) { input.value = input.value.slice(0, s-1) + input.value.slice(s); input.setSelectionRange(s-1, s-1); }
+      } else if (action === 'clear') {
+        input.value = '';
+        input.setSelectionRange(0, 0);
+      } else if (key.dataset.insert !== undefined) {
+        const ins = key.dataset.insert;
+        const s = input.selectionStart, e = input.selectionEnd;
+        input.value = input.value.slice(0, s) + ins + input.value.slice(e);
+        input.setSelectionRange(s + ins.length, s + ins.length);
+      }
+      input.focus();
+      updateKbPreview();
+    });
+  });
+
+  document.getElementById('kb-input').addEventListener('input', updateKbPreview);
+  document.getElementById('btn-kb-close').addEventListener('click', closeKeyboard);
+  document.getElementById('btn-kb-insert').addEventListener('click', () => {
+    const expr = document.getElementById('kb-input').value.trim();
+    if (!expr) return;
+    if (kbTargetWaveId !== null) {
+      updateWaveExpr(kbTargetWaveId, expr);
+      renderAllWaveLists();
+    }
+    closeKeyboard();
+  });
+
+  // Color picker
+  buildColorGrid();
+  document.getElementById('custom-color-picker').addEventListener('input', function() {
+    if (colorPickerCallback) colorPickerCallback(this.value);
+    document.getElementById('color-picker-popup').classList.remove('open');
+  });
+  document.getElementById('btn-color-cancel').addEventListener('click', () => {
+    document.getElementById('color-picker-popup').classList.remove('open');
+  });
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('#color-picker-popup') && !e.target.dataset.action?.startsWith('pick')) {
+      document.getElementById('color-picker-popup').classList.remove('open');
+    }
+    if (!e.target.closest('#palette-panel') && !e.target.closest('#btn-palette') && document.getElementById('palette-modal').classList.contains('open')) {
+      // No auto-close palette on outside click; user must use buttons
+    }
+  });
+
+  // Ejemplos
+  document.querySelectorAll('.example-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      loadExample(parseInt(btn.dataset.example));
+    });
+  });
+  document.getElementById('btn-examples-quick').addEventListener('click', () => {
+    // Cambiar al tab de didáctica
+    document.querySelectorAll('.panel-tab').forEach(t => { t.classList.remove('active'); t.setAttribute('aria-selected','false'); });
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    document.querySelector('[data-tab="didactica"]').classList.add('active');
+    document.querySelector('[data-tab="didactica"]').setAttribute('aria-selected','true');
+    document.getElementById('tab-didactica').classList.add('active');
+    if (window.innerWidth <= 768) document.getElementById('left-panel').classList.add('open');
+  });
+
+  // Resizer del panel
+  const resizer = document.getElementById('panel-resizer');
+  let resizerDrag = false;
+  resizer.addEventListener('mousedown', (e) => { resizerDrag = true; resizer.classList.add('dragging'); e.preventDefault(); });
+  window.addEventListener('mousemove', (e) => {
+    if (!resizerDrag) return;
+    const panel = document.getElementById('left-panel');
+    const newW = e.clientX - panel.getBoundingClientRect().left;
+    if (newW > 220 && newW < 600) panel.style.width = newW + 'px';
+  });
+  window.addEventListener('mouseup', () => { resizerDrag = false; resizer.classList.remove('dragging'); });
+
+  // Resize observer
+  const ro = new ResizeObserver(() => { renderAll(); });
+  ro.observe(document.getElementById('canvas-container'));
+  ro.observe(document.getElementById('modal-canvas-container'));
+}
+
+function openModal() {
+  document.getElementById('modal-overlay').classList.add('open');
+  renderAllWaveLists();
+  setTimeout(() => renderAll(), 100);
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+}
+
+// ============================================================
+// INICIALIZACIÓN
+// ============================================================
+function init() {
+  // Cargar ejemplo inicial
+  loadExample(0);
+
+  // Aplicar paleta inicial
+  applyPaletteToUI();
+
+  // Iniciar animación
+  animFrame = requestAnimationFrame(animate);
+
+  // Eventos
+  initEvents();
+
+  // Sincronizar parámetros UI
+  syncParamInputs();
+  document.getElementById('param-v').value = state.v;
+  document.getElementById('param-tmax').value = state.tMax;
+}
+
+// Esperar DOM
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
+

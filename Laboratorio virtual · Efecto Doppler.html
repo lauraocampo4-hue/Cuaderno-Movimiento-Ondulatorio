@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Laboratorio virtual · Efecto Doppler</title>
+<style>
+:root{--bg:#fff;--grid:rgba(99,102,241,.09);--ink:#1e2150;--mut:#6b6f9a;--card:#fff;--line:rgba(99,102,241,.25);--acc:#4f46e5;--pink:#ec4899;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12132a;--grid:rgba(165,170,255,.08);--ink:#e8e9ff;--mut:#9ea3d6;--card:#1b1d3d;--line:rgba(165,170,255,.3);--acc:#8b8cff}}
+:root[data-theme="dark"]{--bg:#12132a;--grid:rgba(165,170,255,.08);--ink:#e8e9ff;--mut:#9ea3d6;--card:#1b1d3d;--line:rgba(165,170,255,.3);--acc:#8b8cff}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:22px 22px}
+.wrap{max-width:1240px;margin:0 auto;padding:18px;display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:22px}
+@media(max-width:900px){.wrap{grid-template-columns:1fr}}
+h1{margin:0 0 4px;font-size:clamp(22px,3.4vw,32px);color:var(--acc)}
+h1::after{content:"";display:block;height:5px;width:62%;margin-top:6px;border-radius:4px;background:linear-gradient(90deg,#ec4899,#8b5cf6)}
+h2{font-size:19px;margin:0 0 10px;color:var(--acc)}
+p.lead{color:var(--mut);margin:8px 0 14px}
+canvas{display:block;width:100%;aspect-ratio:16/8;border-radius:16px;box-shadow:0 6px 24px rgba(79,70,229,.2);touch-action:none;cursor:grab;background:#cfe6ff}
+@media(max-width:600px){canvas{aspect-ratio:4/3}}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+button,select{font:inherit;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:8px 13px;border-radius:10px;cursor:pointer}
+button:hover{border-color:var(--acc)}
+button.pri{background:linear-gradient(90deg,#6366f1,#a855f7);color:#fff;border:0}
+button.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+.ctls{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px 18px}
+.ctl label{display:flex;justify-content:space-between;font-weight:600;font-size:13px}
+.ctl output{color:var(--acc)}
+input[type=range]{width:100%;accent-color:#7c3aed}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.card{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--c,#6366f1);border-radius:12px;padding:9px 13px}
+.card.w{grid-column:1/-1}
+.card b{display:block;font-size:13px}
+.card span{font-size:20px;font-weight:700}
+.card small{display:block;color:var(--mut);font-size:12px}
+.tone{margin:16px 0 4px;font-weight:600;font-size:13px}
+.bar{position:relative;height:14px;border-radius:9px;background:linear-gradient(90deg,#60a5fa,#e5e7f5 50%,#f472b6)}
+.bar i{position:absolute;top:-4px;width:20px;height:22px;border-radius:10px;background:#4f46e5;border:3px solid #fff;transform:translateX(-50%);left:50%;transition:left .1s}
+.bar u{position:absolute;left:50%;top:-5px;height:24px;border-left:2px solid var(--ink)}
+.lbl{display:flex;justify-content:space-between;font-size:11px;color:var(--mut)}
+.exp{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 13px;margin-bottom:10px}
+.exp b{color:var(--acc)}.exp p{margin:4px 0 8px;font-size:13px;color:var(--mut)}
+.note{font-size:12px;color:var(--mut);margin-top:8px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<main>
+  <h1>Escena viva del efecto Doppler</h1>
+  <p class="lead">Cada frente de onda recuerda dónde y cuándo nació y crece a la rapidez del sonido. Que se amontonen por delante es una consecuencia de la física, no un truco de dibujo. <b>Arrastra la ambulancia o al observador</b> con el ratón o el dedo.</p>
+  <canvas id="cv"></canvas>
+  <div class="btns">
+    <button class="pri" id="bStart">▶ Iniciar</button>
+    <button id="bPause">⏸ Pausar</button>
+    <button id="bCont">⏯ Continuar</button>
+    <button id="bReset">↺ Reiniciar</button>
+    <button id="bDir">⇄ Invertir sentido</button>
+    <button id="bWaves" class="on">〰 Frentes de onda</button>
+    <button id="bAudio">🔈 Audio: apagado</button>
+    <select id="aMode" aria-label="Qué tono escuchar"><option value="p">Oír tono percibido</option><option value="e">Oír tono emitido</option></select>
+  </div>
+  <div class="ctls" id="ctls"></div>
+</main>
+<aside>
+  <h2>Lecturas en vivo</h2>
+  <div class="cards" id="cards"></div>
+  <div class="tone" id="toneTxt">Tono percibido frente al emitido</div>
+  <div class="bar"><u></u><i id="mark"></i></div>
+  <div class="lbl"><span>más grave</span><span>emitido</span><span>más agudo</span></div>
+  <p class="note">Escala visual: se dibuja 1 frente por cada 40 ciclos emitidos (440 Hz → 11 frentes/s), para que las ondas sean visibles. Las longitudes de onda del panel usan la frecuencia real.</p>
+  <h2 style="margin-top:20px">Tres experimentos para hacer ahora</h2>
+  <div class="exp"><b>1 · Fuente acercándose</b><p>El observador queda quieto a la derecha. Sube la velocidad de la ambulancia: los frentes delanteros se comprimen y f′ crece.</p><button data-exp="1">Preparar experimento 1</button></div>
+  <div class="exp"><b>2 · Fuente alejándose</b><p>La ambulancia se mueve en sentido contrario al observador. Los frentes se separan y f′ baja. También puedes usar «Invertir sentido».</p><button data-exp="2">Preparar experimento 2</button></div>
+  <div class="exp"><b>3 · Variar la frecuencia emitida</b><p>Con velocidad constante (30 m/s), cambia f: observa la separación entre frentes y la nueva f′.</p><button data-exp="3">Preparar experimento 3</button></div>
+  <div class="exp"><b>Caso de prueba</b><p>f = 440 Hz, v = 343 m/s, vₛ = 30 m/s, acercándose: f′ ≈ 482,2 Hz; λ delante ≈ 0,711 m; λ detrás ≈ 0,848 m.</p><button data-exp="0">Cargar caso de prueba</button></div>
+</aside>
+</div>
+<script>
+/* ===== ESTADO ===== */
+const S={vs:30,f:440,v:343,speed:1,dir:1,srcX:40,startX:40,obsX:240,state:'idle',waves:[],t:0,acc:0,showWaves:true};
+const WORLD=300;               // la escena representa 0–300 m
+const VIS=40;                  // ciclos reales por cada frente dibujado
+const $=s=>document.querySelector(s);
+const fmt=(n,d=1)=>n.toFixed(d).replace('.',',');
+
+/* ===== FÍSICA (ecuaciones del enunciado) ===== */
+function physics(){
+  const {f,v,vs,dir,srcX,obsX}=S;
+  const approaching=(obsX-srcX)*dir>0;                 // ¿la fuente se dirige hacia el observador?
+  const fp=approaching?(v-vs>0?f*v/(v-vs):null):f*v/(v+vs);  // f′ (null si Mach ≥ 1 acercándose)
+  return {approaching,fp,mach:vs/v,
+    lamF:v-vs>0?(v-vs)/f:null,   // λ delante = (v − vs)/f
+    lamB:(v+vs)/f,               // λ detrás  = (v + vs)/f
+    rel:approaching?vs:-vs};
+}
+
+/* ===== CONTROLES ===== */
+const defs=[
+ ['vs','Velocidad de la fuente','m/s',0,400,1],['f','Frecuencia emitida','Hz',100,2000,1],
+ ['v','Velocidad del sonido','m/s',200,500,1],['srcX','Posición de la ambulancia','m',0,300,1],
+ ['obsX','Posición del observador','m',0,300,1],['speed','Reproducción (cámara lenta)','×',0.05,2,0.05]];
+const sl={};
+defs.forEach(([k,lab,u,min,max,step])=>{
+  const d=document.createElement('div');d.className='ctl';
+  d.innerHTML=`<label>${lab}<output></output></label><input type="range" min="${min}" max="${max}" step="${step}">`;
+  $('#ctls').appendChild(d);
+  const inp=d.querySelector('input'),out=d.querySelector('output');
+  sl[k]={inp,out,u};
+  inp.oninput=()=>{S[k]=+inp.value;if(k==='srcX'){S.startX=S.srcX;S.waves=[];}};
+});
+function syncSliders(){for(const k in sl){const s=sl[k];if(document.activeElement!==s.inp)s.inp.value=S[k];
+  s.out.textContent=(k==='speed'?fmt(S[k],2):Math.round(S[k]))+' '+s.u;}}
+
+/* ===== BOTONES ===== */
+$('#bStart').onclick=()=>{if(S.state==='idle')S.startX=S.srcX;S.state='run'};
+$('#bPause').onclick=()=>{if(S.state==='run')S.state='pause'};
+$('#bCont').onclick=()=>{if(S.state==='pause')S.state='run'};
+$('#bReset').onclick=()=>{S.srcX=S.startX;S.waves=[];S.t=0;S.acc=0;S.state='idle'};
+$('#bDir').onclick=()=>{S.dir*=-1;S.waves=[]};
+$('#bWaves').onclick=e=>{S.showWaves=!S.showWaves;e.currentTarget.classList.toggle('on',S.showWaves)};
+document.querySelectorAll('[data-exp]').forEach(b=>b.onclick=()=>{
+  const n=+b.dataset.exp;S.waves=[];S.t=0;S.acc=0;S.showWaves=true;$('#bWaves').classList.add('on');
+  S.obsX=240;S.srcX=S.startX=40;S.dir=1;S.f=440;S.v=343;S.vs=30;
+  if(n===2){S.obsX=40;S.srcX=S.startX=120;}          // se aleja del observador
+  S.state='run';
+});
+
+/* ===== AUDIO (Web Audio API) ===== */
+let ac,osc,gain,audioOn=false;
+$('#bAudio').onclick=()=>{
+  if(!ac){ac=new (window.AudioContext||window.webkitAudioContext)();osc=ac.createOscillator();gain=ac.createGain();
+    gain.gain.value=0;osc.connect(gain).connect(ac.destination);osc.start();}
+  audioOn=!audioOn;ac.resume();gain.gain.setTargetAtTime(audioOn?0.06:0,ac.currentTime,0.05);
+  $('#bAudio').textContent=audioOn?'🔊 Audio: encendido':'🔈 Audio: apagado';$('#bAudio').classList.toggle('on',audioOn);
+};
+function audioTick(fp){if(!audioOn)return;const f=$('#aMode').value==='e'?S.f:fp;
+  if(f)osc.frequency.setTargetAtTime(Math.min(f,8000),ac.currentTime,0.03);}
+
+/* ===== LIENZO ===== */
+const cv=$('#cv'),ctx=cv.getContext('2d');let W=0,H=0;
+function resize(){const r=cv.getBoundingClientRect(),d=devicePixelRatio||1;W=r.width;H=r.height;
+  cv.width=W*d;cv.height=H*d;ctx.setTransform(d,0,0,d,0,0);}
+addEventListener('resize',resize);resize();
+const M=30,sc=()=>(W-2*M)/WORLD,toX=m=>M+m*sc(),gY=()=>H*0.7,K=()=>Math.max(.6,Math.min(1.2,W/800));
+
+/* Arrastre con ratón o dedo (pointer events) */
+let drag=null;
+function pos(e){const r=cv.getBoundingClientRect();return[e.clientX-r.left,e.clientY-r.top]}
+cv.onpointerdown=e=>{const[x,y]=pos(e);const da=Math.abs(x-toX(S.srcX)),dobs=Math.abs(x-toX(S.obsX));
+  if(Math.min(da,dobs)>50*K())return;drag=da<=dobs?'srcX':'obsX';cv.setPointerCapture(e.pointerId);cv.style.cursor='grabbing';};
+cv.onpointermove=e=>{if(!drag)return;const m=Math.max(0,Math.min(WORLD,(pos(e)[0]-M)/sc()));S[drag]=m;
+  if(drag==='srcX'){S.startX=m;S.waves=[];}};
+cv.onpointerup=cv.onpointercancel=()=>{drag=null;cv.style.cursor='grab'};
+
+/* ===== DIBUJO ===== */
+function drawScene(){
+  const gy=gY(),k=K(),s=sc();
+  let g=ctx.createLinearGradient(0,0,0,gy);g.addColorStop(0,'#6fb3ff');g.addColorStop(1,'#e3f1ff');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+  g=ctx.createRadialGradient(W*.84,H*.2,4,W*.84,H*.2,50*k);g.addColorStop(0,'#fff6b0');g.addColorStop(1,'rgba(255,220,100,0)');
+  ctx.fillStyle=g;ctx.fillRect(W*.84-60*k,H*.2-60*k,120*k,120*k);
+  ctx.fillStyle='#b9c7e2';ctx.beginPath();ctx.moveTo(0,gy);   // colinas
+  for(let x=0;x<=W;x+=10)ctx.lineTo(x,gy-28*k-14*k*Math.sin(x/90)-8*k*Math.sin(x/37));
+  ctx.lineTo(W,gy);ctx.fill();
+  ctx.fillStyle='#8fbf6a';ctx.fillRect(0,gy-4,W,6);
+  ctx.fillStyle='#f3deb5';ctx.fillRect(0,gy+2,W,34*k);           // regla
+  g=ctx.createLinearGradient(0,gy+36*k,0,H);g.addColorStop(0,'#e0b97c');g.addColorStop(1,'#c9965a');ctx.fillStyle=g;ctx.fillRect(0,gy+36*k,W,H);
+  ctx.strokeStyle='#5b4a2e';ctx.fillStyle='#4a3b22';ctx.font=`${10*k}px system-ui`;ctx.textAlign='center';ctx.lineWidth=1;
+  for(let m=0;m<=WORLD;m+=10){const x=toX(m),l=m%20?6*k:11*k;ctx.beginPath();ctx.moveTo(x,gy+2);ctx.lineTo(x,gy+2+l);ctx.stroke();
+    if(m%20===0)ctx.fillText(m,x,gy+24*k);}
+  ctx.textAlign='right';ctx.fillText('metros',W-8,gy+46*k);
+}
+function drawWaves(){
+  if(!S.showWaves)return;const s=sc(),cy=gY()-26*K();ctx.lineWidth=2.5;
+  for(const w of S.waves){const r=(S.t-w.t0)*S.v;       // radio = v · (t − t_emisión)
+    ctx.strokeStyle=`hsla(${215+r*0.12},85%,55%,${Math.max(0,1-r/700)})`;
+    ctx.beginPath();ctx.arc(toX(w.x),cy,r*s,Math.PI,2*Math.PI);ctx.stroke();}
+}
+function drawAmbulance(){
+  const k=K(),x=toX(S.srcX),y=gY();ctx.save();ctx.translate(x,y);ctx.scale(S.dir*k,k);
+  ctx.fillStyle='#fff';ctx.strokeStyle='#445';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.roundRect(-30,-30,60,24,5);ctx.fill();ctx.stroke();
+  ctx.beginPath();ctx.moveTo(8,-30);ctx.lineTo(22,-30);ctx.lineTo(30,-17);ctx.lineTo(30,-6);ctx.lineTo(8,-6);ctx.closePath();ctx.fillStyle='#fff';ctx.fill();ctx.stroke();
+  ctx.fillStyle='#8fd0ff';ctx.fillRect(12,-27,9,9);
+  ctx.fillStyle='#e11d48';ctx.fillRect(-30,-20,38,4);ctx.fillRect(-16,-28,4,16);ctx.fillRect(-22,-22,16,0);
+  ctx.fillStyle=Math.floor(performance.now()/250)%2?'#ef4444':'#3b82f6';ctx.fillRect(-4,-35,12,5);
+  ctx.fillStyle='#222';[-18,18].forEach(wx=>{ctx.beginPath();ctx.arc(wx,-4,6,0,7);ctx.fill();});
+  ctx.restore();
+  if(S.vs>0){                                          // flecha de velocidad
+    const L=Math.min(120*k,20+S.vs*0.3*k),ax=x,ay=y-62*k,e=ax+S.dir*L;
+    ctx.strokeStyle=ctx.fillStyle='#3730a3';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(ax,ay);ctx.lineTo(e,ay);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(e,ay);ctx.lineTo(e-S.dir*9,ay-6);ctx.lineTo(e-S.dir*9,ay+6);ctx.fill();
+    ctx.font=`bold ${12*k}px system-ui`;ctx.textAlign='center';ctx.fillText(`v = ${S.vs} m/s`,(ax+e)/2,ay-9);}
+}
+function drawObserver(){
+  const k=K(),x=toX(S.obsX),y=gY();ctx.save();ctx.translate(x,y);ctx.scale(k,k);
+  ctx.fillStyle='#374151';ctx.fillRect(-6,-16,4,16);ctx.fillRect(2,-16,4,16);
+  ctx.fillStyle='#0d9488';ctx.beginPath();ctx.roundRect(-9,-40,18,26,4);ctx.fill();
+  ctx.fillStyle='#f1c27d';ctx.beginPath();ctx.arc(0,-48,8,0,7);ctx.fill();ctx.restore();
+  ctx.fillStyle='#134e4a';ctx.font=`bold ${11*k}px system-ui`;ctx.textAlign='center';ctx.fillText('Observador',x,y-70*k);
+}
+
+/* ===== PANEL DE RESULTADOS ===== */
+const cardDefs=[['f','Emitida f','#6366f1'],['fp','Percibida f′','#7c3aed'],['vs','Rapidez de la fuente vₛ','#e11d48'],
+ ['v','Velocidad del sonido v','#0d9488'],['mach','Número de Mach','#10b981'],['diff','Diferencia f′ − f','#d97706','w'],
+ ['lam','λ real · delante / detrás','#0891b2','w'],['rel','Velocidad relativa fuente–observador','#4f46e5','w']];
+cardDefs.forEach(([id,t,c,w])=>{const d=document.createElement('div');d.className='card '+(w||'');d.style.setProperty('--c',c);
+  d.innerHTML=`<b>${t}</b><span id="c_${id}"></span><small id="s_${id}"></small>`;$('#cards').appendChild(d);});
+const set=(id,v,sub='')=>{$('#c_'+id).textContent=v;$('#s_'+id).textContent=sub};
+function updatePanel(p){
+  const sup=p.fp===null;
+  set('f',fmt(S.f)+' Hz');set('fp',sup?'—':fmt(p.fp)+' Hz',sup?'Mach ≥ 1: onda de choque':p.approaching?'se acerca':'se aleja');
+  set('vs',fmt(S.vs)+' m/s');set('v',fmt(S.v)+' m/s');
+  set('mach',fmt(p.mach,2),p.mach>=1?'supersónico':'subsónico');
+  set('diff',sup?'—':(p.fp-S.f>=0?'+':'')+fmt(p.fp-S.f)+' Hz');
+  set('lam',(p.lamF===null?'—':fmt(p.lamF,3))+' m / '+fmt(p.lamB,3)+' m');
+  set('rel',(p.rel>=0?'+':'')+fmt(p.rel)+' m/s',p.rel>=0?'se acercan':'se alejan');
+  const mark=$('#mark');
+  if(sup){$('#toneTxt').textContent='Sin tono estable: la fuente alcanza o supera la velocidad del sonido';mark.style.left='100%';return;}
+  const st=12*Math.log2(p.fp/S.f);
+  mark.style.left=(50+Math.max(-1,Math.min(1,st/12))*50)+'%';
+  $('#toneTxt').textContent=`Tono que oyes frente al emitido · ${st>=0?'+':''}${fmt(st)} semitonos (${Math.abs(st)<.05?'igual':st>0?'más agudo':'más grave'})`;
+}
+
+/* ===== BUCLE PRINCIPAL ===== */
+let last=performance.now();
+function frame(now){
+  const dt=Math.min(.05,(now-last)/1000)*S.speed;last=now;
+  if(S.state==='run'){
+    S.t+=dt;S.srcX+=S.dir*S.vs*dt;
+    if(S.srcX>WORLD+30){S.srcX=-30;S.waves=[]}else if(S.srcX<-30){S.srcX=WORLD+30;S.waves=[]}
+    const rate=S.f/VIS;S.acc+=dt*rate;
+    for(let i=0;S.acc>=1&&i<300;i++){S.acc-=1;           // emisión: cada frente guarda su centro y su instante
+      const ago=S.acc/rate;S.waves.push({x:S.srcX-S.dir*S.vs*ago,t0:S.t-ago});}
+    S.waves=S.waves.filter(w=>(S.t-w.t0)*S.v<900);
+  }
+  const p=physics();
+  drawScene();drawWaves();drawAmbulance();drawObserver();
+  updatePanel(p);syncSliders();audioTick(p.fp);
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
